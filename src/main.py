@@ -1,53 +1,45 @@
-#!/usr/bin/env python
+from PIL import Image
+from renderer import render
+import pygame  # type: ignore
+from hardware import Platform
+from router import router
 
-import argparse
-import logging
-import sys
+# loop
+pygame.init()
+win: pygame.Surface = pygame.display.set_mode(
+    (Platform.screen_width, Platform.screen_height)
+)
+clock: pygame.time.Clock = pygame.time.Clock()
 
-from seedsigner.controller import Controller
+running: bool = True
 
-logger = logging.getLogger(__name__)
+while running:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            running = False
+        elif e.type == pygame.KEYDOWN:
+            if e.key == pygame.K_UP:
+                router.current_screen().handle_input("up")
+            elif e.key == pygame.K_DOWN:
+                router.current_screen().handle_input("down")
+            elif e.key == pygame.K_LEFT:
+                router.current_screen().handle_input("left")
+            elif e.key == pygame.K_RIGHT:
+                router.current_screen().handle_input("right")
+            elif e.key == pygame.K_RETURN:
+                router.current_screen().handle_input("select")
 
-DEFAULT_MODULE_LOG_LEVELS = {
-    "PIL": logging.WARNING,
-    # "seedsigner.gui.toast": logging.DEBUG,  # example of more specific submodule logging config
-}
+    # "render" phase
+    canvas: Image.Image = render(router.current_screen())
 
-
-def main(sys_argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-l",
-        "--loglevel",
-        choices=list((logging._nameToLevel.keys())),
-        default="INFO",
-        type=str,
-        help=(
-            "Set the log level (default: %(default)s), WARNING: changing the log level "
-            "to something more verbose than %(default)s may result in unwanted data "
-            "being written to stderr"
-        ),
+    # pygame blit
+    data: bytes = canvas.convert("RGB").tobytes()
+    surf: pygame.Surface = pygame.image.fromstring(
+        data, (Platform.screen_width, Platform.screen_height), "RGB"
     )
+    win.blit(surf, (0, 0))
+    pygame.display.flip()
 
-    args = parser.parse_args(sys_argv)
+    clock.tick(60)
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.getLevelName(args.loglevel))
-    console_handler = logging.StreamHandler(sys.stderr)
-    console_handler.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)8s [%(name)s %(funcName)s (%(lineno)d)]: %(message)s")
-    )
-    root_logger.addHandler(console_handler)
-
-    # Set log levels for specific modules
-    for module, level in DEFAULT_MODULE_LOG_LEVELS.items():
-        logging.getLogger(module).setLevel(level)
-
-    logger.info(f"Starting SeedSigner with: {args.__dict__}")
-
-    # Get the one and only Controller instance and start our main loop
-    Controller.get_instance().start()
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+pygame.quit()
