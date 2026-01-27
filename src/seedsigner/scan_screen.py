@@ -1,6 +1,6 @@
 from typing import Literal
 
-from components.components import Body, Header, BackButton
+from components import Body, Header, BackButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 

@@ -1,6 +1,6 @@
 from typing import Literal
 
-from components.components import Body, Header, BackButton, Button
+from components import Header, Body, BackButton, Button
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
@@ -13,7 +13,7 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-class SettingsScreen:
+class ToolsScreen:
     def __init__(self, router):
         self.router = router
         self.state: dict[Literal["selected"], NavKey] = {"selected": "scan"}

@@ -1,9 +1,9 @@
 from typing import Literal
 
-from components.components import Body, Header, BackButton, Button
+from components import Body, Header, BackButton, Button
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal["scan", "tools", "seed", "back"]
+NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
 
 nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "back": {"down": "scan"},
@@ -13,7 +13,7 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-class SeedScreen:
+class SettingsScreen:
     def __init__(self, router):
         self.router = router
         self.state: dict[Literal["selected"], NavKey] = {"selected": "scan"}
@@ -24,7 +24,7 @@ class SeedScreen:
         return [
             Header(
                 left=BackButton(selected=selected == "back"),
-                title="Seed",
+                title="Settings",
             ),
             Body(
                 Button(text="Scan", selected=selected == "scan", index=0),

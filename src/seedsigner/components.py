@@ -3,9 +3,10 @@ from typing import Any
 
 from draw_command import Rect, Text
 from hardware import Platform
+from colors import Colors
 
 
-@dataclass(frozen=True)
+@dataclass
 class Header:
     height = 40
     padding = 8
@@ -15,12 +16,18 @@ class Header:
     right: Any = None
 
     def render(self):
-        bg = Rect(x=0, y=0, w=Platform.screen_width, h=Header.height, fill="blue")
+        bg = Rect(
+            x=0,
+            y=0,
+            w=Platform.screen_width,
+            h=Header.height,
+            fill=Colors.background,
+        )
 
         return [
             bg,
             self.left,
-            Text(x=60, y=10, text=self.title, fill="white", size=20),
+            Text(x=60, y=10, text=self.title, fill=Colors.text, size=20),
             self.right,
         ]
 
@@ -28,7 +35,7 @@ class Header:
 button_padding = 4
 
 
-@dataclass(frozen=True)
+@dataclass
 class BackButton:
     height = Header.height - Header.padding - Header.padding
     width = height
@@ -44,20 +51,24 @@ class BackButton:
                 y=BackButton.y,
                 w=BackButton.width,
                 h=BackButton.height,
-                fill="green" if self.selected else "red",
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
                 radius=6,
             ),
             Text(
                 x=Header.padding + button_padding,
                 y=Header.padding + button_padding,
                 text="<",
-                fill="white",
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
                 size=18,
             ),
         ]
 
 
-@dataclass(frozen=True)
+@dataclass
 class PowerButton:
     height = Header.height - Header.padding - Header.padding
     width = height
@@ -73,14 +84,18 @@ class PowerButton:
                 y=PowerButton.y,
                 w=PowerButton.width,
                 h=PowerButton.height,
-                fill="green" if self.selected else "red",
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
                 radius=6,
             ),
             Text(
                 x=PowerButton.x + button_padding,
                 y=PowerButton.y + button_padding,
                 text="P",
-                fill="white",
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
                 size=18,
             ),
         ]
@@ -98,7 +113,7 @@ class Body:
         y=y,
         w=width,
         h=height,
-        fill="lightgray",
+        fill=Colors.background,
     )
 
     def __init__(self, *children):
@@ -108,7 +123,7 @@ class Body:
         return [Body.bg, *self.children]
 
 
-@dataclass(frozen=True)
+@dataclass
 class Grid:
     columns = 2
     rows = 2
@@ -123,7 +138,7 @@ class Grid:
     right = Body.padding + width + Body.padding
 
 
-@dataclass(frozen=True)
+@dataclass
 class Button:
     height = 40
     width = Platform.screen_width - Body.padding - Body.padding
@@ -142,20 +157,22 @@ class Button:
                 y=y,
                 w=Button.width,
                 h=Button.height,
-                fill="green" if self.selected else "red",
+                fill="orange" if self.selected else "gray",
                 radius=10,
             ),
             Text(
                 x=Button.x + button_padding,
                 y=y,
                 text=self.text,
-                fill="white",
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
                 size=18,
             ),
         ]
 
 
-@dataclass(frozen=True)
+@dataclass
 class LargeButton:
     columns = 2
     rows = 2
@@ -174,14 +191,18 @@ class LargeButton:
                 y=self.y,
                 w=LargeButton.width,
                 h=LargeButton.height,
-                fill="green" if self.selected else "red",
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
                 radius=10,
             ),
             Text(
                 x=self.x + button_padding,
                 y=self.y + button_padding,
                 text=self.text,
-                fill="white",
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
                 size=18,
             ),
         ]

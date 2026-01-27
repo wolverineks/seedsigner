@@ -1,6 +1,6 @@
 from typing import Literal
 
-from components.components import Body, Header, LargeButton, Grid, PowerButton
+from components import Body, Header, LargeButton, Grid, PowerButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
