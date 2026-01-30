@@ -23,8 +23,8 @@ class Router:
         self.routes = routes
         self.stack = [initial_screen(self)] if initial_screen is not None else []
 
-    def current_screen(self):
-        return self.stack[-1]
+    def render(self):
+        return self.current_screen()
 
     def navigate_to(self, route, *params):
         screen_cls = self.routes.get(route)
@@ -36,11 +36,17 @@ class Router:
 
     def pop(self):
         if len(self.stack) > 1:
-            screen = self.stack[-1]
+            screen = self.current_screen()
             print(f"Popping {screen} from stack")
             self.stack.pop()
         else:
             print("Cannot pop the last screen")
+
+    def current_screen(self):
+        return self.stack[-1]
+
+    def handle_input(self, input):
+        return self.current_screen().handle_input(input)
 
 
 router = Router(

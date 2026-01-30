@@ -1,41 +1,17 @@
-from PIL import Image
-from renderer import render
-import pygame  # type: ignore
-from hardware import Platform
-from app import App
-from router import router
-from events import Events
+from PIL import Image, ImageDraw
+from hardware.displays.display_driver import DisplayDriver
 
-pygame.init()
-win: pygame.Surface = pygame.display.set_mode(
-    (Platform.screen_width, Platform.screen_height)
+from hardware.hardware import Platform
+
+driver = DisplayDriver(
+    "st7789",
+    width=int(Platform.screen_width),
+    height=int(Platform.screen_height),
 )
-clock: pygame.time.Clock = pygame.time.Clock()
 
 
-running = True  # 'count' is bound in the enclosing scope
+img = Image.new("RGB", (Platform.screen_width, Platform.screen_height), "black")
+draw = ImageDraw.Draw(img)
+draw.text((120, 120), "IT WORKS", fill="white", anchor="mm")
 
-
-def on_quit():
-    print("quitting")
-    # global running = False
-
-
-while running:
-    app = App(router=router, on_quit=on_quit)
-    Events.handle_events(app)
-
-    # "render" phase
-    canvas: Image.Image = render(app)
-
-    # pygame blit
-    data: bytes = canvas.convert("RGB").tobytes()
-    surf: pygame.Surface = pygame.image.fromstring(
-        data, (Platform.screen_width, Platform.screen_height), "RGB"
-    )
-    win.blit(surf, (0, 0))
-    pygame.display.flip()
-
-    clock.tick(60)
-
-pygame.quit()
+driver.show_image(img)

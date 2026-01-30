@@ -12,7 +12,7 @@ def render(component) -> Image.Image:
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(canvas)
 
     def recurse(node: Any) -> None:
-        print("node", node)
+        # print("node", node)
         if isinstance(node, list):
             for child in node:
                 recurse(child)
