@@ -175,12 +175,7 @@ class Button:
 from PIL import ImageFont
 
 size = 24
-font = ImageFont.load_default(size=size)  # or ImageFont.load_default(size=24)
-
-# Scan: Width: 55px Height: 16px
-# Seed: Width: 55px Height: 17px
-# Tools: Width: 62px Height: 17px
-# Settings: Width: 89px Height: 21px
+font = ImageFont.load_default(size=size)
 
 
 @dataclass
@@ -196,11 +191,13 @@ class LargeButton:
     selected: bool
 
     def render(self) -> List[DrawCommand]:
-        left, top, right, bottom = font.getbbox(self.text)
+        left, _, right, _ = font.getbbox(self.text)
         width = right - left
-        height = int(bottom - top)
+        ascent, descent = font.getmetrics()
+        height = ascent + descent
 
-        print(f"{self.text}: Width: {width}px Height: {height}px")
+        centered = self.x + int(LargeButton.width / 2) - int(width / 2)
+        bottom = self.y + LargeButton.height - height - button_padding
 
         return [
             Rect(
@@ -214,8 +211,8 @@ class LargeButton:
                 radius=10,
             ),
             Text(
-                x=self.x + int(LargeButton.width / 2) - int(width / 2),
-                y=self.y + LargeButton.height - height - button_padding,
+                x=centered,
+                y=bottom,
                 text=self.text,
                 fill=Colors.button.focused.text
                 if self.selected

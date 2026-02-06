@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from typing import Callable
+from threading import Timer
 
 from seedsigner.toast import toast
 from seedsigner.draw_command import DrawCommand
 from seedsigner.router import Router
 
-toast.show()
+Timer(4, toast.show).start()
 
 
 @dataclass
