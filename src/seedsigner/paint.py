@@ -1,5 +1,5 @@
 # from environment import is_raspberry_pi
-# from components import Platform
+# from seedsigner.dimensions import Dimensions
 
 
 # class Painter:
@@ -17,7 +17,7 @@
 
 #         data = canvas
 #         pil_img = Image.frombytes(
-#             "RGB", (Platform.screen_width, Platform.screen_height), data
+#             "RGB", (Dimensions.screen_width, Dimensions.screen_height), data
 #         )
 
 #         driver = ST7789()
@@ -28,7 +28,7 @@
 
 #         data: bytes = canvas.convert("RGB").tobytes()
 #         surf: pygame.Surface = pygame.image.fromstring(
-#             data, (Platform.screen_width, Platform.screen_height), "RGB"
+#             data, (Dimensions.screen_width, Dimensions.screen_height), "RGB"
 #         )
 #         win.blit(surf, (0, 0))
 #         pygame.display.flip()

@@ -1,23 +1,21 @@
 from dataclasses import dataclass
-from typing import Callable, Any
-from toast import Toast
+from typing import Callable
+
+from seedsigner.toast import toast
+from seedsigner.draw_command import DrawCommand
+from seedsigner.router import Router
+
+toast.show()
 
 
 @dataclass
 class App:
     on_quit: Callable
-    router: Any
+    router: Router
+    toast_visible: bool = False
 
-    modal_visible: bool = True
-
-    def render(self):
-        return [
-            self.router,
-            Toast(router=self.router, visible=self.modal_visible),
-        ]
+    def render(self) -> DrawCommand:
+        return [self.router, toast]
 
     def handle_input(self, input):
-        if self.modal_visible:
-            self.modal_visible = False
-            return
         self.router.handle_input(input)

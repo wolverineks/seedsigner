@@ -1,13 +1,13 @@
 from typing import Any
 from PIL import Image, ImageDraw
 
-from draw_command import Rect, Text
-from hardware import Platform
+from seedsigner.draw_command import Rect, Text
+from seedsigner.dimensions import Dimensions
 
 
 def render(component) -> Image.Image:
     canvas: Image.Image = Image.new(
-        "RGB", (Platform.screen_width, Platform.screen_height), "white"
+        "RGB", (Dimensions.width, Dimensions.height), "white"
     )
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(canvas)
 
@@ -34,6 +34,7 @@ def render(component) -> Image.Image:
                 (node.x, node.y),
                 node.text,
                 fill=node.fill,
+                font_size=node.size,
             )
         elif node is None:
             pass

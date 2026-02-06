@@ -1,6 +1,6 @@
-from typing import Literal
+from typing import Literal, Any
 
-from components import Body, Header, LargeButton, Grid, PowerButton
+from seedsigner.components import Body, Header, LargeButton, Grid, PowerButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
@@ -16,7 +16,7 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 
 class MainScreen:
-    def __init__(self, router):
+    def __init__(self, router: Any):
         self.router = router
         self.state: dict[Literal["selected"], NavKey] = {"selected": "scan"}
 

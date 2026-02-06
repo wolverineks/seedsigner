@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List
 
-from draw_command import Rect, Text
-from hardware import Platform
-from colors import Colors
+from seedsigner.draw_command import Rect, Text, DrawCommand
+from seedsigner.dimensions import Dimensions
+from seedsigner.colors import Colors
 
 
 @dataclass
@@ -19,7 +19,7 @@ class Header:
         bg = Rect(
             x=0,
             y=0,
-            w=Platform.screen_width,
+            w=Dimensions.width,
             h=Header.height,
             fill=Colors.background,
         )
@@ -72,7 +72,7 @@ class BackButton:
 class PowerButton:
     height = Header.height - Header.padding - Header.padding
     width = height
-    x = Platform.screen_width - Header.padding - width
+    x = Dimensions.width - Header.padding - width
     y = Header.padding
 
     selected: bool = False
@@ -106,8 +106,8 @@ class Body:
     padding = 8
     x = 0
     y = Header.height
-    width = Platform.screen_width
-    height = Platform.screen_height - Header.height
+    width = Dimensions.width
+    height = Dimensions.height - Header.height
     bg = Rect(
         x=x,
         y=y,
@@ -116,10 +116,10 @@ class Body:
         fill=Colors.background,
     )
 
-    def __init__(self, *children):
+    def __init__(self, *children: List[DrawCommand]):
         self.children = children
 
-    def render(self):
+    def render(self) -> List[DrawCommand]:
         return [Body.bg, *self.children]
 
 
@@ -128,9 +128,9 @@ class Grid:
     columns = 2
     rows = 2
     width = int(
-        (Platform.screen_width - Body.padding - Body.padding - Body.padding) / columns
+        (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
     )
-    height = int((Platform.screen_height - Header.height - 3 * Body.padding) / rows)
+    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
 
     top = Header.height + Body.padding
     bottom = top + height + Body.padding
@@ -141,14 +141,14 @@ class Grid:
 @dataclass
 class Button:
     height = 40
-    width = Platform.screen_width - Body.padding - Body.padding
+    width = Dimensions.width - Body.padding - Body.padding
     x = Body.padding
 
     text: str
     index: int
     selected: bool
 
-    def render(self):
+    def render(self) -> List[DrawCommand]:
         y = Header.height + Body.padding + self.index * (Button.height + Body.padding)
 
         return [
@@ -172,19 +172,36 @@ class Button:
         ]
 
 
+from PIL import ImageFont
+
+size = 24
+font = ImageFont.load_default(size=size)  # or ImageFont.load_default(size=24)
+
+# Scan: Width: 55px Height: 16px
+# Seed: Width: 55px Height: 17px
+# Tools: Width: 62px Height: 17px
+# Settings: Width: 89px Height: 21px
+
+
 @dataclass
 class LargeButton:
     columns = 2
     rows = 2
-    width = int((Platform.screen_width - 3 * (Body.padding)) / columns)
-    height = int((Platform.screen_height - Header.height - 3 * Body.padding) / rows)
+    width = int((Dimensions.width - 3 * (Body.padding)) / columns)
+    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
 
     text: str
     x: int
     y: int
     selected: bool
 
-    def render(self):
+    def render(self) -> List[DrawCommand]:
+        left, top, right, bottom = font.getbbox(self.text)
+        width = right - left
+        height = int(bottom - top)
+
+        print(f"{self.text}: Width: {width}px Height: {height}px")
+
         return [
             Rect(
                 x=self.x,
@@ -197,12 +214,12 @@ class LargeButton:
                 radius=10,
             ),
             Text(
-                x=self.x + button_padding,
-                y=self.y + button_padding,
+                x=self.x + int(LargeButton.width / 2) - int(width / 2),
+                y=self.y + LargeButton.height - height - button_padding,
                 text=self.text,
                 fill=Colors.button.focused.text
                 if self.selected
                 else Colors.button.text,
-                size=18,
+                size=size,
             ),
         ]

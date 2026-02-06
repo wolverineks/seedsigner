@@ -1,13 +1,13 @@
-from components import Button, Rect, Platform
-from colors import Colors
+from seedsigner.components import Rect, Dimensions
+from threading import Timer
 
 
 class Toast:
     padding = 8
-    width = Platform.screen_width
+    width = Dimensions.width
     height = 40
     x = 0
-    y = Platform.screen_height - height
+    y = Dimensions.height - height
     bg = Rect(
         x=x,
         y=y,
@@ -16,14 +16,21 @@ class Toast:
         fill="red",
     )
 
-    def __init__(self, router, visible, *children):
-        self.children = children
-        self.visible = visible
-        self.router = router
+    def __init__(self):
+        self.visible: bool = False
 
     def render(self):
-        return (
-            [self.bg, Button(text="QWE", index=0, selected=False)]
-            if self.visible
-            else None
-        )
+        return [self.bg] if self.visible else None
+
+    def show(self):
+        self.visible = True
+        Timer(5, self.hide).start()
+
+        return
+
+    def hide(self):
+        self.visible = False
+        return
+
+
+toast = Toast()

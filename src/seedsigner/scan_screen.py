@@ -1,6 +1,6 @@
 from typing import Literal
 
-from components import Body, Header, BackButton
+from seedsigner.components import Body, Header, BackButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 
