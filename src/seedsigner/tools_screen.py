@@ -2,41 +2,6 @@ from typing import Literal
 
 from seedsigner.components import Header, Body, BackButton, Button
 
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal[
-    "back",
-    "new_seed_camera",
-    "new_seed_dice",
-    "calculate_checksum",
-    "address_explorer",
-    "verify_address",
-]
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "down": "new_seed_camera",
-    },
-    "new_seed_camera": {
-        "up": "back",
-        "down": "new_seed_dice",
-    },
-    "new_seed_dice": {
-        "up": "new_seed_camera",
-        "down": "calculate_checksum",
-    },
-    "calculate_checksum": {
-        "up": "new_seed_dice",
-        "down": "address_explorer",
-    },
-    "address_explorer": {
-        "up": "calculate_checksum",
-        "down": "verify_address",
-    },
-    "verify_address": {
-        "up": "address_explorer",
-    },
-}
-
 
 class ToolsScreen:
     def __init__(self, router):
@@ -95,3 +60,39 @@ class ToolsScreen:
             self.router.pop()
         else:
             self.router.navigate_to(selected)
+
+
+HWButtonInput = Literal["up", "down", "left", "right", "select"]
+NavKey = Literal[
+    "back",
+    "new_seed_camera",
+    "new_seed_dice",
+    "calculate_checksum",
+    "address_explorer",
+    "verify_address",
+]
+
+NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "down": "new_seed_camera",
+    },
+    "new_seed_camera": {
+        "up": "back",
+        "down": "new_seed_dice",
+    },
+    "new_seed_dice": {
+        "up": "new_seed_camera",
+        "down": "calculate_checksum",
+    },
+    "calculate_checksum": {
+        "up": "new_seed_dice",
+        "down": "address_explorer",
+    },
+    "address_explorer": {
+        "up": "calculate_checksum",
+        "down": "verify_address",
+    },
+    "verify_address": {
+        "up": "address_explorer",
+    },
+}

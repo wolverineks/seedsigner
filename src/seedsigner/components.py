@@ -45,6 +45,10 @@ class BackButton:
     selected: bool = False
 
     def render(self):
+        ascent = font.getmetrics()[0]
+
+        text_y = BackButton.y + int((BackButton.height - ascent) / 2)
+
         return [
             Rect(
                 x=BackButton.x,
@@ -58,7 +62,7 @@ class BackButton:
             ),
             Text(
                 x=Header.padding + button_padding,
-                y=Header.padding + button_padding,
+                y=text_y,
                 text="<",
                 fill=Colors.button.focused.text
                 if self.selected
@@ -138,6 +142,12 @@ class Grid:
     right = Body.padding + width + Body.padding
 
 
+from PIL import ImageFont
+
+size = 24
+font = ImageFont.load_default(size=size)
+
+
 @dataclass
 class Button:
     height = 30
@@ -148,21 +158,27 @@ class Button:
     index: int
     selected: bool
 
-    def render(self) -> List[DrawCommand]:
-        y = Header.height + Body.padding + self.index * (Button.height + Body.padding)
+    def render(self) -> List[DrawCommand | None]:
+        button_y = (
+            Header.height + Body.padding + self.index * (Button.height + Body.padding)
+        )
+        ascent = font.getmetrics()[0]
+
+        text_y = button_y + int((Button.height - ascent) / 2)
 
         return [
             Rect(
                 x=Button.x,
-                y=y,
+                y=button_y,
                 w=Button.width,
                 h=Button.height,
                 fill="orange" if self.selected else "gray",
                 radius=10,
             ),
+            None,
             Text(
                 x=Button.x + button_padding,
-                y=y,
+                y=text_y,
                 text=self.text,
                 fill=Colors.button.focused.text
                 if self.selected
@@ -170,12 +186,6 @@ class Button:
                 size=18,
             ),
         ]
-
-
-from PIL import ImageFont
-
-size = 24
-font = ImageFont.load_default(size=size)
 
 
 @dataclass
