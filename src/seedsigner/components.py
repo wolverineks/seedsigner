@@ -140,7 +140,7 @@ class Grid:
 
 @dataclass
 class Button:
-    height = 40
+    height = 30
     width = Dimensions.width - Body.padding - Body.padding
     x = Body.padding
 

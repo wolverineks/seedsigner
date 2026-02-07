@@ -3,20 +3,45 @@ from typing import Literal
 from seedsigner.components import Header, Body, BackButton, Button
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
+NavKey = Literal[
+    "back",
+    "new_seed_camera",
+    "new_seed_dice",
+    "calculate_checksum",
+    "address_explorer",
+    "verify_address",
+]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {"down": "scan"},
-    "scan": {"down": "tools", "up": "back"},
-    "tools": {"up": "scan", "down": "seed"},
-    "seed": {"up": "tools"},
+NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "down": "new_seed_camera",
+    },
+    "new_seed_camera": {
+        "up": "back",
+        "down": "new_seed_dice",
+    },
+    "new_seed_dice": {
+        "up": "new_seed_camera",
+        "down": "calculate_checksum",
+    },
+    "calculate_checksum": {
+        "up": "new_seed_dice",
+        "down": "address_explorer",
+    },
+    "address_explorer": {
+        "up": "calculate_checksum",
+        "down": "verify_address",
+    },
+    "verify_address": {
+        "up": "address_explorer",
+    },
 }
 
 
 class ToolsScreen:
     def __init__(self, router):
         self.router = router
-        self.state: dict[Literal["selected"], NavKey] = {"selected": "scan"}
+        self.state: dict[Literal["selected"], NavKey] = {"selected": "new_seed_camera"}
 
     def render(self):
         selected = self.state["selected"]
@@ -27,9 +52,31 @@ class ToolsScreen:
                 title="Settings",
             ),
             Body(
-                Button(text="Scan", selected=selected == "scan", index=0),
-                Button(text="Tools", selected=selected == "tools", index=1),
-                Button(text="Seed", selected=selected == "seed", index=2),
+                Button(
+                    text="New seed (camera)",
+                    selected=selected == "new_seed_camera",
+                    index=0,
+                ),
+                Button(
+                    text="New seed (dice)",
+                    selected=selected == "new_seed_dice",
+                    index=1,
+                ),
+                Button(
+                    text="Calc 12th/24th word",
+                    selected=selected == "calculate_checksum",
+                    index=2,
+                ),
+                Button(
+                    text="Address Explorer",
+                    selected=selected == "address_explorer",
+                    index=3,
+                ),
+                Button(
+                    text="Verify Address",
+                    selected=selected == "verify_address",
+                    index=4,
+                ),
             ),
         ]
 
@@ -38,8 +85,8 @@ class ToolsScreen:
             self.handle_select()
         else:
             selected = self.state["selected"]
-            if input in nav_map[selected]:
-                self.state["selected"] = nav_map[selected][input]
+            if input in NAV_MAP[selected]:
+                self.state["selected"] = NAV_MAP[selected][input]
 
     def handle_select(self):
         selected = self.state["selected"]

@@ -21,16 +21,22 @@ class SettingsScreen:
     def render(self):
         selected = self.state["selected"]
 
+        buttons = [
+            Button(text="Scan", selected=selected == "scan", index=0),
+            Button(text="Tools", selected=selected == "tools", index=1),
+            Button(text="Seed", selected=selected == "seed", index=2),
+            Button(text="Scan", selected=selected == "scan", index=3),
+            Button(text="Tools", selected=selected == "tools", index=4),
+            Button(text="Seed", selected=selected == "seed", index=5),
+            Button(text="Seed", selected=selected == "seed", index=6),
+        ]
+
         return [
             Header(
                 left=BackButton(selected=selected == "back"),
                 title="Settings",
             ),
-            Body(
-                Button(text="Scan", selected=selected == "scan", index=0),
-                Button(text="Tools", selected=selected == "tools", index=1),
-                Button(text="Seed", selected=selected == "seed", index=2),
-            ),
+            Body(buttons),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
