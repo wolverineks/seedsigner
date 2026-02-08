@@ -13,22 +13,27 @@ NavKey = Literal[
 
 NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "back": {
+        "right": "scan_a_seedqr",
         "down": "scan_a_seedqr",
     },
     "scan_a_seedqr": {
         "up": "back",
+        "left": "back",
         "down": "enter_a_12_word_seed",
     },
     "enter_a_12_word_seed": {
         "up": "scan_a_seedqr",
+        "left": "back",
         "down": "enter_a_24_word_seed",
     },
     "enter_a_24_word_seed": {
         "up": "enter_a_12_word_seed",
+        "left": "back",
         "down": "create_a_seed",
     },
     "create_a_seed": {
         "up": "enter_a_24_word_seed",
+        "left": "back",
     },
 }
 
@@ -36,10 +41,10 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 class SeedScreen:
     def __init__(self, router):
         self.router = router
-        self.state: dict[Literal["selected"], NavKey] = {"selected": "scan_a_seedqr"}
+        self.selected: NavKey = "scan_a_seedqr"
 
     def render(self):
-        selected = self.state["selected"]
+        selected = self.selected
 
         return [
             Header(
@@ -69,13 +74,15 @@ class SeedScreen:
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
         if input == "select":
             self.handle_select()
+        elif input == "left" and self.selected == "back":
+            self.handle_select()
         else:
-            selected = self.state["selected"]
+            selected = self.selected
             if input in NAV_MAP[selected]:
-                self.state["selected"] = NAV_MAP[selected][input]
+                self.selected = NAV_MAP[selected][input]
 
     def handle_select(self):
-        selected = self.state["selected"]
+        selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
             self.router.pop()

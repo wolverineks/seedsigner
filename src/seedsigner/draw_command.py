@@ -1,6 +1,5 @@
-from typing import Literal, List
+from typing import Literal, List, Any
 from dataclasses import dataclass
-from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -22,13 +21,9 @@ class Text:
     x: int = 0
     y: int = 0
     text: str = ""
-    fill: str = "white"
-    size: int = 16
-    font: str = "regular"
+    fill: str | None = "white"
+    size: int | None = 16
+    font: Any | None = None
 
 
-type DrawCommand = Rect | Text | List[DrawCommand]
-
-
-class Renderable(Protocol):
-    def render(self) -> DrawCommand: ...
+type DrawCommand = Rect | Text | None | List[DrawCommand]

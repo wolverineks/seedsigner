@@ -8,10 +8,10 @@ HWButtonInput = Literal["up", "down", "left", "right", "select"]
 class ScanScreen:
     def __init__(self, router):
         self.router = router
-        self.state: dict[Literal["selected"], Literal["back"]] = {"selected": "back"}
+        self.selected: Literal["back"] = "back"
 
     def render(self):
-        selected = self.state["selected"]
+        selected = self.selected
 
         return [
             Header(
@@ -24,9 +24,11 @@ class ScanScreen:
     def handle_input(self, input: Literal["select"]):
         if input == "select":
             self.handle_select()
+        elif input == "left" and self.selected == "back":
+            self.handle_select()
 
     def handle_select(self):
-        selected = self.state["selected"]
+        selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
             self.router.pop()

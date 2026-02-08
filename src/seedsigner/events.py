@@ -1,5 +1,7 @@
 import pygame  # type: ignore
 
+from seedsigner.app import App
+
 
 class Events:
     event_map = {
@@ -11,7 +13,7 @@ class Events:
     }
 
     @staticmethod
-    def handle_events(app):
+    def handle_events(app: App):
         events = Events.get_events()
         inputs = Events.get_inputs(events)
 

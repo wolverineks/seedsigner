@@ -1,4 +1,3 @@
-from PIL import Image
 import pygame  # type: ignore
 
 from seedsigner.renderer import render
@@ -25,8 +24,7 @@ app = App(router=router, on_quit=on_quit)
 while running:
     Events.handle_events(app)
 
-    # "render" phase
-    canvas: Image.Image = render(app)
+    canvas = render(app)
 
     # pygame blit
     data: bytes = canvas.convert("RGB").tobytes()

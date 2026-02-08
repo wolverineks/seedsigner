@@ -6,15 +6,15 @@ from seedsigner.components import Header, Body, BackButton, Button
 class ToolsScreen:
     def __init__(self, router):
         self.router = router
-        self.state: dict[Literal["selected"], NavKey] = {"selected": "new_seed_camera"}
+        self.selected: NavKey = "new_seed_camera"
 
     def render(self):
-        selected = self.state["selected"]
+        selected = self.selected
 
         return [
             Header(
                 left=BackButton(selected=selected == "back"),
-                title="Settings",
+                title="Tools",
             ),
             Body(
                 Button(
@@ -48,13 +48,15 @@ class ToolsScreen:
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
         if input == "select":
             self.handle_select()
+        elif input == "left" and self.selected == "back":
+            self.handle_select()
         else:
-            selected = self.state["selected"]
+            selected = self.selected
             if input in NAV_MAP[selected]:
-                self.state["selected"] = NAV_MAP[selected][input]
+                self.selected = NAV_MAP[selected][input]
 
     def handle_select(self):
-        selected = self.state["selected"]
+        selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
             self.router.pop()
@@ -74,25 +76,31 @@ NavKey = Literal[
 
 NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "back": {
+        "right": "new_seed_camera",
         "down": "new_seed_camera",
     },
     "new_seed_camera": {
         "up": "back",
         "down": "new_seed_dice",
+        "left": "back",
     },
     "new_seed_dice": {
         "up": "new_seed_camera",
         "down": "calculate_checksum",
+        "left": "back",
     },
     "calculate_checksum": {
         "up": "new_seed_dice",
         "down": "address_explorer",
+        "left": "back",
     },
     "address_explorer": {
         "up": "calculate_checksum",
         "down": "verify_address",
+        "left": "back",
     },
     "verify_address": {
         "up": "address_explorer",
+        "left": "back",
     },
 }

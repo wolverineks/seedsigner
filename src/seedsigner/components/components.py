@@ -15,7 +15,7 @@ class Header:
     left: Any = None
     right: Any = None
 
-    def render(self):
+    def render(self) -> DrawCommand:
         bg = Rect(
             x=0,
             y=0,
@@ -44,7 +44,7 @@ class BackButton:
 
     selected: bool = False
 
-    def render(self):
+    def render(self) -> DrawCommand:
         ascent = font.getmetrics()[0]
 
         text_y = BackButton.y + int((BackButton.height - ascent) / 2)
@@ -81,7 +81,7 @@ class PowerButton:
 
     selected: bool = False
 
-    def render(self):
+    def render(self) -> DrawCommand:
         return [
             Rect(
                 x=PowerButton.x,
@@ -123,23 +123,8 @@ class Body:
     def __init__(self, *children: List[DrawCommand]):
         self.children = children
 
-    def render(self) -> List[DrawCommand]:
+    def render(self) -> DrawCommand:
         return [Body.bg, *self.children]
-
-
-@dataclass
-class Grid:
-    columns = 2
-    rows = 2
-    width = int(
-        (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
-    )
-    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
-
-    top = Header.height + Body.padding
-    bottom = top + height + Body.padding
-    left = Body.padding
-    right = Body.padding + width + Body.padding
 
 
 from PIL import ImageFont
@@ -158,7 +143,7 @@ class Button:
     index: int
     selected: bool
 
-    def render(self) -> List[DrawCommand | None]:
+    def render(self) -> DrawCommand:
         button_y = (
             Header.height + Body.padding + self.index * (Button.height + Body.padding)
         )
@@ -200,7 +185,7 @@ class LargeButton:
     y: int
     selected: bool
 
-    def render(self) -> List[DrawCommand]:
+    def render(self) -> DrawCommand:
         left, _, right, _ = font.getbbox(self.text)
         width = right - left
         ascent, descent = font.getmetrics()
@@ -230,3 +215,30 @@ class LargeButton:
                 size=size,
             ),
         ]
+
+
+@dataclass()
+class Icon:
+    # x: int
+    # y: int
+    # text: str
+    # color: str | None
+    # size: int | None
+    # font: str
+
+    def render(self):
+        font = ImageFont.truetype(
+            "./src/seedsigner/resources/fonts/seedsigner-icons.otf",
+            64,
+            # "./src/seedsigner/resources/fonts/Font_Awesome_6_Free-Solid-900.otf",
+            # 32,
+        )
+
+        return Text(
+            x=0,
+            y=0,
+            text="\ue902",
+            fill="white",
+            size=64,
+            font=font,
+        )

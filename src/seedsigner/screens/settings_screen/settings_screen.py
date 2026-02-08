@@ -2,7 +2,7 @@ from typing import Literal
 
 from seedsigner.components import Body, Header, BackButton, Button
 
-HWButtonInput = Literal["up", "down", "select"]
+HWButtonInput = Literal["up", "down", "right", "left", "select"]
 NavKey = Literal[
     "language",
     "persistent_settings",
@@ -17,34 +17,42 @@ NavKey = Literal[
 
 nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "back": {
+        "right": "language",
         "down": "language",
     },
     "language": {
         "down": "persistent_settings",
         "up": "back",
+        "left": "back",
     },
     "persistent_settings": {
         "up": "language",
         "down": "coordination_software",
+        "left": "back",
     },
     "coordination_software": {
         "up": "persistent_settings",
         "down": "denomination_display",
+        "left": "back",
     },
     "denomination_display": {
         "up": "coordination_software",
         "down": "advanced",
+        "left": "back",
     },
     "advanced": {
         "up": "denomination_display",
         "down": "i/o_test",
+        "left": "back",
     },
     "i/o_test": {
         "up": "advanced",
         "down": "donate",
+        "left": "back",
     },
     "donate": {
         "up": "i/o_test",
+        "left": "back",
     },
 }
 
@@ -105,6 +113,8 @@ class SettingsScreen:
 
     def handle_input(self, input: HWButtonInput):
         if input == "select":
+            self.handle_select()
+        elif input == "left" and self.selected == "back":
             self.handle_select()
         else:
             selected = self.selected

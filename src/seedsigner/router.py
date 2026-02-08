@@ -1,9 +1,11 @@
-from seedsigner.main_screen import MainScreen
-from seedsigner.power_screen import PowerScreen
-from seedsigner.scan_screen import ScanScreen
-from seedsigner.seed_screen import SeedScreen
-from seedsigner.settings_screen import SettingsScreen
-from seedsigner.tools_screen import ToolsScreen
+from seedsigner.screens import (
+    MainScreen,
+    PowerScreen,
+    ScanScreen,
+    SeedScreen,
+    SettingsScreen,
+    ToolsScreen,
+)
 
 
 class Router:

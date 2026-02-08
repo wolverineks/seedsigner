@@ -1,11 +1,12 @@
 from typing import Any
 from PIL import Image, ImageDraw
 
+from seedsigner.app import App
 from seedsigner.draw_command import Rect, Text
 from seedsigner.dimensions import Dimensions
 
 
-def render(component) -> Image.Image:
+def render(component: App) -> Image.Image:
     canvas: Image.Image = Image.new(
         "RGB", (Dimensions.width, Dimensions.height), "white"
     )
@@ -35,6 +36,7 @@ def render(component) -> Image.Image:
                 node.text,
                 fill=node.fill,
                 font_size=node.size,
+                font=node.font,
             )
         elif node is None:
             pass
