@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-from seedsigner.component import Component, Rect, Text, Node
+from seedsigner.loopyUI import Component, Rect, Text, Node
 from seedsigner.dimensions import Dimensions
 from seedsigner.colors import Colors
 

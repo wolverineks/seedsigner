@@ -1,7 +1,7 @@
 from typing import Literal, Any
 
 from seedsigner.components import Body, Header, LargeButton, PowerButton
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 from .components import Grid
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]

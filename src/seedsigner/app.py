@@ -4,7 +4,7 @@ from threading import Timer
 
 from seedsigner.toast import toast
 from seedsigner.router import Router
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 
 Timer(4, toast.show).start()
 

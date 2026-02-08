@@ -8,7 +8,7 @@ from seedsigner.screens import (
     ToolsScreen,
 )
 
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 
 
 class Router(Component):

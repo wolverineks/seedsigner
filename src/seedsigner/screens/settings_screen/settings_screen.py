@@ -1,7 +1,7 @@
 from typing import Literal
 
 from seedsigner.components import Body, Header, BackButton, Button
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 
 HWButtonInput = Literal["up", "down", "right", "left", "select"]
 NavKey = Literal[

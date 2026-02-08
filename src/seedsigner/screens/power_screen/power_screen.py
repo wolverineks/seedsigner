@@ -2,7 +2,7 @@ from typing import Literal
 import pygame  # type: ignore
 
 from seedsigner.components import Body, Header, LargeButton, BackButton
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 from .components import Grid
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]

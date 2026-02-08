@@ -1,7 +1,7 @@
 from typing import Literal
 
 from seedsigner.components import Header, Body, BackButton, Button
-from seedsigner.component import Component, Node
+from seedsigner.loopyUI import Component, Node
 
 
 class ToolsScreen(Component):

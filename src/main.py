@@ -1,10 +1,9 @@
 import pygame  # type: ignore
 
-from seedsigner.renderer import render
+from seedsigner.loopyUI import render, Events
 from seedsigner.dimensions import Dimensions
 from seedsigner.app import App
 from seedsigner.router import router
-from seedsigner.events import Events
 
 pygame.init()
 win: pygame.Surface = pygame.display.set_mode((Dimensions.width, Dimensions.height))
