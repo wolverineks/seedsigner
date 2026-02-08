@@ -2,7 +2,7 @@ from typing import Any
 from PIL import Image, ImageDraw
 
 from seedsigner.app import App
-from seedsigner.draw_command import Rect, Text
+from seedsigner.component import Rect, Text
 from seedsigner.dimensions import Dimensions
 
 

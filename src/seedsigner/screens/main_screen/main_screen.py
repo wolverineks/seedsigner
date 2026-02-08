@@ -1,6 +1,7 @@
 from typing import Literal, Any
 
-from seedsigner.components import Body, Header, LargeButton, PowerButton, Icon
+from seedsigner.components import Body, Header, LargeButton, PowerButton
+from seedsigner.component import Component, Node
 from .components import Grid
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
@@ -16,12 +17,12 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-class MainScreen:
+class MainScreen(Component):
     def __init__(self, router: Any):
         self.router = router
         self.selected: NavKey = "scan"
 
-    def render(self):
+    def render(self) -> Node:
         selected = self.selected
 
         return [
@@ -35,7 +36,6 @@ class MainScreen:
                 ToolsButton(selected=selected == "tools"),
                 SettingsButton(selected=selected == "settings"),
             ),
-            Icon(),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
@@ -89,5 +89,6 @@ def SettingsButton(selected: bool):
         text="Settings",
         x=Grid.right,
         y=Grid.bottom,
+        icon="gear",
         selected=selected,
     )

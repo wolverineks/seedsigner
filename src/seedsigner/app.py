@@ -3,19 +3,19 @@ from typing import Callable
 from threading import Timer
 
 from seedsigner.toast import toast
-from seedsigner.draw_command import DrawCommand
 from seedsigner.router import Router
+from seedsigner.component import Component, Node
 
 Timer(4, toast.show).start()
 
 
 @dataclass
-class App:
+class App(Component):
     on_quit: Callable
     router: Router
     toast_visible: bool = False
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         return [self.router, toast]
 
     def handle_input(self, input):

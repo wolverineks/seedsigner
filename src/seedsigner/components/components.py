@@ -1,21 +1,21 @@
 from dataclasses import dataclass
-from typing import Any, List
 
-from seedsigner.draw_command import Rect, Text, DrawCommand
+
+from seedsigner.component import Component, Rect, Text, Node
 from seedsigner.dimensions import Dimensions
 from seedsigner.colors import Colors
 
 
 @dataclass
-class Header:
+class Header(Component):
     height = 40
     padding = 8
 
     title: str
-    left: Any = None
-    right: Any = None
+    left: Component | None = None
+    right: Component | None = None
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         bg = Rect(
             x=0,
             y=0,
@@ -36,7 +36,7 @@ button_padding = 4
 
 
 @dataclass
-class BackButton:
+class BackButton(Component):
     height = Header.height - Header.padding - Header.padding
     width = height
     x = Header.padding
@@ -44,8 +44,8 @@ class BackButton:
 
     selected: bool = False
 
-    def render(self) -> DrawCommand:
-        ascent = font.getmetrics()[0]
+    def render(self) -> Node:
+        ascent = (font.getmetrics() or (0, 0))[0]
 
         text_y = BackButton.y + int((BackButton.height - ascent) / 2)
 
@@ -73,7 +73,7 @@ class BackButton:
 
 
 @dataclass
-class PowerButton:
+class PowerButton(Component):
     height = Header.height - Header.padding - Header.padding
     width = height
     x = Dimensions.width - Header.padding - width
@@ -81,7 +81,7 @@ class PowerButton:
 
     selected: bool = False
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         return [
             Rect(
                 x=PowerButton.x,
@@ -106,7 +106,7 @@ class PowerButton:
 
 
 @dataclass(init=False)
-class Body:
+class Body(Component):
     padding = 8
     x = 0
     y = Header.height
@@ -120,10 +120,10 @@ class Body:
         fill=Colors.background,
     )
 
-    def __init__(self, *children: List[DrawCommand]):
+    def __init__(self, *children):
         self.children = children
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         return [Body.bg, *self.children]
 
 
@@ -134,7 +134,7 @@ font = ImageFont.load_default(size=size)
 
 
 @dataclass
-class Button:
+class Button(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
     x = Body.padding
@@ -143,7 +143,7 @@ class Button:
     index: int
     selected: bool
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         button_y = (
             Header.height + Body.padding + self.index * (Button.height + Body.padding)
         )
@@ -174,7 +174,7 @@ class Button:
 
 
 @dataclass
-class LargeButton:
+class LargeButton(Component):
     columns = 2
     rows = 2
     width = int((Dimensions.width - 3 * (Body.padding)) / columns)
@@ -184,8 +184,9 @@ class LargeButton:
     x: int
     y: int
     selected: bool
+    icon: str = ""
 
-    def render(self) -> DrawCommand:
+    def render(self) -> Node:
         left, _, right, _ = font.getbbox(self.text)
         width = right - left
         ascent, descent = font.getmetrics()
@@ -214,19 +215,20 @@ class LargeButton:
                 else Colors.button.text,
                 size=size,
             ),
+            Icon(x=centered, y=self.y) if self.icon else None,
         ]
 
 
 @dataclass()
-class Icon:
-    # x: int
-    # y: int
+class Icon(Component):
+    x: int
+    y: int
     # text: str
     # color: str | None
     # size: int | None
     # font: str
 
-    def render(self):
+    def render(self) -> Node:
         font = ImageFont.truetype(
             "./src/seedsigner/resources/fonts/seedsigner-icons.otf",
             64,
@@ -235,8 +237,8 @@ class Icon:
         )
 
         return Text(
-            x=0,
-            y=0,
+            x=self.x,
+            y=self.y,
             text="\ue902",
             fill="white",
             size=64,

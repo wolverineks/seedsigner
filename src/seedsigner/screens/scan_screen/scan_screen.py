@@ -1,16 +1,17 @@
 from typing import Literal
 
 from seedsigner.components import Body, Header, BackButton
+from seedsigner.component import Component, Node
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 
 
-class ScanScreen:
+class ScanScreen(Component):
     def __init__(self, router):
         self.router = router
         self.selected: Literal["back"] = "back"
 
-    def render(self):
+    def render(self) -> Node:
         selected = self.selected
 
         return [

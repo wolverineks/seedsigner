@@ -1,6 +1,7 @@
 from typing import Literal
 
 from seedsigner.components import Body, Header, BackButton, Button
+from seedsigner.component import Component, Node
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal[
@@ -38,12 +39,12 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-class SeedScreen:
+class SeedScreen(Component):
     def __init__(self, router):
         self.router = router
         self.selected: NavKey = "scan_a_seedqr"
 
-    def render(self):
+    def render(self) -> Node:
         selected = self.selected
 
         return [

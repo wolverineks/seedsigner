@@ -1,3 +1,4 @@
+from typing import List, Any, Literal
 from seedsigner.screens import (
     MainScreen,
     PowerScreen,
@@ -7,8 +8,10 @@ from seedsigner.screens import (
     ToolsScreen,
 )
 
+from seedsigner.component import Component, Node
 
-class Router:
+
+class Router(Component):
     def __init__(
         self,
         routes: dict[
@@ -19,13 +22,13 @@ class Router:
             | type[ToolsScreen]
             | type[ScanScreen]
             | type[PowerScreen],
-        ] = {},
-        initial_screen=None,
+        ],
+        initial_screen: str,
     ):
         self.routes = routes
-        self.stack = [initial_screen(self)] if initial_screen is not None else []
+        self.stack: List[Component] = [routes[initial_screen](self)]
 
-    def render(self):
+    def render(self) -> Node:
         return self.current_screen()
 
     def navigate_to(self, route, *params):
@@ -47,7 +50,7 @@ class Router:
     def current_screen(self):
         return self.stack[-1]
 
-    def handle_input(self, input):
+    def handle_input(self, input: Any) -> Any:
         return self.current_screen().handle_input(input)
 
 
@@ -60,5 +63,5 @@ router = Router(
         "seed": SeedScreen,
         "power": PowerScreen,
     },
-    initial_screen=MainScreen,
+    initial_screen="main",
 )

@@ -2,6 +2,7 @@ from typing import Literal
 import pygame  # type: ignore
 
 from seedsigner.components import Body, Header, LargeButton, BackButton
+from seedsigner.component import Component, Node
 from .components import Grid
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
@@ -20,12 +21,12 @@ nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
 }
 
 
-class PowerScreen:
+class PowerScreen(Component):
     def __init__(self, router):
         self.router = router
         self.selected: ButtonId = "shutdown"
 
-    def render(self):
+    def render(self) -> Node:
         selected = self.selected
 
         return [

@@ -1,14 +1,15 @@
 from typing import Literal
 
 from seedsigner.components import Header, Body, BackButton, Button
+from seedsigner.component import Component, Node
 
 
-class ToolsScreen:
+class ToolsScreen(Component):
     def __init__(self, router):
         self.router = router
         self.selected: NavKey = "new_seed_camera"
 
-    def render(self):
+    def render(self) -> Node:
         selected = self.selected
 
         return [

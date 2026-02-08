@@ -1,5 +1,16 @@
-from typing import Literal, List, Any
 from dataclasses import dataclass
+from typing import Union, List, TypeAlias, Literal, Any
+
+DrawPrimitive: TypeAlias = Union["Rect", "Text"]
+Node: TypeAlias = Union[DrawPrimitive, "Component", None, List["Node"]]
+
+
+class Component:
+    def handle_input(self, input: Any) -> Any:
+        pass
+
+    def render(self) -> Node:
+        raise NotImplementedError("Subclasses must implement render")
 
 
 @dataclass(frozen=True)
@@ -24,6 +35,3 @@ class Text:
     fill: str | None = "white"
     size: int | None = 16
     font: Any | None = None
-
-
-type DrawCommand = Rect | Text | None | List[DrawCommand]
