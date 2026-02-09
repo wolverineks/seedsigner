@@ -1,9 +1,9 @@
+from dataclasses import dataclass
 from typing import Literal
 import pygame  # type: ignore
 
-from seedsigner.components import Body, Header, LargeButton, BackButton
+from seedsigner.components import Body, Header, LargeButton, BackButton, Dimensions
 from seedsigner.loopyUI import Component, Node
-from .components import Grid
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 ButtonId = Literal["back", "shutdown", "restart"]
@@ -13,7 +13,11 @@ nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
         "right": "shutdown",
         "down": "shutdown",
     },
-    "shutdown": {"up": "back", "right": "restart", "left": "back"},
+    "shutdown": {
+        "up": "back",
+        "right": "restart",
+        "left": "back",
+    },
     "restart": {
         "up": "back",
         "left": "shutdown",
@@ -71,7 +75,7 @@ def ShutdownButton(selected: bool):
         label="Shutdown",
         icon="power",
         x=Grid.left,
-        y=Grid.top,
+        y=Body.y + int((Body.height - LargeButton.height) / 2),
         selected=selected,
     )
 
@@ -81,6 +85,16 @@ def RestartButton(selected: bool):
         label="Restart",
         icon="restart",
         x=Grid.right,
-        y=Grid.top,
+        y=Body.y + int((Body.height - LargeButton.height) / 2),
         selected=selected,
     )
+
+
+@dataclass
+class Grid:
+    columns = 2
+    width = int(
+        (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
+    )
+    left = Body.padding
+    right = Body.padding + width + Body.padding

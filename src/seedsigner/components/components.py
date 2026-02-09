@@ -46,9 +46,9 @@ class BackButton(Component):
     selected: bool = False
 
     def render(self) -> Node:
+        font, code = get_icon_info("back", 18)
         ascent = (font.getmetrics() or (0, 0))[0]
-
-        text_y = BackButton.y + int((BackButton.height - ascent) / 2)
+        icon_y = BackButton.y + int((BackButton.height - ascent) / 2)
 
         return [
             Rect(
@@ -62,13 +62,14 @@ class BackButton(Component):
                 radius=6,
             ),
             Text(
-                x=Header.padding + button_padding,
-                y=text_y,
-                text="<",
+                x=BackButton.x + 2,
+                y=icon_y,
+                text=code,
                 fill=Colors.button.focused.text
                 if self.selected
                 else Colors.button.text,
                 size=18,
+                font=font,
             ),
         ]
 
@@ -83,6 +84,10 @@ class PowerButton(Component):
     selected: bool = False
 
     def render(self) -> Node:
+        font, code = get_icon_info("power", 18)
+        ascent = (font.getmetrics() or (0, 0))[0]
+        icon_y = PowerButton.y + int((PowerButton.height - ascent) / 2)
+
         return [
             Rect(
                 x=PowerButton.x,
@@ -96,12 +101,13 @@ class PowerButton(Component):
             ),
             Text(
                 x=PowerButton.x + button_padding,
-                y=PowerButton.y + button_padding,
-                text="P",
+                y=icon_y,
+                text=code,
                 fill=Colors.button.focused.text
                 if self.selected
                 else Colors.button.text,
                 size=18,
+                font=font,
             ),
         ]
 
@@ -156,7 +162,9 @@ class Button(Component):
                 y=button_y,
                 w=Button.width,
                 h=Button.height,
-                fill="orange" if self.selected else "gray",
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
                 radius=10,
             ),
             None,
@@ -242,7 +250,7 @@ class LargeButton(Component):
         selected: bool,
         size: int,
     ):
-        font, code = LargeButton.get_icon_info(icon=icon, size=size)
+        font, code = get_icon_info(icon=icon, size=size)
 
         return Text(
             x=x,
@@ -263,23 +271,24 @@ class LargeButton(Component):
             size=24,
         )
 
-    @staticmethod
-    def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
-        font = ImageFont.truetype(
-            "./src/seedsigner/resources/fonts/seedsigner-icons.otf", size
-        )
 
-        icon_codes = {
-            "scan": "\ue900",
-            "seeds": "\ue901",
-            "gear": "\ue902",
-            "tools": "\ue904",
-            "restart": "\ue911",
-            "power": "\ue910",
-        }
+def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
+    font = ImageFont.truetype(
+        "./src/seedsigner/resources/fonts/seedsigner-icons.otf", size
+    )
 
-        code = icon_codes.get(icon)
-        if code is None:
-            raise ValueError(f"Unknown icon: {icon}")
+    icon_codes = {
+        "scan": "\ue900",
+        "seeds": "\ue901",
+        "gear": "\ue902",
+        "tools": "\ue903",
+        "back": "\ue904",
+        "power": "\ue910",
+        "restart": "\ue911",
+    }
 
-        return font, code
+    code = icon_codes.get(icon)
+    if code is None:
+        raise ValueError(f"Unknown icon: {icon}")
+
+    return font, code
