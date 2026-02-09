@@ -9,6 +9,18 @@ class Component:
     def handle_input(self, input: Any) -> Any:
         pass
 
+    def handle_on_focus(self) -> Any:
+        pass
+
+    def handle_on_blur(self) -> Any:
+        pass
+
+    def handle_on_mount(self) -> Any:
+        pass
+
+    def handle_on_unmount(self) -> Any:
+        pass
+
     def render(self) -> Node:
         raise NotImplementedError("Subclasses must implement render")
 

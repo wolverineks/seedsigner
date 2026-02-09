@@ -127,7 +127,7 @@ class Body(Component):
         fill=Colors.background,
     )
 
-    def __init__(self, *children):
+    def __init__(self, *children: Node):
         self.children = children
 
     def render(self) -> Node:

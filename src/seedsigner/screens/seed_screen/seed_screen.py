@@ -1,5 +1,8 @@
 from dataclasses import dataclass
-from typing import Literal, Any
+from typing import Literal, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from seedsigner.router import Router
 
 from seedsigner.components import Body, Header, BackButton, Button
 from seedsigner.loopyUI import Component, Node
@@ -42,7 +45,7 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 @dataclass
 class SeedScreen(Component):
-    router: Any
+    router: "Router"
     selected: NavKey = "scan_a_seedqr"
 
     def render(self) -> Node:
