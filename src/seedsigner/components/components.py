@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-
+from PIL import ImageFont
+from typing import Tuple
 
 from seedsigner.loopyUI import Component, Rect, Text, Node
 from seedsigner.dimensions import Dimensions
@@ -127,8 +128,6 @@ class Body(Component):
         return [Body.bg, *self.children]
 
 
-from PIL import ImageFont
-
 size = 24
 font = ImageFont.load_default(size=size)
 
@@ -177,70 +176,110 @@ class Button(Component):
 class LargeButton(Component):
     columns = 2
     rows = 2
-    width = int((Dimensions.width - 3 * (Body.padding)) / columns)
-    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
+    width = int((Body.width - 3 * Body.padding) / columns)
+    height = int((Body.height - 3 * Body.padding) / rows)
 
-    text: str
     x: int
     y: int
     selected: bool
-    icon: str = ""
+    icon: str
+    label: str
 
     def render(self) -> Node:
-        left, _, right, _ = font.getbbox(self.text)
+        size = 24
+        font = ImageFont.load_default(size=size)
+        left, _, right, _ = font.getbbox(self.label)
         width = right - left
         ascent, descent = font.getmetrics()
         height = ascent + descent
 
-        centered = self.x + int(LargeButton.width / 2) - int(width / 2)
-        bottom = self.y + LargeButton.height - height - button_padding
+        label_x = self.x + int(LargeButton.width / 2) - int(width / 2)
+        label_y = self.y + LargeButton.height - button_padding - height
+
+        icon_size = 48
+        icon_x = self.x + int(LargeButton.width / 2) - int(icon_size / 2)
+        icon_y = self.y + 4
 
         return [
-            Rect(
+            LargeButton.Bg(
                 x=self.x,
                 y=self.y,
-                w=LargeButton.width,
-                h=LargeButton.height,
-                fill=Colors.button.focused.background
-                if self.selected
-                else Colors.button.background,
-                radius=10,
+                selected=self.selected,
             ),
-            Text(
-                x=centered,
-                y=bottom,
-                text=self.text,
-                fill=Colors.button.focused.text
-                if self.selected
-                else Colors.button.text,
-                size=size,
+            LargeButton.Icon(
+                x=icon_x,
+                y=icon_y,
+                icon=self.icon,
+                size=icon_size,
+                selected=self.selected,
             ),
-            Icon(x=centered, y=self.y) if self.icon else None,
+            LargeButton.Label(
+                text=self.label,
+                x=label_x,
+                y=label_y,
+                selected=self.selected,
+            ),
         ]
 
-
-@dataclass()
-class Icon(Component):
-    x: int
-    y: int
-    # text: str
-    # color: str | None
-    # size: int | None
-    # font: str
-
-    def render(self) -> Node:
-        font = ImageFont.truetype(
-            "./src/seedsigner/resources/fonts/seedsigner-icons.otf",
-            64,
-            # "./src/seedsigner/resources/fonts/Font_Awesome_6_Free-Solid-900.otf",
-            # 32,
+    @staticmethod
+    def Bg(x: int, y: int, selected: bool) -> Node:
+        return Rect(
+            x=x,
+            y=y,
+            w=LargeButton.width,
+            h=LargeButton.height,
+            fill=Colors.button.focused.background
+            if selected
+            else Colors.button.background,
+            radius=10,
         )
+
+    @staticmethod
+    def Icon(
+        x: int,
+        y: int,
+        icon: str,
+        selected: bool,
+        size: int,
+    ):
+        font, code = LargeButton.get_icon_info(icon=icon, size=size)
 
         return Text(
-            x=self.x,
-            y=self.y,
-            text="\ue902",
-            fill="white",
-            size=64,
+            x=x,
+            y=y,
+            text=code,
+            fill="black" if selected else "white",
+            size=size,
             font=font,
         )
+
+    @staticmethod
+    def Label(x: int, y: int, selected: bool, text: str) -> Node:
+        return Text(
+            x=x,
+            y=y,
+            text=text,
+            fill=Colors.button.focused.text if selected else Colors.button.text,
+            size=24,
+        )
+
+    @staticmethod
+    def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
+        font = ImageFont.truetype(
+            "./src/seedsigner/resources/fonts/seedsigner-icons.otf", size
+        )
+
+        icon_codes = {
+            "scan": "\ue900",
+            "seeds": "\ue901",
+            "gear": "\ue902",
+            "tools": "\ue904",
+            "restart": "\ue911",
+            "power": "\ue910",
+        }
+
+        code = icon_codes.get(icon)
+        if code is None:
+            raise ValueError(f"Unknown icon: {icon}")
+
+        return font, code

@@ -68,7 +68,8 @@ class PowerScreen(Component):
 
 def ShutdownButton(selected: bool):
     return LargeButton(
-        text="Shutdown",
+        label="Shutdown",
+        icon="power",
         x=Grid.left,
         y=Grid.top,
         selected=selected,
@@ -77,7 +78,8 @@ def ShutdownButton(selected: bool):
 
 def RestartButton(selected: bool):
     return LargeButton(
-        text="Restart",
+        label="Restart",
+        icon="restart",
         x=Grid.right,
         y=Grid.top,
         selected=selected,

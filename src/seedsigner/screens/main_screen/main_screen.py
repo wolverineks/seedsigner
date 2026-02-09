@@ -59,7 +59,8 @@ class MainScreen(Component):
 
 def ScanButton(selected: bool):
     return LargeButton(
-        text="Scan",
+        label="Scan",
+        icon="scan",
         x=Grid.left,
         y=Grid.top,
         selected=selected,
@@ -68,7 +69,8 @@ def ScanButton(selected: bool):
 
 def SeedButton(selected: bool):
     return LargeButton(
-        text="Seed",
+        label="Seeds",
+        icon="seeds",
         x=Grid.right,
         y=Grid.top,
         selected=selected,
@@ -77,7 +79,8 @@ def SeedButton(selected: bool):
 
 def ToolsButton(selected: bool):
     return LargeButton(
-        text="Tools",
+        label="Tools",
+        icon="tools",
         x=Grid.left,
         y=Grid.bottom,
         selected=selected,
@@ -86,7 +89,7 @@ def ToolsButton(selected: bool):
 
 def SettingsButton(selected: bool):
     return LargeButton(
-        text="Settings",
+        label="Settings",
         x=Grid.right,
         y=Grid.bottom,
         icon="gear",
