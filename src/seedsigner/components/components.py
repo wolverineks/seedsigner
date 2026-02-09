@@ -10,6 +10,7 @@ from seedsigner.colors import Colors
 @dataclass
 class Header(Component):
     height = 40
+    width = Dimensions.width
     padding = 8
 
     title: str
@@ -17,6 +18,13 @@ class Header(Component):
     right: Component | None = None
 
     def render(self) -> Node:
+        size = 20
+        font = ImageFont.load_default(size=size)
+        left, _, right, _ = font.getbbox(self.title)
+        width = right - left
+
+        text_x = int(Header.width / 2) - int(width / 2)
+
         bg = Rect(
             x=0,
             y=0,
@@ -28,7 +36,7 @@ class Header(Component):
         return [
             bg,
             self.left,
-            Text(x=60, y=10, text=self.title, fill=Colors.text, size=20),
+            Text(x=text_x, y=10, text=self.title, fill=Colors.text, size=size),
             self.right,
         ]
 
