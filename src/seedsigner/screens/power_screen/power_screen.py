@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Any
 import pygame  # type: ignore
 
-from seedsigner.components import Body, Header, LargeButton, BackButton, Dimensions
+from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
+from .components import ShutdownButton, RestartButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 ButtonId = Literal["back", "shutdown", "restart"]
@@ -25,10 +26,10 @@ nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
 }
 
 
+@dataclass
 class PowerScreen(Component):
-    def __init__(self, router):
-        self.router = router
-        self.selected: ButtonId = "shutdown"
+    router: Any
+    selected: ButtonId = "shutdown"
 
     def render(self) -> Node:
         selected = self.selected
@@ -68,33 +69,3 @@ class PowerScreen(Component):
         print("Shutting down...")
         custom_quit_event = pygame.event.Event(pygame.QUIT)
         pygame.event.post(custom_quit_event)
-
-
-def ShutdownButton(selected: bool):
-    return LargeButton(
-        label="Shutdown",
-        icon="power",
-        x=Grid.left,
-        y=Body.y + int((Body.height - LargeButton.height) / 2),
-        selected=selected,
-    )
-
-
-def RestartButton(selected: bool):
-    return LargeButton(
-        label="Restart",
-        icon="restart",
-        x=Grid.right,
-        y=Body.y + int((Body.height - LargeButton.height) / 2),
-        selected=selected,
-    )
-
-
-@dataclass
-class Grid:
-    columns = 2
-    width = int(
-        (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
-    )
-    left = Body.padding
-    right = Body.padding + width + Body.padding

@@ -1,13 +1,55 @@
-from typing import Literal
+from dataclasses import dataclass
+from typing import Literal, Any
 
 from seedsigner.components import Header, Body, BackButton, Button
 from seedsigner.loopyUI import Component, Node
 
+HWButtonInput = Literal["up", "down", "left", "right", "select"]
+NavKey = Literal[
+    "back",
+    "new_seed_camera",
+    "new_seed_dice",
+    "calculate_checksum",
+    "address_explorer",
+    "verify_address",
+]
 
+NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "right": "new_seed_camera",
+        "down": "new_seed_camera",
+    },
+    "new_seed_camera": {
+        "up": "back",
+        "down": "new_seed_dice",
+        "left": "back",
+    },
+    "new_seed_dice": {
+        "up": "new_seed_camera",
+        "down": "calculate_checksum",
+        "left": "back",
+    },
+    "calculate_checksum": {
+        "up": "new_seed_dice",
+        "down": "address_explorer",
+        "left": "back",
+    },
+    "address_explorer": {
+        "up": "calculate_checksum",
+        "down": "verify_address",
+        "left": "back",
+    },
+    "verify_address": {
+        "up": "address_explorer",
+        "left": "back",
+    },
+}
+
+
+@dataclass
 class ToolsScreen(Component):
-    def __init__(self, router):
-        self.router = router
-        self.selected: NavKey = "new_seed_camera"
+    router: Any
+    selected: NavKey = "new_seed_camera"
 
     def render(self) -> Node:
         selected = self.selected
@@ -63,45 +105,3 @@ class ToolsScreen(Component):
             self.router.pop()
         else:
             self.router.navigate_to(selected)
-
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal[
-    "back",
-    "new_seed_camera",
-    "new_seed_dice",
-    "calculate_checksum",
-    "address_explorer",
-    "verify_address",
-]
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "new_seed_camera",
-        "down": "new_seed_camera",
-    },
-    "new_seed_camera": {
-        "up": "back",
-        "down": "new_seed_dice",
-        "left": "back",
-    },
-    "new_seed_dice": {
-        "up": "new_seed_camera",
-        "down": "calculate_checksum",
-        "left": "back",
-    },
-    "calculate_checksum": {
-        "up": "new_seed_dice",
-        "down": "address_explorer",
-        "left": "back",
-    },
-    "address_explorer": {
-        "up": "calculate_checksum",
-        "down": "verify_address",
-        "left": "back",
-    },
-    "verify_address": {
-        "up": "address_explorer",
-        "left": "back",
-    },
-}

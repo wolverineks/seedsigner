@@ -1,8 +1,9 @@
+from dataclasses import dataclass
 from typing import Literal, Any
 
-from seedsigner.components import Body, Header, LargeButton, PowerButton
+from seedsigner.components import Body, Header, PowerButton
 from seedsigner.loopyUI import Component, Node
-from .components import Grid
+from .components import ScanButton, SeedsButton, SettingsButton, ToolsButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["scan", "tools", "settings", "seed", "back", "power"]
@@ -17,10 +18,10 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
+@dataclass
 class MainScreen(Component):
-    def __init__(self, router: Any):
-        self.router = router
-        self.selected: NavKey = "scan"
+    router: Any
+    selected: NavKey = "scan"
 
     def render(self) -> Node:
         selected = self.selected
@@ -32,7 +33,7 @@ class MainScreen(Component):
             ),
             Body(
                 ScanButton(selected=selected == "scan"),
-                SeedButton(selected=selected == "seed"),
+                SeedsButton(selected=selected == "seed"),
                 ToolsButton(selected=selected == "tools"),
                 SettingsButton(selected=selected == "settings"),
             ),
@@ -55,43 +56,3 @@ class MainScreen(Component):
             router.pop()
         else:
             router.navigate_to(selected)
-
-
-def ScanButton(selected: bool):
-    return LargeButton(
-        label="Scan",
-        icon="scan",
-        x=Grid.left,
-        y=Grid.top,
-        selected=selected,
-    )
-
-
-def SeedButton(selected: bool):
-    return LargeButton(
-        label="Seeds",
-        icon="seeds",
-        x=Grid.right,
-        y=Grid.top,
-        selected=selected,
-    )
-
-
-def ToolsButton(selected: bool):
-    return LargeButton(
-        label="Tools",
-        icon="tools",
-        x=Grid.left,
-        y=Grid.bottom,
-        selected=selected,
-    )
-
-
-def SettingsButton(selected: bool):
-    return LargeButton(
-        label="Settings",
-        x=Grid.right,
-        y=Grid.bottom,
-        icon="gear",
-        selected=selected,
-    )

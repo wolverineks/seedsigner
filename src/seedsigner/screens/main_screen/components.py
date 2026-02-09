@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from seedsigner.components import Header, Dimensions, Body
+
+from seedsigner.components import Header, Dimensions, Body, LargeButton
 
 
 @dataclass
@@ -15,3 +16,43 @@ class Grid:
     bottom = top + height + Body.padding
     left = Body.padding
     right = Body.padding + width + Body.padding
+
+
+def ScanButton(selected: bool):
+    return LargeButton(
+        label="Scan",
+        icon="scan",
+        x=Grid.left,
+        y=Grid.top,
+        selected=selected,
+    )
+
+
+def SeedsButton(selected: bool):
+    return LargeButton(
+        label="Seeds",
+        icon="seeds",
+        x=Grid.right,
+        y=Grid.top,
+        selected=selected,
+    )
+
+
+def ToolsButton(selected: bool):
+    return LargeButton(
+        label="Tools",
+        icon="tools",
+        x=Grid.left,
+        y=Grid.bottom,
+        selected=selected,
+    )
+
+
+def SettingsButton(selected: bool):
+    return LargeButton(
+        label="Settings",
+        x=Grid.right,
+        y=Grid.bottom,
+        icon="gear",
+        selected=selected,
+    )

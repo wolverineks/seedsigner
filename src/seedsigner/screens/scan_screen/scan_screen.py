@@ -1,4 +1,5 @@
-from typing import Literal
+from dataclasses import dataclass
+from typing import Literal, Any
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -6,10 +7,10 @@ from seedsigner.loopyUI import Component, Node
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 
 
+@dataclass
 class ScanScreen(Component):
-    def __init__(self, router):
-        self.router = router
-        self.selected: Literal["back"] = "back"
+    router: Any
+    selected: Literal["back"] = "back"
 
     def render(self) -> Node:
         selected = self.selected

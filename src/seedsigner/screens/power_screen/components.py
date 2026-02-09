@@ -1,17 +1,32 @@
 from dataclasses import dataclass
-from seedsigner.components import Header, Dimensions, Body
+from seedsigner.components import Dimensions, Body, LargeButton
 
 
 @dataclass
 class Grid:
     columns = 2
-    rows = 2
     width = int(
         (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
     )
-    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
-
-    top = Header.height + Body.padding
-    bottom = top + height + Body.padding
     left = Body.padding
     right = Body.padding + width + Body.padding
+
+
+def ShutdownButton(selected: bool):
+    return LargeButton(
+        label="Shutdown",
+        icon="power",
+        x=Grid.left,
+        y=Body.y + int((Body.height - LargeButton.height) / 2),
+        selected=selected,
+    )
+
+
+def RestartButton(selected: bool):
+    return LargeButton(
+        label="Restart",
+        icon="restart",
+        x=Grid.right,
+        y=Body.y + int((Body.height - LargeButton.height) / 2),
+        selected=selected,
+    )
