@@ -29,6 +29,8 @@ def render(component: App) -> Image.Image:
                 ),
                 fill=node.fill,
                 radius=node.radius if hasattr(node, "radius") else 0,
+                outline=node.outline,
+                width=node.width,
             )
         elif isinstance(node, Text):
             draw.text(

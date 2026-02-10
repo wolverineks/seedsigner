@@ -1,13 +1,8 @@
-import pygame  # type: ignore
-
 from seedsigner.loopyUI import render, Events
-from seedsigner.dimensions import Dimensions
 from seedsigner.app import App
 from seedsigner.router import router
-
-pygame.init()
-win: pygame.Surface = pygame.display.set_mode((Dimensions.width, Dimensions.height))
-clock: pygame.time.Clock = pygame.time.Clock()
+import time
+from seedsigner.dimensions import Dimensions
 
 
 running = True
@@ -15,25 +10,38 @@ running = True
 
 def on_quit():
     print("quitting")
-    # global running = False
+    global running
+    running = False
 
+
+from seedsigner.hardware.displays.display_driver import DisplayDriver
 
 app = App(router=router, on_quit=on_quit)
-
+driver = DisplayDriver(
+    "desktop",
+    Dimensions.width,
+    Dimensions.height,
+)
 while running:
     Events.handle_events(app)
-
     canvas = render(app)
+    driver.show_image(canvas)
+    time.sleep(0)
 
-    # pygame blit
-    data: bytes = canvas.convert("RGB").tobytes()
-    surf: pygame.Surface = pygame.image.fromstring(
-        data, (Dimensions.width, Dimensions.height), "RGB"
-    )
-    win.blit(surf, (0, 0))
-    pygame.display.flip()
+# from seedsigner.loopyUI import Desktop
+# desktop = Desktop()
+# app = App(router=router, on_quit=on_quit)
 
-    clock.tick(60)
+# while running:
+#     Events.handle_events(app)
 
+#     before_render = time.time()
+#     canvas = render(app)
+#     after_render = time.time()
 
-pygame.quit()
+#     print("RENDER: ", after_render - before_render)
+
+#     before_paint = time.time()
+#     desktop.paint(canvas)
+#     after_paint = time.time()
+#     print("PAINT: ", after_paint - before_paint)

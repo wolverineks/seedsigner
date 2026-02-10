@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Literal
-import pygame  # type: ignore
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -54,5 +53,3 @@ class PowerOffScreen(Component):
 
     def handle_shutdown(self):
         print("Shutting down...")
-        custom_quit_event = pygame.event.Event(pygame.QUIT)
-        pygame.event.post(custom_quit_event)

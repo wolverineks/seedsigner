@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import pygame  # type: ignore
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -66,8 +65,3 @@ class PowerScreen(Component):
             self.router.pop()
         else:
             self.router.navigate_to(selected)
-
-    def handle_shutdown(self):
-        print("Shutting down...")
-        custom_quit_event = pygame.event.Event(pygame.QUIT)
-        pygame.event.post(custom_quit_event)

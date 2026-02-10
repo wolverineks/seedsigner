@@ -1,25 +1,30 @@
-from seedsigner.components import Rect, Dimensions
 from threading import Timer
 import time
+from dataclasses import dataclass
+from typing import Optional
 
+from seedsigner.components import Rect, Dimensions
+from seedsigner.loopyUI import Component
 
-HEIGHT = 40
-WIDTH = Dimensions.width
-FILL_COLOR = "red"
+OUTLINE_WIDTH = 1
+HEIGHT = 40 - OUTLINE_WIDTH
+WIDTH = Dimensions.width - OUTLINE_WIDTH
+FILL_COLOR = "black"
 TRANSITION_DURATION = 0.3
 DISPLAY_DURATION = 5.0
 X = 0
-OPENED_Y = Dimensions.height - HEIGHT
+OPENED_Y = Dimensions.height - HEIGHT - 4
+NOTIFICATION_COLOR = "#00F100"
 
 
-class Toast:
-    def __init__(self):
-        self.y = Dimensions.height
+@dataclass()
+class Toast(Component):
+    y: int = Dimensions.height  # default value
 
-        self.show_start_time: float | None = None
-        self.hide_start_time: float | None = None
+    show_start_time: Optional[float] = None
+    hide_start_time: Optional[float] = None
 
-        self.state = "closed"
+    state: str = "closed"  # default state
 
     def render(self) -> Rect | None:
         if self.state == "closed":
@@ -32,6 +37,9 @@ class Toast:
                 w=WIDTH,
                 h=HEIGHT,
                 fill=FILL_COLOR,
+                radius=8,
+                outline=NOTIFICATION_COLOR,
+                width=OUTLINE_WIDTH,
             )
 
         if self.state == "opening":
@@ -39,7 +47,7 @@ class Toast:
                 return None
 
             progress = get_progress(self.show_start_time)
-            y = Dimensions.height - HEIGHT * progress
+            y = Dimensions.height - HEIGHT * ease_out_quad(progress)
 
             return Rect(
                 x=X,
@@ -47,6 +55,9 @@ class Toast:
                 w=WIDTH,
                 h=HEIGHT,
                 fill=FILL_COLOR,
+                radius=8,
+                outline=NOTIFICATION_COLOR,
+                width=OUTLINE_WIDTH,
             )
 
         if self.state == "closing":
@@ -54,7 +65,7 @@ class Toast:
                 return None
 
             progress = get_progress(self.hide_start_time)
-            y = Dimensions.height - HEIGHT + HEIGHT * progress
+            y = Dimensions.height - HEIGHT + HEIGHT * ease_in_quad(progress)
 
             return Rect(
                 x=X,
@@ -62,6 +73,9 @@ class Toast:
                 w=WIDTH,
                 h=HEIGHT,
                 fill=FILL_COLOR,
+                radius=8,
+                outline=NOTIFICATION_COLOR,
+                width=OUTLINE_WIDTH,
             )
 
         return None
@@ -93,3 +107,13 @@ def get_progress(start_time: float):
 
 
 toast = Toast()
+
+
+def ease_out_quad(t: float) -> float:
+    """Starts fast, slows down at the end"""
+    return 1 - (1 - t) * (1 - t)
+
+
+def ease_in_quad(t: float) -> float:
+    """Starts slow, accelerates"""
+    return t**2

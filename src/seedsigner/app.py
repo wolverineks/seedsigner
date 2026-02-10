@@ -11,7 +11,7 @@ Timer(4, toast.show).start()
 
 @dataclass
 class App(Component):
-    on_quit: Callable
+    on_quit: Callable[[], None]
     router: Router
     toast_visible: bool = False
 
