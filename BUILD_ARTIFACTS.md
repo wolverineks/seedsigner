@@ -1,40 +1,66 @@
 # SeedSigner Build Artifacts
 
-## Latest Successful Build
+## ⚠️ Important: Artifact Access
+
+**GitHub Actions artifacts are only visible to repository collaborators.** If you don't have direct access to this repository, you won't see the Artifacts section on workflow run pages.
+
+## Solutions to Get a Build
+
+### Option 1: Use Official SeedSigner Releases (Recommended)
+
+The official SeedSigner project provides pre-built, verified images:
+
+**Download from:** https://github.com/SeedSigner/seedsigner/releases/latest
+
+- Latest stable release: v0.8.6
+- Images available for all Raspberry Pi models
+- Includes SHA256 checksums and GPG signatures
+- Thoroughly tested and community verified
+
+### Option 2: Trigger Your Own Build
+
+If you need a custom build from this fork:
+
+1. **Fork this repository** to your own GitHub account
+2. Go to **Actions** tab in your fork
+3. Select the **Build** workflow
+4. Click **Run workflow**
+5. Configure build parameters (or use defaults)
+6. Wait for build to complete (~30-40 minutes)
+7. Download artifacts from your own workflow run
+
+### Option 3: Request Access
+
+If you need artifacts from this specific repository, request collaborator access from the repository owner (@wolverineks).
+
+## Latest Build Status
 
 **Build Run:** 21865924996  
 **Date:** February 10, 2026 at 13:01 UTC  
-**Status:** ✅ Success  
+**Status:** ✅ Success (artifacts available to repo collaborators only)  
 **Branch:** dev
 
-### Available Artifacts
+## Known Build Issues
 
-1. **seedsigner_os_images-pi0** (364 MB)
-   - Contains the bootable .img.zip file for Raspberry Pi Zero
-   - Download: https://github.com/wolverineks/seedsigner/actions/runs/21865924996
+Recent builds have been failing due to a configuration error in the external `3rdIteration/seedsigner-os` repository:
 
-2. **seedsigner_os_images_sha256** (310 bytes)
-   - Contains SHA256 checksums for verification
-   
-### How to Download
+**Error:** `../pi0-dev/board/genimage-rpi-seedsigner.cfg:21: no such option 'image'`
 
-1. Go to: https://github.com/wolverineks/seedsigner/actions/runs/21865924996
-2. Scroll down to the "Artifacts" section at the bottom
-3. Click on "seedsigner_os_images-pi0" to download
-4. Extract the .img.zip file
-5. Use a tool like Balena Etcher or Raspberry Pi Imager to flash to SD card
+This is a syntax error in the upstream genimage configuration file and cannot be fixed from this repository. Until the upstream issue is resolved:
+- Use the official SeedSigner releases (Option 1 above)
+- Or wait for the upstream fix and trigger a new build
 
-## Recent Build Failures
+## Building Locally
 
-Recent builds have been failing due to Docker build errors in the seedsigner-os build process. The builds are attempting to pull from:
-- App: `3rdIteration/seedsigner@dev`
-- OS: `3rdIteration/seedsigner-os@main`
+For advanced users who want complete control:
 
-The Docker container exits with code 2 before producing image files.
+```bash
+# Clone the official SeedSigner OS builder
+git clone https://github.com/SeedSigner/seedsigner-os.git
+cd seedsigner-os
 
-## Triggering a New Build
+# Follow build instructions
+# See: https://github.com/SeedSigner/seedsigner-os/blob/main/docs/building.md
+```
 
-To trigger a manual build, go to:
-https://github.com/wolverineks/seedsigner/actions/workflows/build.yml
-
-Click "Run workflow" and adjust parameters as needed.
+This gives you a reproducible build you can verify yourself.
