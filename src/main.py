@@ -18,7 +18,7 @@ from seedsigner.hardware.displays.display_driver import DisplayDriver
 
 app = App(router=router, on_quit=on_quit)
 driver = DisplayDriver(
-    "desktop",
+    "st7789",
     Dimensions.width,
     Dimensions.height,
 )
@@ -45,3 +45,8 @@ while running:
 #     desktop.paint(canvas)
 #     after_paint = time.time()
 #     print("PAINT: ", after_paint - before_paint)
++
+
+
++
+y
