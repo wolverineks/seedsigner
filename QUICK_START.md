@@ -1,10 +1,18 @@
 # Quick Start: Getting a SeedSigner Image
 
-## 🚀 Fastest Solution (Recommended)
+## 🎯 For Repository Owner
 
-### Download Official Pre-Built Image
+**Your build artifacts ARE available!** See `ARTIFACT_DOWNLOAD.md` for direct download methods if you're having UI issues.
 
-Go to the official SeedSigner releases page:
+**Quick download via GitHub CLI:**
+```bash
+gh run download 21865924996 --repo wolverineks/seedsigner
+```
+
+## 🚀 Alternative: Official SeedSigner Release
+
+For a tested, verified, production-ready image:
+
 👉 **https://github.com/SeedSigner/seedsigner/releases/latest**
 
 1. Download the `.img` file for your Raspberry Pi model:
@@ -18,20 +26,19 @@ Go to the official SeedSigner releases page:
 
 3. Insert SD card into your Raspberry Pi and power on!
 
-## Why Can't I See Artifacts Here?
+## Triggering a New Build
 
-GitHub Actions artifacts are **only visible to repository collaborators**. Even though this repository is public, the build artifacts are restricted.
+To create a fresh build:
 
-## Alternative: Build Your Own
-
-If you want to build from this fork:
-
-1. Fork this repository to your GitHub account
-2. Go to **Actions** → **Build** workflow
-3. Click **Run workflow** 
+1. Go to **Actions** → **Build** workflow
+2. Click **Run workflow** 
+3. Configure parameters (or use defaults)
 4. Wait ~30-40 minutes
-5. Download artifacts from YOUR workflow run (they'll be visible to you)
+5. Download artifacts from the completed run
+
+**Note:** Recent builds may fail due to upstream genimage config error in `3rdIteration/seedsigner-os`.
 
 ---
 
-📖 **See BUILD_ARTIFACTS.md for detailed information**
+📖 **See ARTIFACT_DOWNLOAD.md for detailed download methods**  
+📖 **See BUILD_ARTIFACTS.md for build troubleshooting**

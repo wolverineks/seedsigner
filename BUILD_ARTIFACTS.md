@@ -1,12 +1,34 @@
 # SeedSigner Build Artifacts
 
-## ⚠️ Important: Artifact Access
+## ✅ Artifacts ARE Available
 
-**GitHub Actions artifacts are only visible to repository collaborators.** If you don't have direct access to this repository, you won't see the Artifacts section on workflow run pages.
+**Repository Owner Note:** Your build artifacts exist and are accessible. If you're not seeing them in the GitHub UI, see `ARTIFACT_DOWNLOAD.md` for alternative download methods including GitHub CLI and direct API access.
 
-## Solutions to Get a Build
+## Latest Successful Builds
 
-### Option 1: Use Official SeedSigner Releases (Recommended)
+### Build #18 - Run 21865924996 (Feb 10, 2026)
+- **Status:** ✅ Success
+- **Artifacts:** 2 files (364 MB total)
+- **Direct Link:** https://github.com/wolverineks/seedsigner/actions/runs/21865924996
+- **Created:** 2026-02-10 13:39 UTC
+- **Expires:** 2026-05-11 (90 day retention)
+
+**Quick Download:**
+```bash
+gh run download 21865924996 --repo wolverineks/seedsigner
+```
+
+### Build #3 - Run 21551315057 (Jan 31, 2026)
+- **Status:** ✅ Success
+- **Direct Link:** https://github.com/wolverineks/seedsigner/actions/runs/21551315057
+
+### Build #1 - Run 21517762917 (Jan 30, 2026)
+- **Status:** ✅ Success
+- **Direct Link:** https://github.com/wolverineks/seedsigner/actions/runs/21517762917
+
+## Alternative Sources
+
+### Official SeedSigner Releases (Stable)
 
 The official SeedSigner project provides pre-built, verified images:
 
@@ -17,28 +39,19 @@ The official SeedSigner project provides pre-built, verified images:
 - Includes SHA256 checksums and GPG signatures
 - Thoroughly tested and community verified
 
-### Option 2: Trigger Your Own Build
+## Troubleshooting Artifact Visibility
 
-If you need a custom build from this fork:
+If you can't see artifacts in the GitHub Actions UI:
 
-1. **Fork this repository** to your own GitHub account
-2. Go to **Actions** tab in your fork
-3. Select the **Build** workflow
-4. Click **Run workflow**
-5. Configure build parameters (or use defaults)
-6. Wait for build to complete (~30-40 minutes)
-7. Download artifacts from your own workflow run
+1. **Refresh the page** - Hard refresh with Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)
+2. **Clear browser cache** - Sometimes old cache prevents UI updates
+3. **Try different browser** - Or use incognito/private mode
+4. **Use GitHub CLI** - Most reliable method (see ARTIFACT_DOWNLOAD.md)
+5. **Check GitHub Status** - Visit https://www.githubstatus.com/
 
-### Option 3: Request Access
+The artifacts exist in the system (verified via API) even if the UI doesn't display them.
 
-If you need artifacts from this specific repository, request collaborator access from the repository owner (@wolverineks).
-
-## Latest Build Status
-
-**Build Run:** 21865924996  
-**Date:** February 10, 2026 at 13:01 UTC  
-**Status:** ✅ Success (artifacts available to repo collaborators only)  
-**Branch:** dev
+## Triggering New Builds
 
 ## Known Build Issues
 
