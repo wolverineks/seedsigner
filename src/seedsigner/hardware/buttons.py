@@ -9,8 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class HardwareButtons(Singleton):
-    if GPIO.RPI_INFO['P1_REVISION'] == 3: #This indicates that we have revision 3 GPIO
-        logger.info("Detected 40pin GPIO (Rasbperry Pi 2 and above)")
+    # Detect GPIO revision and set pin mappings
+    if GPIO.RPI_INFO['P1_REVISION'] == 3:  # This indicates that we have revision 3 GPIO
+        logger.info("Detected 40pin GPIO (Raspberry Pi 2 and above)")
         KEY_UP_PIN = 31
         KEY_DOWN_PIN = 35
         KEY_LEFT_PIN = 29
@@ -22,7 +23,7 @@ class HardwareButtons(Singleton):
         KEY3_PIN = 36
 
     else:
-        logger.info("Assuming 26 Pin GPIO (Raspberry P1 1)")
+        logger.info("Assuming 26 Pin GPIO (Raspberry Pi 1)")
         KEY_UP_PIN = 5
         KEY_DOWN_PIN = 11
         KEY_LEFT_PIN = 3
@@ -40,13 +41,13 @@ class HardwareButtons(Singleton):
         if cls._instance is None:
             cls._instance = cls.__new__(cls)
 
-            #init GPIO
+            # init GPIO
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(HardwareButtons.KEY_UP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Input with pull-up
             GPIO.setup(HardwareButtons.KEY_DOWN_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Input with pull-up
             GPIO.setup(HardwareButtons.KEY_LEFT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Input with pull-up
-            GPIO.setup(HardwareButtons.KEY_RIGHT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Input with pull-up
-            GPIO.setup(HardwareButtons.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Input with pull-up
+            GPIO.setup(HardwareButtons.KEY_RIGHT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Input with pull-up
+            GPIO.setup(HardwareButtons.KEY_PRESS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Input with pull-up
             GPIO.setup(HardwareButtons.KEY1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)      # Input with pull-up
             GPIO.setup(HardwareButtons.KEY2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)      # Input with pull-up
             GPIO.setup(HardwareButtons.KEY3_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)      # Input with pull-up
@@ -88,9 +89,10 @@ class HardwareButtons(Singleton):
         return False
 
 
-# class used as short hand for static button/channel lookup values
+# Class used as shorthand for static button/channel lookup values
 class HardwareButtonsConstants:
-    if GPIO.RPI_INFO['P1_REVISION'] == 3: #This indicates that we have revision 3 GPIO
+    # Use same GPIO revision detection as HardwareButtons
+    if GPIO.RPI_INFO['P1_REVISION'] == 3:  # This indicates that we have revision 3 GPIO
         KEY_UP = 31
         KEY_DOWN = 35
         KEY_LEFT = 29

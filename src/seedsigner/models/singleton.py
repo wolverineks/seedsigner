@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Singleton:
     _instance = None
 
@@ -25,9 +28,9 @@ class ConfigurableSingleton(Singleton):
 
 
     @classmethod
-    def configure_instance(cls, config: any = None):
+    def configure_instance(cls, config: Any = None):
         # Must be called before the first get_instance() call
         if cls._instance:
             raise Exception("Instance already configured")
-        
-        #TODO: Implementation classes should do something with incoming config
+
+        # TODO: Implementation classes should do something with incoming config
