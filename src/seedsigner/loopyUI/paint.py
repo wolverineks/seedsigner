@@ -1,6 +1,5 @@
 # from environment import is_raspberry_pi
 # from seedsigner.dimensions import Dimensions
-import pygame  # type: ignore
 from PIL import Image
 from seedsigner.dimensions import Dimensions
 import time
@@ -54,11 +53,13 @@ class RPI:
         self.driver.show_image(pil_img)
 
     def destroy(self):
-        pygame.quit()
+        # No cleanup needed for RPI mode
+        pass
 
 
 class Desktop:
     def __init__(self) -> None:
+        import pygame  # type: ignore
         pygame.init()
         self.win: pygame.Surface = pygame.display.set_mode(
             (Dimensions.width, Dimensions.height)
@@ -66,6 +67,7 @@ class Desktop:
         self.clock: pygame.time.Clock = pygame.time.Clock()
 
     def paint(self, canvas: Image.Image):
+        import pygame  # type: ignore
         before_convert = time.time()
         data: bytes = canvas.convert("RGB").tobytes()
         after_convert = time.time()
@@ -88,4 +90,5 @@ class Desktop:
         # self.clock.tick(60)
 
     def destroy(self):
+        import pygame  # type: ignore
         pygame.quit()
