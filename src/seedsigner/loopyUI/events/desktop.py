@@ -21,12 +21,12 @@ class Events:
             app.handle_input(input=input)
 
     @staticmethod
-    def get_events():
+    def get_events() -> list[pygame.event.Event]:
         return pygame.event.get()
 
     @staticmethod
-    def get_inputs(events):
-        inputs = []
+    def get_inputs(events: list[pygame.event.Event]) -> list[str]:
+        inputs: list[str] = []
         for event in events:
             if event.type == pygame.KEYDOWN and event.key in Events.event_map:
                 inputs.append(Events.event_map[event.key])

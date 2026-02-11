@@ -3,7 +3,7 @@ from seedsigner.app import App
 from seedsigner.router import router
 import time
 from seedsigner.dimensions import Dimensions
-
+from seedsigner.hardware.displays.display_driver import DisplayDriver
 
 running = True
 
@@ -13,8 +13,6 @@ def on_quit():
     global running
     running = False
 
-
-from seedsigner.hardware.displays.display_driver import DisplayDriver
 
 app = App(router=router, on_quit=on_quit)
 driver = DisplayDriver(
@@ -26,7 +24,7 @@ while running:
     Events.handle_events(app)
     canvas = render(app)
     driver.show_image(canvas)
-    time.sleep(0)
+    time.sleep(0.01)
 
 # from seedsigner.loopyUI import Desktop
 # desktop = Desktop()
@@ -45,8 +43,3 @@ while running:
 #     desktop.paint(canvas)
 #     after_paint = time.time()
 #     print("PAINT: ", after_paint - before_paint)
-+
-
-
-+
-y
