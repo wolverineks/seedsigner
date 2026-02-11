@@ -115,9 +115,10 @@ class ST7789(object):
 
         self.command(0x21)  # inversion ON; 0x20 = inversion OFF
 
-        self.command(0x11)
+        self.command(0x11)  # Exit sleep mode
+        time.sleep(0.120)  # Must wait 120ms after sleep out before sending other commands
 
-        self.command(0x29)
+        self.command(0x29)  # Display on
 
     def reset(self):
         """Reset the display"""
