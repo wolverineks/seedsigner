@@ -45,8 +45,3 @@ while running:
 #     desktop.paint(canvas)
 #     after_paint = time.time()
 #     print("PAINT: ", after_paint - before_paint)
-+
-
-
-+
-y
