@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -63,11 +62,12 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-@dataclass
 class SettingsScreen(Component):
-    store: "Store"
-    router: "Router"
-    selected: NavKey = "language"
+    def __init__(self, store: "Store", router: "Router") -> None:
+        super().__init__()
+        self.store = store
+        self.router = router
+        self.selected: NavKey = "language"
 
     def render(self) -> Node:
         selected = self.selected
@@ -126,7 +126,7 @@ class SettingsScreen(Component):
         else:
             selected = self.selected
             if input in nav_map[selected]:
-                self.selected = nav_map[selected][input]
+                self.set_selected(nav_map[selected][input])
 
     def handle_select(self):
         selected = self.selected

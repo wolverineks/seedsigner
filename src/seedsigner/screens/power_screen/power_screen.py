@@ -1,8 +1,9 @@
-from dataclasses import dataclass
 from typing import Literal, TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -28,10 +29,12 @@ nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
 }
 
 
-@dataclass
 class PowerScreen(Component):
-    router: "Router"
-    selected: ButtonId = "power-off"
+    def __init__(self, store: "Store", router: "Router") -> None:
+        super().__init__()
+        self.store = store
+        self.router = router
+        self.selected: ButtonId = "power-off"
 
     def render(self) -> Node:
         selected = self.selected
@@ -55,7 +58,7 @@ class PowerScreen(Component):
         else:
             selected = self.selected
             if input in nav_map[selected]:
-                self.selected = nav_map[selected][input]
+                self.set_selected(nav_map[selected][input])
 
     def handle_select(self):
         selected = self.selected

@@ -1,15 +1,10 @@
 from typing import Any
 from PIL import Image, ImageDraw
 
-from seedsigner.loopyUI import Rect, Text
-from seedsigner.dimensions import Dimensions
-from seedsigner.loopyUI.component import Component
+from .component import Rect, Text, Component
 
 
-def render(component: Component) -> Image.Image:
-    canvas: Image.Image = Image.new(
-        "RGB", (Dimensions.width, Dimensions.height), "white"
-    )
+def render(component: Component, canvas: Image.Image) -> Image.Image:
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(canvas)
 
     def recurse(node: Any) -> None:

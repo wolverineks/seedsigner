@@ -1,8 +1,8 @@
-from dataclasses import dataclass
-from typing import Literal, TYPE_CHECKING, Any
+from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, PowerButton
 from seedsigner.loopyUI import Component, Node
@@ -11,7 +11,8 @@ from .components import ScanButton, SeedsButton, SettingsButton, ToolsButton
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+
+NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "scan": {"right": "seeds", "down": "tools"},
     "seeds": {"left": "scan", "down": "settings", "up": "power"},
     "tools": {"right": "settings", "up": "scan"},
@@ -21,11 +22,16 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-@dataclass
 class MainScreen(Component):
-    store: Any
-    router: "Router"
-    selected: NavKey = "scan"
+    def __init__(self, store: "Store", router: "Router") -> None:
+        super().__init__()
+        self.store = store
+        self.router = router
+        self.selected: NavKey = "scan"
+
+    def set_selected(self, selected: NavKey) -> None:
+        self.selected = selected
+        self.dirty = True
 
     def render(self) -> Node:
         selected = self.selected
@@ -43,19 +49,18 @@ class MainScreen(Component):
             ),
         ]
 
-    def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
         else:
             selected = self.selected
-            if input in nav_map[selected]:
-                self.selected = nav_map[selected][input]
+            if input in NAV_MAP[selected]:
+                self.set_selected(NAV_MAP[selected][input])
 
     def handle_select(self):
         selected = self.selected
         router = self.router
 
-        print(f"Selected {selected}")
         if selected == "back":
             router.go_back()
         else:

@@ -1,8 +1,8 @@
-from dataclasses import dataclass
-from typing import Literal, TYPE_CHECKING, Any
+from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.store import Store
 
 from seedsigner.components import Header, Body, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -10,16 +10,17 @@ from seedsigner.loopyUI import Component, Node
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
 NavKey = Literal["back"]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     "back": {},
 }
 
 
-@dataclass
 class NotFoundScreen(Component):
-    store: Any
-    router: "Router"
-    selected: NavKey = "back"
+    def __init__(self, store: "Store", router: "Router") -> None:
+        super().__init__()
+        self.store = store
+        self.router = router
+        self.selected: NavKey = "back"
 
     def render(self) -> Node:
         selected = self.selected
@@ -35,10 +36,12 @@ class NotFoundScreen(Component):
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
         if input == "select":
             self.handle_select()
+        elif input == "left" and self.selected == "back":
+            self.handle_select()
         else:
             selected = self.selected
-            if input in nav_map[selected]:
-                self.selected = nav_map[selected][input]
+            if input in NAV_MAP[selected]:
+                self.set_selected(NAV_MAP[selected][input])
 
     def handle_select(self):
         selected = self.selected

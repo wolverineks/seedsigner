@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from seedsigner.router import AppRoute, Router
+    from seedsigner.router import Route, Router
+    from seedsigner.store import Store
 
 from seedsigner.components import Header, Body, BackButton, Button
 from seedsigner.loopyUI import Component, Node
@@ -48,7 +48,7 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
     },
 }
 
-SELECT_ROUTES: dict[NavKey, "AppRoute"] = {
+SELECT_ROUTES: dict[NavKey, "Route"] = {
     "new_seed_camera": "new_seed_camera",
     "new_seed_dice": "new_seed_dice",
     "calculate_checksum": "calculate_checksum",
@@ -57,10 +57,12 @@ SELECT_ROUTES: dict[NavKey, "AppRoute"] = {
 }
 
 
-@dataclass
 class ToolsScreen(Component):
-    router: "Router"
-    selected: NavKey = "new_seed_camera"
+    def __init__(self, store: "Store", router: "Router") -> None:
+        super().__init__()
+        self.store = store
+        self.router = router
+        self.selected: NavKey = "new_seed_camera"
 
     def render(self) -> Node:
         selected = self.selected
@@ -100,6 +102,7 @@ class ToolsScreen(Component):
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+        print(f"Input: {self.selected}, input: {input}")
         if input == "select":
             self.handle_select()
         elif input == "left" and self.selected == "back":
@@ -107,7 +110,7 @@ class ToolsScreen(Component):
         else:
             selected = self.selected
             if input in NAV_MAP[selected]:
-                self.selected = NAV_MAP[selected][input]
+                self.set_selected(NAV_MAP[selected][input])
 
     def handle_select(self):
         selected = self.selected

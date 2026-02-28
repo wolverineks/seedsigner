@@ -57,7 +57,8 @@ source = ["src"]
 branch = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "src/seedsigner/loopyUI"]
+pythonpath = ["src"]
 log_level = "DEBUG"
 
 [tool.setuptools]

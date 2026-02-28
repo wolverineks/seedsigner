@@ -7,10 +7,11 @@ DrawPrimitive: TypeAlias = Union["Rect", "Text"]
 Node: TypeAlias = Union[DrawPrimitive, "Component", None, List["Node"]]
 
 
-@dataclass
 class Component:
-    state: object = None
-    dirty: bool = True
+    def __init__(self) -> None:
+        self.state: Any = None
+        self.dirty: bool = True
+        self.selected: Any = None
 
     # hack to avoid having to set dirty = False in every render method
     def __init_subclass__(cls: type["Component"], **kwargs: Any) -> None:
@@ -31,6 +32,10 @@ class Component:
 
         setattr(wrapped_render, "__component_render_wrapped__", True)
         cls.render = wrapped_render
+
+    def set_selected(self, selected: Any) -> None:
+        self.selected = selected
+        self.dirty = True
 
     def handle_input(self, input: Any) -> Any:
         pass

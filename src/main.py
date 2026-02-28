@@ -1,12 +1,11 @@
 from time import sleep
+from PIL import Image
 
+from seedsigner.dimensions import Dimensions
 from seedsigner.loopyUI import render, DesktopButtons, Component
 from seedsigner.router import router, Router
 from seedsigner.store import Store, store
-from seedsigner.helpers import (
-    get_screen,
-    handle_lifecycle_methods,
-)
+from seedsigner.helpers import get_screen, handle_lifecycle_methods
 
 
 # from seedsigner.dimensions import Dimensions
@@ -38,13 +37,16 @@ def main():
             sleep(0.01)
             continue
 
+        print(f"Inputs: {inputs}")
         for input in inputs:
             screen.handle_input(input)
 
         handle_lifecycle_methods(store=store, router=router)
 
         screen = get_screen(path=router.current_route, store=store, router=router)
-        canvas = render(screen)
+        canvas = render(
+            screen, Image.new("RGB", (Dimensions.width, Dimensions.height), "white")
+        )
         desktop.paint(canvas)
 
         sleep(0.01)
