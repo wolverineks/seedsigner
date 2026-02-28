@@ -3,6 +3,7 @@ from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, BackButton, Button
 from seedsigner.loopyUI import Component, Node
@@ -64,6 +65,7 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 @dataclass
 class SettingsScreen(Component):
+    store: "Store"
     router: "Router"
     selected: NavKey = "language"
 
@@ -128,8 +130,10 @@ class SettingsScreen(Component):
 
     def handle_select(self):
         selected = self.selected
+        router = self.router
+
         print(f"Selected {selected}")
         if selected == "back":
-            self.router.pop()
+            router.go_back()
         else:
-            self.router.navigate_to(selected)
+            router.navigate_to(selected)

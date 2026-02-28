@@ -1,12 +1,12 @@
 from typing import Any
 from PIL import Image, ImageDraw
 
-from seedsigner.app import App
 from seedsigner.loopyUI import Rect, Text
 from seedsigner.dimensions import Dimensions
+from seedsigner.loopyUI.component import Component
 
 
-def render(component: App) -> Image.Image:
+def render(component: Component) -> Image.Image:
     canvas: Image.Image = Image.new(
         "RGB", (Dimensions.width, Dimensions.height), "white"
     )

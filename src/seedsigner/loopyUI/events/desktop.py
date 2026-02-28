@@ -1,10 +1,8 @@
 import pygame  # type: ignore
 
-from seedsigner.app import App
 
-
-class Events:
-    event_map = {
+class DesktopButtons:
+    button_map = {
         pygame.K_UP: "up",
         pygame.K_DOWN: "down",
         pygame.K_LEFT: "left",
@@ -13,22 +11,16 @@ class Events:
     }
 
     @staticmethod
-    def handle_events(app: App):
-        events = Events.get_events()
-        inputs = Events.get_inputs(events)
-
-        for input in inputs:
-            app.handle_input(input=input)
-
-    @staticmethod
     def get_events() -> list[pygame.event.Event]:
         return pygame.event.get()
 
     @staticmethod
-    def get_inputs(events: list[pygame.event.Event]) -> list[str]:
+    def get_inputs() -> list[str]:
         inputs: list[str] = []
+        events = DesktopButtons.get_events()
+
         for event in events:
-            if event.type == pygame.KEYDOWN and event.key in Events.event_map:
-                inputs.append(Events.event_map[event.key])
+            if event.type == pygame.KEYDOWN and event.key in DesktopButtons.button_map:
+                inputs.append(DesktopButtons.button_map[event.key])
 
         return inputs

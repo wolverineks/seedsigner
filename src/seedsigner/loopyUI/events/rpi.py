@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 
-from seedsigner.app import App
 
 if GPIO.RPI_INFO["P1_REVISION"] == 3:  # RPi with 40-pin GPIO
     # Raspberry Pi 2 and newer models share the same pin layout.
@@ -77,15 +76,7 @@ for pin in gpio_pins.values():
     GPIO.add_event_detect(pin, GPIO.FALLING, bouncetime=50)
 
 
-class Events:
-    @staticmethod
-    def handle_events(app: App):
-        events = Events.get_events()
-        inputs = Events.get_inputs(events)
-
-        for input in inputs:
-            app.handle_input(input=input)
-
+class Buttons:
     @staticmethod
     def get_events() -> list[str]:
         events: list[str] = []
@@ -96,5 +87,6 @@ class Events:
         return events
 
     @staticmethod
-    def get_inputs(events: list[str]) -> list[str]:
+    def get_inputs() -> list[str]:
+        events = Buttons.get_events()
         return events

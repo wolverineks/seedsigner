@@ -17,9 +17,7 @@ class RestartingScreen(Component):
     def render(self) -> Node:
 
         return [
-            Header(
-                title="Restarting",
-            ),
+            Header(title="Restarting"),
             Body(),
         ]
 
@@ -27,4 +25,4 @@ class RestartingScreen(Component):
         Timer(5, self.go_back).start()
 
     def go_back(self):
-        self.router.pop()
+        self.router.go_back()

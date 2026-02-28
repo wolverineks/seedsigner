@@ -4,7 +4,6 @@ from typing import Literal, TYPE_CHECKING
 if TYPE_CHECKING:
     from seedsigner.router import Router
 
-
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
 from .components import ShutdownButton, RestartButton
@@ -62,6 +61,6 @@ class PowerScreen(Component):
         selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
-            self.router.pop()
+            self.router.go_back()
         else:
             self.router.navigate_to(selected)

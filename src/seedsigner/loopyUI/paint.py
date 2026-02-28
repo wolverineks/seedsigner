@@ -69,21 +69,21 @@ class Desktop:
         before_convert = time.time()
         data: bytes = canvas.convert("RGB").tobytes()
         after_convert = time.time()
-        print("CONVERT:, ", after_convert - before_convert)
+        # print("CONVERT:, ", after_convert - before_convert)
 
         before = time.time()
         surf: pygame.Surface = pygame.image.fromstring(
             data, (Dimensions.width, Dimensions.height), "RGB"
         )
-        print("FROM_STRING: ", time.time() - before)
+        # print("FROM_STRING: ", time.time() - before)
 
         before = time.time()
         self.win.blit(surf, (0, 0))
-        print("BLIT: ", time.time() - before)
+        # print("BLIT: ", time.time() - before)
 
         before = time.time()
         pygame.display.flip()
-        print("FLIP: ", time.time() - before)
+        # print("FLIP: ", time.time() - before)
 
         # self.clock.tick(60)
 

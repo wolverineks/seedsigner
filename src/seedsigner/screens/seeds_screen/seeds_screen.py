@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from seedsigner.router import Router
+    from seedsigner.router import Router, Route
 
 from seedsigner.components import Body, Header, BackButton, Button
 from seedsigner.loopyUI import Component, Node
@@ -44,7 +44,7 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 
 @dataclass
-class SeedScreen(Component):
+class SeedsScreen(Component):
     router: "Router"
     selected: NavKey = "scan_a_seedqr"
 
@@ -88,8 +88,10 @@ class SeedScreen(Component):
 
     def handle_select(self):
         selected = self.selected
+        router = self.router
+
         print(f"Selected {selected}")
         if selected == "back":
-            self.router.pop()
+            router.go_back()
         else:
-            self.router.navigate_to(selected)
+            router.navigate_to(selected)

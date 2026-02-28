@@ -4,43 +4,32 @@ from typing import Literal, TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from seedsigner.router import Router
 
-from seedsigner.components import Body, Header, PowerButton
+from seedsigner.components import Header, Body, BackButton
 from seedsigner.loopyUI import Component, Node
-from .components import ScanButton, SeedsButton, SettingsButton, ToolsButton
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
+NavKey = Literal["back"]
 
 nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "scan": {"right": "seeds", "down": "tools"},
-    "seeds": {"left": "scan", "down": "settings", "up": "power"},
-    "tools": {"right": "settings", "up": "scan"},
-    "settings": {"left": "tools", "up": "seeds"},
-    "back": {"right": "power", "down": "scan"},
-    "power": {"down": "seeds"},
+    "back": {},
 }
 
 
 @dataclass
-class MainScreen(Component):
+class NotFoundScreen(Component):
     store: Any
     router: "Router"
-    selected: NavKey = "scan"
+    selected: NavKey = "back"
 
     def render(self) -> Node:
         selected = self.selected
 
         return [
             Header(
-                title="Home",
-                right=PowerButton(selected=selected == "power"),
+                left=BackButton(selected=selected == "back"),
+                title="Not Found",
             ),
-            Body(
-                ScanButton(selected=selected == "scan"),
-                SeedsButton(selected=selected == "seeds"),
-                ToolsButton(selected=selected == "tools"),
-                SettingsButton(selected=selected == "settings"),
-            ),
+            Body(),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):

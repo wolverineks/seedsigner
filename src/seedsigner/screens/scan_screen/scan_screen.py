@@ -36,4 +36,4 @@ class ScanScreen(Component):
         selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
-            self.router.pop()
+            self.router.go_back()

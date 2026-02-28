@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from seedsigner.router import Router
+    from seedsigner.router import AppRoute, Router
 
 from seedsigner.components import Header, Body, BackButton, Button
 from seedsigner.loopyUI import Component, Node
@@ -46,6 +46,14 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
         "up": "address_explorer",
         "left": "back",
     },
+}
+
+SELECT_ROUTES: dict[NavKey, "AppRoute"] = {
+    "new_seed_camera": "new_seed_camera",
+    "new_seed_dice": "new_seed_dice",
+    "calculate_checksum": "calculate_checksum",
+    "address_explorer": "address_explorer",
+    "verify_address": "verify_address",
 }
 
 
@@ -105,6 +113,9 @@ class ToolsScreen(Component):
         selected = self.selected
         print(f"Selected {selected}")
         if selected == "back":
-            self.router.pop()
-        else:
-            self.router.navigate_to(selected)
+            self.router.go_back()
+            return
+
+        route = SELECT_ROUTES.get(selected)
+        if route is not None:
+            self.router.navigate_to(route)

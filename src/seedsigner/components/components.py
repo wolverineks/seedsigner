@@ -13,9 +13,10 @@ class Header(Component):
     width = Dimensions.width
     padding = 8
 
-    title: str
     left: Component | None = None
     right: Component | None = None
+
+    title: str = ""
 
     def render(self) -> Node:
         size = 20
@@ -152,9 +153,9 @@ class Button(Component):
     width = Dimensions.width - Body.padding - Body.padding
     x = Body.padding
 
-    text: str
-    index: int
-    selected: bool
+    text: str = ""
+    index: int = 0
+    selected: bool = False
 
     def render(self) -> Node:
         button_y = (
@@ -195,11 +196,11 @@ class LargeButton(Component):
     width = int((Body.width - 3 * Body.padding) / columns)
     height = int((Body.height - 3 * Body.padding) / rows)
 
-    x: int
-    y: int
-    selected: bool
-    icon: str
-    label: str
+    x: int = 0
+    y: int = 0
+    selected: bool = False
+    icon: str = ""
+    label: str = ""
 
     def render(self) -> Node:
         size = 24
