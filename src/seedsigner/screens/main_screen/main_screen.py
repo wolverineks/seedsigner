@@ -29,10 +29,6 @@ class MainScreen(Component):
         self.router = router
         self.selected: NavKey = "scan"
 
-    def set_selected(self, selected: NavKey) -> None:
-        self.selected = selected
-        self.dirty = True
-
     def render(self) -> Node:
         selected = self.selected
 

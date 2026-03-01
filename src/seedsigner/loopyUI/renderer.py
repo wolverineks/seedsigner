@@ -1,10 +1,14 @@
 from typing import Any
 from PIL import Image, ImageDraw
 
+from seedsigner.dimensions import Dimensions
+
 from .component import Rect, Text, Component
 
+canvas = Image.new("RGB", (Dimensions.width, Dimensions.height), "white")
 
-def render(component: Component, canvas: Image.Image) -> Image.Image:
+
+def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(canvas)
 
     def recurse(node: Any) -> None:

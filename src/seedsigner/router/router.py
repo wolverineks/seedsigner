@@ -17,6 +17,7 @@ Route = Literal[
     "calculate_checksum",
     "address_explorer",
     "verify_address",
+    "language",
     "not_found",
 ]
 
@@ -34,6 +35,7 @@ ROUTES: tuple[Route, ...] = (
     "calculate_checksum",
     "address_explorer",
     "verify_address",
+    "language",
     "not_found",
 )
 

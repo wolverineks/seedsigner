@@ -143,10 +143,6 @@ class Body(Component):
         return [Body.bg, *self.children]
 
 
-size = 24
-font = ImageFont.load_default(size=size)
-
-
 @dataclass
 class Button(Component):
     height = 30
@@ -158,6 +154,8 @@ class Button(Component):
     selected: bool = False
 
     def render(self) -> Node:
+        size = 24
+        font = ImageFont.load_default(size=size)
         button_y = (
             Header.height + Body.padding + self.index * (Button.height + Body.padding)
         )
@@ -179,6 +177,63 @@ class Button(Component):
             None,
             Text(
                 x=Button.x + button_padding,
+                y=text_y,
+                text=self.text,
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
+                size=18,
+            ),
+        ]
+
+
+@dataclass
+class CheckmarkButton(Component):
+    height = 30
+    width = Dimensions.width - Body.padding - Body.padding
+    x = Body.padding
+
+    text: str = ""
+    index: int = 0
+    selected: bool = False
+
+    def render(self) -> Node:
+        size = 24
+        font = ImageFont.load_default(size=size)
+        button_y = (
+            Header.height + Body.padding + self.index * (Button.height + Body.padding)
+        )
+        ascent = font.getmetrics()[0]
+
+        text_y = button_y + int((Button.height - ascent) / 2)
+
+        font, code = get_icon_info("checkmark", 16)
+        ascent = font.getmetrics()[0]
+
+        checkmark_y = button_y + int((Button.height - ascent) / 2)
+        checkmark = Text(
+            x=Button.x + button_padding,
+            y=checkmark_y,
+            text=code,
+            fill="black",
+            size=16,
+            font=font,
+        )
+
+        return [
+            Rect(
+                x=Button.x,
+                y=button_y,
+                w=Button.width,
+                h=Button.height,
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
+                radius=10,
+            ),
+            checkmark if self.selected else None,
+            Text(
+                x=Button.x + button_padding + 24,
                 y=text_y,
                 text=self.text,
                 fill=Colors.button.focused.text
@@ -282,22 +337,47 @@ class LargeButton(Component):
 
 
 def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
-    font = ImageFont.truetype(
-        "./src/seedsigner/resources/fonts/seedsigner-icons.otf", size
-    )
+    fonts_path = "./src/seedsigner/resources/fonts/"
+    seedsigner_icons_path = f"{fonts_path}seedsigner-icons.otf"
+    font_awesome_path = f"{fonts_path}Font_Awesome_6_Free-Solid-900.otf"
 
     icon_codes = {
-        "scan": "\ue900",
-        "seeds": "\ue901",
-        "gear": "\ue902",
-        "tools": "\ue903",
-        "back": "\ue904",
-        "power": "\ue910",
-        "restart": "\ue911",
+        "scan": (
+            seedsigner_icons_path,
+            "\ue900",
+        ),
+        "seeds": (
+            seedsigner_icons_path,
+            "\ue901",
+        ),
+        "gear": (
+            seedsigner_icons_path,
+            "\ue902",
+        ),
+        "tools": (
+            seedsigner_icons_path,
+            "\ue903",
+        ),
+        "back": (
+            seedsigner_icons_path,
+            "\ue904",
+        ),
+        "power": (
+            seedsigner_icons_path,
+            "\ue910",
+        ),
+        "restart": (
+            seedsigner_icons_path,
+            "\ue911",
+        ),
+        "checkmark": (
+            font_awesome_path,
+            "\uf00c",
+        ),
     }
 
     code = icon_codes.get(icon)
     if code is None:
         raise ValueError(f"Unknown icon: {icon}")
 
-    return font, code
+    return ImageFont.truetype(code[0], size), code[1]
