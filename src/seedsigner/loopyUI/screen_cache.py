@@ -8,7 +8,7 @@ class ScreenCache:
         self.cache: dict[str, Component] = {}
         self.make_screen = make_screen
 
-    def get_or_initialize(self, path: str) -> Component:
+    def get(self, path: str) -> Component:
         if path not in self.cache:
             self.cache[path] = self.make_screen(path)
         return self.cache[path]

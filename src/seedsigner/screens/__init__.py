@@ -1,8 +1,7 @@
-from .power_screen import PowerScreen, RestartingScreen, PowerOffScreen
-from .main_screen import MainScreen
-from .settings_screen import SettingsScreen
-from .scan_screen import ScanScreen
-from .seeds_screen import SeedsScreen
-from .tools_screen import ToolsScreen
-from .not_found_screen import NotFoundScreen
-from .settings_screen.language import LanguageScreen
+from .power import PowerScreen, RestartingScreen, PowerOffScreen
+from .main_menu import MainScreen
+from .settings import SettingsScreen, LanguageScreen
+from .scan import ScanScreen
+from .seeds import SeedsScreen
+from .tools import ToolsScreen
+from .not_found import NotFoundScreen

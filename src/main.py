@@ -20,12 +20,13 @@ from seedsigner.app import app
 #     driver.show_image(canvas)
 #     time.sleep(0.01)
 
-from seedsigner.loopyUI import Desktop
+from seedsigner.loopyUI import Desktop, DesktopButtons
 
 
 def main():
     while running:
-        updated = app.update()
+        inputs = DesktopButtons.get_inputs()
+        updated = app.update(inputs)
         if updated:
             canvas = render(app)
             desktop.paint(canvas)
