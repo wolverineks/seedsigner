@@ -35,6 +35,7 @@ class PowerScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: ButtonId = "power-off"
 
     def render(self) -> Node:

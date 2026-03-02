@@ -28,6 +28,7 @@ class MainMenuScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: NavKey = "scan"
 
     def render(self) -> Node:

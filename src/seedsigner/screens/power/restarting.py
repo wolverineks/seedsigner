@@ -16,6 +16,7 @@ class RestartingScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
 
     def render(self) -> Node:
 

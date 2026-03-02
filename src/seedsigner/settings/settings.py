@@ -37,7 +37,9 @@ class Settings:
         self.save()
 
     def has_changed(self) -> bool:
-        return self.dirty
+        dirty = self.dirty
+        self.dirty = False
+        return dirty
 
     def load(self, loaded: Optional[dict[str, Any]] = None) -> None:
         values = DEFAULT_SETTINGS if loaded is None else loaded

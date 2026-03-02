@@ -63,6 +63,7 @@ class ToolsScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: NavKey = "new_seed_camera"
 
     def render(self) -> Node:

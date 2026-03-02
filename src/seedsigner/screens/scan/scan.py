@@ -16,6 +16,7 @@ class ScanScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: Literal["back"] = "back"
 
     def render(self) -> Node:

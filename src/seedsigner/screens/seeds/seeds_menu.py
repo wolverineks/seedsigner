@@ -49,6 +49,7 @@ class SeedsScreen(Component):
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: NavKey = "scan_a_seedqr"
 
     def render(self) -> Node:
