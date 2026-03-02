@@ -2,6 +2,7 @@ from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Route, Router
+    from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
 from seedsigner.components import Header, Body, BackButton, Button
@@ -58,7 +59,7 @@ SELECT_ROUTES: dict[NavKey, "Route"] = {
 
 
 class ToolsScreen(Component):
-    def __init__(self, store: "Store", router: "Router") -> None:
+    def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store
         self.router = router

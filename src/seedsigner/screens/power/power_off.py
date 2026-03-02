@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
 HWButtonInput = Literal["up", "down", "left", "right", "select"]
@@ -18,7 +19,7 @@ nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
 
 
 class PowerOffScreen(Component):
-    def __init__(self, store: "Store", router: "Router") -> None:
+    def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store
         self.router = router

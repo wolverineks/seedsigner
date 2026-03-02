@@ -196,6 +196,7 @@ class CheckmarkButton(Component):
     text: str = ""
     index: int = 0
     selected: bool = False
+    checked: bool = False
 
     def render(self) -> Node:
         size = 24
@@ -215,7 +216,7 @@ class CheckmarkButton(Component):
             x=Button.x + button_padding,
             y=checkmark_y,
             text=code,
-            fill="black",
+            fill="black" if self.selected else "white",
             size=16,
             font=font,
         )
@@ -231,7 +232,7 @@ class CheckmarkButton(Component):
                 else Colors.button.background,
                 radius=10,
             ),
-            checkmark if self.selected else None,
+            checkmark if self.checked else None,
             Text(
                 x=Button.x + button_padding + 24,
                 y=text_y,

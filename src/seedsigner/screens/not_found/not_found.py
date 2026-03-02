@@ -1,8 +1,10 @@
 from typing import Literal, TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from seedsigner.router import Router
     from seedsigner.store import Store
+    from seedsigner.settings.settings import Settings
 
 from seedsigner.components import Header, Body, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -16,10 +18,11 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 
 class NotFoundScreen(Component):
-    def __init__(self, store: "Store", router: "Router") -> None:
+    def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: NavKey = "back"
 
     def render(self) -> Node:

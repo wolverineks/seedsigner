@@ -1,4 +1,5 @@
 from seedsigner.router import router, Router
+from seedsigner.settings import settings
 from seedsigner.store import store
 from seedsigner.screen_cache import screen_cache
 
@@ -9,7 +10,12 @@ class App:
         for input in inputs:
             screen.handle_input(input)
 
-        return screen.has_changed() or router.has_changed() or store.has_changed()
+        return (
+            screen.has_changed()
+            or router.has_changed()
+            or store.has_changed()
+            or settings.has_changed()
+        )
 
     def render(self):
         return screen_cache.get(path=router.current_route)

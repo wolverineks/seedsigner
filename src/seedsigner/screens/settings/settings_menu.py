@@ -2,6 +2,7 @@ from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
+    from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, BackButton, Button
@@ -63,7 +64,7 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 
 class SettingsScreen(Component):
-    def __init__(self, store: "Store", router: "Router") -> None:
+    def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store
         self.router = router

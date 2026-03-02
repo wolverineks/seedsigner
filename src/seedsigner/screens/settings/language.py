@@ -2,9 +2,11 @@ from typing import Literal, TYPE_CHECKING
 
 from seedsigner.components.components import CheckmarkButton
 
+
 if TYPE_CHECKING:
     from seedsigner.router import Router
     from seedsigner.store import Store
+    from seedsigner.settings import Settings
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
@@ -64,10 +66,11 @@ nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 
 
 class LanguageScreen(Component):
-    def __init__(self, store: "Store", router: "Router") -> None:
+    def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store
         self.router = router
+        self.settings = settings
         self.selected: NavKey = "english"
 
     def render(self) -> Node:
@@ -83,36 +86,43 @@ class LanguageScreen(Component):
                     CheckmarkButton(
                         text="English",
                         selected=selected == "english",
+                        checked=self.settings.language == "english",
                         index=0,
                     ),
                     CheckmarkButton(
                         text="Español",
                         selected=selected == "spanish",
+                        checked=self.settings.language == "spanish",
                         index=1,
                     ),
                     CheckmarkButton(
                         text="日本語",
                         selected=selected == "japanese",
+                        checked=self.settings.language == "japanese",
                         index=2,
                     ),
                     CheckmarkButton(
                         text="Italiano",
                         selected=selected == "italian",
+                        checked=self.settings.language == "italian",
                         index=3,
                     ),
                     CheckmarkButton(
                         text="Français",
                         selected=selected == "french",
+                        checked=self.settings.language == "french",
                         index=4,
                     ),
                     CheckmarkButton(
                         text="한국어",
                         selected=selected == "korean",
+                        checked=self.settings.language == "korean",
                         index=5,
                     ),
                     CheckmarkButton(
                         text="Русский",
                         selected=selected == "russian",
+                        checked=self.settings.language == "russian",
                         index=6,
                     ),
                 ]
@@ -137,4 +147,4 @@ class LanguageScreen(Component):
         if selected == "back":
             router.go_back()
         else:
-            router.navigate_to(selected)
+            self.settings.language = selected

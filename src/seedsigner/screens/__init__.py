@@ -1,5 +1,5 @@
 from .power import PowerScreen, RestartingScreen, PowerOffScreen
-from .main_menu import MainScreen
+from .main_menu import MainMenuScreen
 from .settings import SettingsScreen, LanguageScreen
 from .scan import ScanScreen
 from .seeds import SeedsScreen
