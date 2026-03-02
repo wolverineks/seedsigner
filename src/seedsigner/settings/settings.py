@@ -1,51 +1,69 @@
-from dataclasses import asdict, dataclass
-from typing import Any, Optional
+from typing import Any
 
+from .default_settings import create_default_settings
 
-@dataclass
-class SettingsValues:
-    language: str = "english"
-    persistent_settings: bool = True
-    coordination_software: str = "sparrow"
-    denomination_display: str = "btc"
-
-
-DEFAULT_SETTINGS: dict[str, Any] = asdict(SettingsValues())
+from .coordination_software import CoordinationSoftwareSelection
+from .denomination_display import DenominationDisplayOption
+from .language import LanguageValue
+from .persistent_settings import PersistentSettingsValue
+from .schema import Schema, COERCE, SettingKey
 
 
 class Settings:
-    def __init__(self, initial: Optional[dict[str, Any]] = None) -> None:
-        self.values = SettingsValues()
+    def __init__(self):
+        self.values: Schema = create_default_settings()
         self.dirty = True
-        if initial:
-            self.load(initial)
 
+    ##### LANGUAGE ###############
     @property
-    def language(self) -> str:
-        self.dirty = False
-        return self.values.language
+    def language(self):
+        return self.values["language"]
 
     @language.setter
-    def language(self, value: str) -> None:
+    def language(self, value: LanguageValue):
         self.set("language", value)
 
-    def set(self, key: str, value: Any) -> None:
-        if not hasattr(self.values, key):
-            raise AttributeError(f"Unknown setting: {key}")
-        setattr(self.values, key, value)
+    ##### PERSISTENT SETTINGS ##########
+    @property
+    def persistent_settings(self):
+        return self.values["persistent_settings"]
+
+    @persistent_settings.setter
+    def persistent_settings(self, value: PersistentSettingsValue):
+        self.set("persistent_settings", value)
+
+    ##### COORDINATION SOFTWARE ##########
+    @property
+    def coordination_software(self):
+        return self.values["coordination_software"]
+
+    @coordination_software.setter
+    def coordination_software(self, value: CoordinationSoftwareSelection):
+        self.set("coordination_software", value)
+
+    ##### DENOMINATION DISPLAY ##########
+    @property
+    def denomination_display(self):
+        return self.values["denomination_display"]
+
+    @denomination_display.setter
+    def denomination_display(self, value: DenominationDisplayOption) -> None:
+        self.set("denomination_display", value)
+
+    ##### HELPER METHODS ##########
+    def set(self, key: SettingKey, value: Any):
+        self.values[key] = COERCE[key](value)
+
         self.dirty = True
         self.save()
 
-    def has_changed(self) -> bool:
+    def has_changed(self):
         dirty = self.dirty
         self.dirty = False
         return dirty
 
-    def load(self, loaded: Optional[dict[str, Any]] = None) -> None:
-        values = DEFAULT_SETTINGS if loaded is None else loaded
-        for key, value in values.items():
-            if hasattr(self.values, key):
-                setattr(self.values, key, value)
+    def load(self) -> None:
+        self.values = create_default_settings()
         self.dirty = True
 
     def save(self) -> None:

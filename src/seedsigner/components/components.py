@@ -246,6 +246,72 @@ class CheckmarkButton(Component):
 
 
 @dataclass
+class CheckboxButton(Component):
+    height = 30
+    width = Dimensions.width - Body.padding - Body.padding
+    x = Body.padding
+
+    text: str = ""
+    index: int = 0
+    selected: bool = False
+    checked: bool = False
+
+    def render(self) -> Node:
+        size = 24
+        font = ImageFont.load_default(size=size)
+        button_y = (
+            Header.height + Body.padding + self.index * (Button.height + Body.padding)
+        )
+        ascent = font.getmetrics()[0]
+
+        text_y = button_y + int((Button.height - ascent) / 2)
+
+        font, code = get_icon_info(
+            "checkbox-checked" if self.checked else "checkbox-unchecked", 16
+        )
+        ascent = font.getmetrics()[0]
+
+        fill = "white"
+        if self.selected:
+            fill = "black"
+        if self.checked and not self.selected:
+            fill = "green"
+
+        checkbox_y = button_y + int((Button.height - ascent) / 2)
+        checkbox = Text(
+            x=Button.x + button_padding,
+            y=checkbox_y,
+            text=code,
+            fill=fill,
+            size=16,
+            font=font,
+        )
+
+        return [
+            Rect(
+                x=Button.x,
+                y=button_y,
+                w=Button.width,
+                h=Button.height,
+                fill=Colors.button.focused.background
+                if self.selected
+                else Colors.button.background,
+                radius=10,
+            ),
+            checkbox,
+            Text(
+                x=Button.x + button_padding + 24,
+                y=text_y,
+                text=self.text,
+                fill=Colors.button.focused.text
+                if self.selected
+                else Colors.button.text,
+                size=18,
+            ),
+        ]
+
+
+@dataclass
 class LargeButton(Component):
     columns = 2
     rows = 2
@@ -374,6 +440,14 @@ def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
         "checkmark": (
             font_awesome_path,
             "\uf00c",
+        ),
+        "checkbox-checked": (
+            seedsigner_icons_path,
+            "\ue907",
+        ),
+        "checkbox-unchecked": (
+            seedsigner_icons_path,
+            "\ue906",
         ),
     }
 

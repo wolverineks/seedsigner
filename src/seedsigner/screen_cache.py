@@ -17,6 +17,9 @@ from seedsigner.screens import (
     RestartingScreen,
     PowerOffScreen,
     LanguageScreen,
+    DenominationDisplayScreen,
+    PersistentSettingsScreen,
+    CoordinationSoftwareScreen,
 )
 
 screen_classes: dict[str, type[Any]] = {
@@ -29,6 +32,9 @@ screen_classes: dict[str, type[Any]] = {
     "restart": RestartingScreen,
     "power-off": PowerOffScreen,
     "language": LanguageScreen,
+    "coordination_software": CoordinationSoftwareScreen,
+    "persistent_settings": PersistentSettingsScreen,
+    "denomination_display": DenominationDisplayScreen,
 }
 
 not_found_screen = NotFoundScreen(store=store, router=router, settings=settings)

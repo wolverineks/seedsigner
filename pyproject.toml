@@ -12,7 +12,7 @@ classifiers = [
 description = "Build an offline, airgapped Bitcoin signing device for less than $50!"
 name = "seedsigner"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 version = "0.8.6"
 
 [project.urls]
@@ -60,6 +60,12 @@ branch = true
 testpaths = ["tests", "src/seedsigner/loopyUI"]
 pythonpath = ["src"]
 log_level = "DEBUG"
+
+[tool.pyright]
+pythonVersion = "3.11"
+
+[tool.mypy]
+python_version = "3.11"
 
 [tool.setuptools]
 include-package-data = true

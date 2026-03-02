@@ -1,6 +1,7 @@
 from typing import Literal, TYPE_CHECKING
 
 from seedsigner.components.components import CheckmarkButton
+from seedsigner.settings.language import LANGUAGE_OPTIONS
 
 
 if TYPE_CHECKING:
@@ -128,6 +129,11 @@ class LanguageScreen(Component):
                 ]
             ),
         ]
+
+    def handle_on_focus(self) -> None:
+        language = self.settings.language
+        if language in LANGUAGE_OPTIONS:
+            self.set_selected(language)
 
     def handle_input(self, input: HWButtonInput):
         if input == "select":
