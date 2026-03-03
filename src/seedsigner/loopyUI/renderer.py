@@ -12,7 +12,6 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(canvas)
 
     def recurse(node: Any) -> None:
-        # print("node", node)
         if isinstance(node, list):
             for child in node:
                 recurse(child)
@@ -42,8 +41,7 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
         elif node is None:
             pass
         else:
-            print("unrecognized node", node)
-            raise
+            raise ValueError(f"unrecognized node: {node}")
 
     recurse(component)
     return canvas
