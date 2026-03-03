@@ -449,6 +449,10 @@ def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
             seedsigner_icons_path,
             "\ue906",
         ),
+        "sdcard": (
+            seedsigner_icons_path,
+            "\ue91f",
+        ),
     }
 
     code = icon_codes.get(icon)
