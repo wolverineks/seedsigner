@@ -6,9 +6,9 @@ from seedsigner.settings import settings
 from seedsigner.store import store
 from seedsigner.screen_cache import screen_cache
 
-Timer(1, lambda: toast.show("SD card inserted")).start()
-Timer(8, lambda: toast.show("You can remove the SD card now")).start()
-Timer(15, lambda: toast.show("SD card removed")).start()
+# Timer(1, lambda: toast.show("SD card inserted")).start()
+# Timer(8, lambda: toast.show("You can remove the SD card now")).start()
+# Timer(15, lambda: toast.show("SD card removed")).start()
 
 
 class App:

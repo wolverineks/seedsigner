@@ -1,7 +1,7 @@
 from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from seedsigner.router import Route, Router
+    from seedsigner.router import Router
     from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
@@ -47,14 +47,6 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
         "up": "address_explorer",
         "left": "back",
     },
-}
-
-SELECT_ROUTES: dict[NavKey, "Route"] = {
-    "new_seed_camera": "new_seed_camera",
-    "new_seed_dice": "new_seed_dice",
-    "calculate_checksum": "calculate_checksum",
-    "address_explorer": "address_explorer",
-    "verify_address": "verify_address",
 }
 
 
@@ -121,6 +113,4 @@ class ToolsScreen(Component):
             self.router.go_back()
             return
 
-        route = SELECT_ROUTES.get(selected)
-        if route is not None:
-            self.router.navigate_to(route)
+        self.router.navigate_to(selected)

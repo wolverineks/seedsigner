@@ -21,6 +21,10 @@ Route = Literal[
     "coordination_software",
     "persistent_settings",
     "denomination_display",
+    "donate",
+    "persistent_settings",
+    "advanced",
+    "i/o_test",
     "not_found",
 ]
 
@@ -42,6 +46,10 @@ ROUTES: tuple[Route, ...] = (
     "coordination_software",
     "persistent_settings",
     "denomination_display",
+    "donate",
+    "persistent_settings",
+    "advanced",
+    "i/o_test",
     "not_found",
 )
 

@@ -9,7 +9,7 @@ from seedsigner.settings import settings
 from seedsigner.screens import (
     MainMenuScreen,
     ScanScreen,
-    SettingsScreen,
+    SettingsMenuScreen,
     ToolsScreen,
     SeedsScreen,
     NotFoundScreen,
@@ -24,7 +24,7 @@ from seedsigner.screens import (
 
 screen_classes: dict[str, type[Any]] = {
     "main": MainMenuScreen,
-    "settings": SettingsScreen,
+    "settings": SettingsMenuScreen,
     "tools": ToolsScreen,
     "scan": ScanScreen,
     "seeds": SeedsScreen,

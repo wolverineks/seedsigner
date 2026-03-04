@@ -1,7 +1,7 @@
 from .power import PowerScreen, RestartingScreen, PowerOffScreen
 from .main_menu import MainMenuScreen
 from .settings import (
-    SettingsScreen,
+    SettingsMenuScreen,
     LanguageScreen,
     DenominationDisplayScreen,
     PersistentSettingsScreen,

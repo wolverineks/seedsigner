@@ -1,4 +1,4 @@
-from .settings_menu import SettingsScreen
+from .settings_menu import SettingsMenuScreen
 from .language import LanguageScreen
 from .denomination_display import DenominationDisplayScreen
 from .persistent_settings import PersistentSettingsScreen
