@@ -18,11 +18,11 @@
 - [x] async example (toast notification) 
 - [ ] paint on rpi
 - [ ] perf test rpi
-- [ ] scrollable list
+- [x] scrollable list
 - [ ] camera
-- [ ] icons
+- [x] icons
 - [ ] fonts
-- [ ] settings in memory
+- [x] settings in memory
 - [ ] better types
 - [ ] better imports
 - [ ] more screens
@@ -32,11 +32,11 @@
 
 - [ ] **Power Screens**
   - [x] Power Options
-  - [ ] Restart
-  - [ ] Power Off
+  - [x] Restart
+  - [x] Power Off
 
 - [ ] **Seed Screens**
-  - [ ] Seeds Menu (index)
+  - [x] Seeds Menu (index)
   - [ ] Load Seed (new)
     - [ ] Seed Mnemonic Entry
     - [ ] Seed Mnemonic Invalid
@@ -79,11 +79,11 @@
 
 
 - [ ] **Settings Screens**
-  - [ ] Settings Menu
-  - [ ] Language
-  - [ ] Persistent Settings
-  - [ ] Coordinator
-  - [ ] Display Denomination
+  - [x] Settings Menu
+  - [x] Language
+  - [x] Persistent Settings
+  - [x] Coordinator
+  - [x] Display Denomination
   - [ ] Advanced Settings Menu
     - [ ] Network
     - [ ] QR Code Density

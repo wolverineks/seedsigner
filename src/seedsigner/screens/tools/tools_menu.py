@@ -50,7 +50,7 @@ NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
 }
 
 
-class ToolsScreen(Component):
+class ToolsMenuScreen(Component):
     def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
         self.store = store

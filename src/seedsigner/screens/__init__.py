@@ -9,5 +9,5 @@ from .settings import (
 )
 from .scan import ScanScreen
 from .seeds import SeedsScreen
-from .tools import ToolsScreen
+from .tools import ToolsMenuScreen
 from .not_found import NotFoundScreen

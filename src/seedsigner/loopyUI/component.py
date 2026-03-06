@@ -58,7 +58,7 @@ class Component:
     def hasnt_changed(self) -> bool:
         return not self.has_changed()
 
-    def render(self) -> None:
+    def render(self) -> None | Node | List[Node]:
         self.dirty = False
         return None
 

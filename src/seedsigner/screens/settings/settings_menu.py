@@ -1,6 +1,5 @@
-from typing import Any, Literal, TYPE_CHECKING, cast
+from typing import Literal, TYPE_CHECKING, NamedTuple
 
-from seedsigner.router import Route
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
@@ -12,8 +11,8 @@ from seedsigner.components import (
     Header,
     BackButton,
     Button,
-    ScrollableList,
-    ScrollableListWindow,
+    ScrollList,
+    ScrollListWindow,
 )
 from seedsigner.loopyUI import Component, Node
 
@@ -29,17 +28,23 @@ MenuKey = Literal[
 ]
 NavKey = Literal["back"] | MenuKey
 
-MENU_ITEMS: list[tuple[MenuKey, str]] = [
-    ("language", "Language"),
-    ("persistent_settings", "Persistent Settings"),
-    ("coordination_software", "Coordinator software"),
-    ("denomination_display", "Denomination display"),
-    ("advanced", "Advanced"),
-    ("i/o_test", "I/O test"),
-    ("donate", "Donate"),
+
+class MenuItem(NamedTuple):
+    key: MenuKey
+    label: str
+
+
+MENU_ITEMS: list[MenuItem] = [
+    MenuItem("language", "Language"),
+    MenuItem("persistent_settings", "Persistent Settings"),
+    MenuItem("coordination_software", "Coordinator software"),
+    MenuItem("denomination_display", "Denomination display"),
+    MenuItem("advanced", "Advanced"),
+    MenuItem("i/o_test", "I/O test"),
+    MenuItem("donate", "Donate"),
 ]
 
-MENU_KEYS: list[MenuKey] = [key for key, _ in MENU_ITEMS]
+MENU_KEYS: list[MenuKey] = [item.key for item in MENU_ITEMS]
 
 
 class SettingsMenuScreen(Component):
@@ -48,11 +53,10 @@ class SettingsMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected = MENU_KEYS[0]
-        self.scrollable_list_window = ScrollableListWindow(
-            visible_count=5,
-            item_count=7,
+        self.selected = MENU_ITEMS[0].key
+        self.window = ScrollListWindow(
             on_blur=lambda: self.set_selected("back"),
+            visible_count=5,
         )
 
     def render(self) -> Node:
@@ -64,78 +68,51 @@ class SettingsMenuScreen(Component):
                 title="Settings",
             ),
             Body(
-                *ScrollableList(
-                    window=self.scrollable_list_window,
-                    items=[
-                        Button(
-                            text="Language",
-                            selected=selected == "language",
-                            index=0,
-                        ),
-                        Button(
-                            text="Persistent Settings",
-                            selected=selected == "persistent_settings",
-                            index=1,
-                        ),
-                        Button(
-                            text="Coordinator software",
-                            selected=selected == "coordination_software",
-                            index=2,
-                        ),
-                        Button(
-                            text="Denomination display",
-                            selected=selected == "denomination_display",
-                            index=3,
-                        ),
-                        Button(
-                            text="Advanced",
-                            selected=selected == "advanced",
-                            index=4,
-                        ),
-                        Button(
-                            text="I/O test",
-                            selected=selected == "i/o_test",
-                            index=5,
-                        ),
-                        Button(
-                            text="Donate",
-                            selected=selected == "donate",
-                            index=6,
-                        ),
-                    ],
+                *ScrollList(
+                    window=self.window,
+                    render_item=self.render_item,
+                    items=MENU_ITEMS,
                 )
             ),
         ]
 
+    def render_item(self, item: MenuItem, index: int):
+        selected = self.selected
+
+        return Button(
+            text=item.label,
+            selected=selected == item.key,
+            index=index,
+        )
+
     def handle_input(self, input: HWButtonInput):
-        print(f"Input: {input}, Selected: {self.selected}")
-        if input == "select":
-            self.handle_select()
+        #### BACK BUTTON ####
+        if self.selected == "back":
+            if input in ["select", "left"]:
+                self.router.go_back()
 
-        elif self.selected == "back":
-            if input == "left":
-                self.handle_select()
-            elif input == "down" or input == "right":
-                self.set_selected(NAV_MAP["back"]["down"])
-                self.scrollable_list_window.reset()
+            elif NAV_MAP["back"].get(input):
+                self.set_selected(NAV_MAP["back"][input])
+                self.window.focus()
 
+        #### MENU KEYS ####
         elif self.selected in MENU_KEYS:
-            if input == "right":
-                self.handle_select()
+            if input in ["select", "right"]:
+                self.router.navigate_to(self.selected)
+
+            elif input == "left":
+                self.set_selected("back")
+
             else:
                 if NAV_MAP[self.selected].get(input):
                     self.set_selected(NAV_MAP[self.selected][input])
-                    self.scrollable_list_window.handle_input(input)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            router.navigate_to(selected)
+                    self.window.handle_input(
+                        selected_index=(
+                            MENU_KEYS.index(self.selected)
+                            if self.selected in MENU_KEYS
+                            else -1
+                        ),
+                    )
 
 
 NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {

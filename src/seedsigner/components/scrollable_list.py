@@ -1,79 +1,44 @@
-from typing import Any, Literal
-
-from seedsigner.components.components import Button
+from typing import Callable, List, Any
 
 
-class ScrollableListWindow:
-    def __init__(self, on_blur: Any, item_count: int, visible_count: int):
-        self.visible_count = visible_count
+class ScrollListWindow:
+    def __init__(
+        self,
+        on_blur: Callable,
+        visible_count: int,
+    ):
+        super().__init__()
         self.on_blur = on_blur
-        self.item_count = item_count
+        self.visible_count = visible_count
+        self.window = (0, visible_count)
 
-        self.selected_index = 0
-        self.window = (0, visible_count - 1)
+    def handle_input(self, selected_index: int):
+        if self.start_of_list(selected_index):
+            self.on_blur()
+            return
 
-    def handle_input(self, input: Literal["up", "down", "left"]):
-        match input:
-            case "left":
-                self.on_blur()
-                return
+        self.sync_window(selected_index)
 
-            case "up":
-                if self.start_of_list():
-                    self.on_blur()
-                    return
+    def sync_window(self, selected_index: int):
+        if selected_index <= self.window[0]:
+            self.window = (
+                selected_index,
+                selected_index + self.visible_count,
+            )
+        elif selected_index >= self.window[1]:
+            self.window = (
+                selected_index - self.visible_count + 1,
+                selected_index + 1,
+            )
 
-                if self.start_of_window():
-                    self.move_window_up()
+    def start_of_list(self, selected_index: int):
+        return selected_index < 0
 
-                self.selected_index -= 1
-
-            case "down":
-                if self.end_of_list():
-                    return
-
-                if self.end_of_window():
-                    self.move_window_down()
-
-                self.selected_index += 1
-
-    def move_window_up(self):
-        self.window = (
-            self.window[0] - 1,
-            self.window[1] - 1,
-        )
-
-    def move_window_down(self):
-        self.window = (
-            self.window[0] + 1,
-            self.window[1] + 1,
-        )
-
-    def start_of_list(self):
-        return self.selected_index == 0
-
-    def end_of_list(self):
-        return self.selected_index == self.item_count - 1
-
-    def start_of_window(self):
-        return self.selected_index == self.window[0]
-
-    def end_of_window(self):
-        return self.selected_index == self.window[1]
-
-    def reset(self):
-        self.selected_index = 0
-        self.window = (0, self.visible_count - 1)
+    def focus(self):
+        self.window = (0, self.visible_count)
 
 
-def ScrollableList(window: ScrollableListWindow, items: list[Any]):
-    visible_items = items[window.window[0] : window.window[1] + 1]
+def ScrollList(items: List[Any], window: ScrollListWindow, render_item):
+    visible_items = items[window.window[0] : window.window[1]]
 
-    return [
-        Button(
-            text=item.text,
-            selected=item.selected,
-            index=index,
-        )
-        for index, item in enumerate(visible_items)
-    ]
+    return [render_item(item, index) for index, item in enumerate(visible_items)]
