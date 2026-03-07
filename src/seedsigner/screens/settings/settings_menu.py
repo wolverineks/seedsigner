@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING, NamedTuple
+from typing import Literal, TYPE_CHECKING, NamedTuple, Tuple
 
 
 if TYPE_CHECKING:
@@ -45,6 +45,9 @@ MENU_ITEMS: list[MenuItem] = [
 ]
 
 MENU_KEYS: list[MenuKey] = [item.key for item in MENU_ITEMS]
+KEY_TO_INDEX: dict[MenuKey, int] = {
+    item.key: index for index, item in enumerate(MENU_ITEMS)
+}
 
 
 class SettingsMenuScreen(Component):
@@ -53,11 +56,8 @@ class SettingsMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected = MENU_ITEMS[0].key
-        self.window = ScrollListWindow(
-            on_blur=lambda: self.set_selected("back"),
-            visible_count=5,
-        )
+        self.selected: MenuKey | Literal["back"] = MENU_ITEMS[0].key
+        self.window = ScrollListWindow(visible_count=5)
 
     def render(self) -> Node:
         selected = self.selected
@@ -68,7 +68,7 @@ class SettingsMenuScreen(Component):
                 title="Settings",
             ),
             Body(
-                *ScrollList(
+                ScrollList(
                     window=self.window,
                     render_item=self.render_item,
                     items=MENU_ITEMS,
@@ -86,72 +86,84 @@ class SettingsMenuScreen(Component):
         )
 
     def handle_input(self, input: HWButtonInput):
-        #### BACK BUTTON ####
-        if self.selected == "back":
-            if input in ["select", "left"]:
+        if input == "select":
+            self.handle_select()
+            return
+
+        action = NAV_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
                 self.router.go_back()
-
-            elif NAV_MAP["back"].get(input):
-                self.set_selected(NAV_MAP["back"][input])
-                self.window.focus()
-
-        #### MENU KEYS ####
-        elif self.selected in MENU_KEYS:
-            if input in ["select", "right"]:
-                self.router.navigate_to(self.selected)
-
-            elif input == "left":
-                self.set_selected("back")
-
             else:
-                if NAV_MAP[self.selected].get(input):
-                    self.set_selected(NAV_MAP[self.selected][input])
-                    self.window.handle_input(
-                        selected_index=(
-                            MENU_KEYS.index(self.selected)
-                            if self.selected in MENU_KEYS
-                            else -1
-                        ),
-                    )
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)  # set_focus
+            if key != "back":
+                self.window.update(selected_index=KEY_TO_INDEX[key])
+
+    def handle_select(self):
+        selected = self.selected
+        router = self.router
+
+        print(f"Selected {selected}")
+        if selected == "back":
+            router.go_back()
+        else:
+            router.navigate_to(selected)
 
 
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+NAV_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": "language",
-        "down": "language",
+        "up": None,
+        "down": ("focus", "language"),
+        "right": ("focus", "language"),
+        "left": ("navigate", "back"),
     },
     "language": {
-        "up": "back",
-        "down": "persistent_settings",
-        "left": "back",
+        "up": ("focus", "back"),
+        "down": ("focus", "persistent_settings"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "language"),
     },
     "persistent_settings": {
-        "up": "language",
-        "down": "coordination_software",
-        "left": "back",
+        "up": ("focus", "language"),
+        "down": ("focus", "coordination_software"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "persistent_settings"),
     },
     "coordination_software": {
-        "up": "persistent_settings",
-        "down": "denomination_display",
-        "left": "back",
+        "up": ("focus", "persistent_settings"),
+        "down": ("focus", "denomination_display"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "coordination_software"),
     },
     "denomination_display": {
-        "up": "coordination_software",
-        "down": "advanced",
-        "left": "back",
+        "up": ("focus", "coordination_software"),
+        "down": ("focus", "advanced"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "denomination_display"),
     },
     "advanced": {
-        "up": "denomination_display",
-        "down": "i/o_test",
-        "left": "back",
+        "up": ("focus", "denomination_display"),
+        "down": ("focus", "i/o_test"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "advanced"),
     },
     "i/o_test": {
-        "up": "advanced",
-        "down": "donate",
-        "left": "back",
+        "up": ("focus", "advanced"),
+        "down": ("focus", "donate"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "i/o_test"),
     },
     "donate": {
-        "up": "i/o_test",
-        "left": "back",
+        "up": ("focus", "i/o_test"),
+        "down": None,
+        "left": ("focus", "back"),
+        "right": ("navigate", "donate"),
     },
 }

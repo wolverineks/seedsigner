@@ -1,7 +1,8 @@
 from typing import Literal
 
-from seedsigner.components import Body, Header, BackButton
+from seedsigner.components import Body, Header, BackButton, Text
 from seedsigner.loopyUI import Component, Node
+from seedsigner.dimensions import Dimensions
 
 from typing import TYPE_CHECKING
 
@@ -34,7 +35,18 @@ class PowerOffScreen(Component):
                 left=BackButton(selected=selected == "back"),
                 title="Just Unplug It",
             ),
-            Body(),
+            Body(
+                Text(
+                    x=int(Dimensions.width / 2) - 80,
+                    y=int(Dimensions.height / 2) - 24,
+                    text="It is safe to disconnect",
+                ),
+                Text(
+                    x=int(Dimensions.width / 2) - 60,
+                    y=int(Dimensions.height / 2),
+                    text="power at any time.",
+                ),
+            ),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
