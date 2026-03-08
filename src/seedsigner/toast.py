@@ -3,7 +3,7 @@ import time
 from dataclasses import dataclass
 from typing import Optional
 
-from seedsigner.components import Dimensions
+from seedsigner.dimensions import Dimensions
 from seedsigner.loopyUI import Component, Rect, Text
 from seedsigner.components import get_icon_info
 

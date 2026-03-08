@@ -1,25 +1,61 @@
-from dataclasses import replace
+from PIL import ImageFont
+from typing import Tuple
 
-from seedsigner.loopyUI import Component, Rect, Text, Node
 
+def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
+    fonts_path = "./src/seedsigner/resources/fonts/"
+    seedsigner_icons_path = f"{fonts_path}seedsigner-icons.otf"
+    font_awesome_path = f"{fonts_path}Font_Awesome_6_Free-Solid-900.otf"
 
-def _offset_node(node: Node, dx: int, dy: int) -> Node:
-    if node is None:
-        return None
+    icon_codes = {
+        "scan": (
+            seedsigner_icons_path,
+            "\ue900",
+        ),
+        "seeds": (
+            seedsigner_icons_path,
+            "\ue901",
+        ),
+        "gear": (
+            seedsigner_icons_path,
+            "\ue902",
+        ),
+        "tools": (
+            seedsigner_icons_path,
+            "\ue903",
+        ),
+        "back": (
+            seedsigner_icons_path,
+            "\ue904",
+        ),
+        "power": (
+            seedsigner_icons_path,
+            "\ue910",
+        ),
+        "restart": (
+            seedsigner_icons_path,
+            "\ue911",
+        ),
+        "checkmark": (
+            font_awesome_path,
+            "\uf00c",
+        ),
+        "checkbox-checked": (
+            seedsigner_icons_path,
+            "\ue907",
+        ),
+        "checkbox-unchecked": (
+            seedsigner_icons_path,
+            "\ue906",
+        ),
+        "sdcard": (
+            seedsigner_icons_path,
+            "\ue91f",
+        ),
+    }
 
-    if isinstance(node, Rect):
-        return replace(node, x=node.x + dx, y=node.y + dy)
+    code = icon_codes.get(icon)
+    if code is None:
+        raise ValueError(f"Unknown icon: {icon}")
 
-    if isinstance(node, Text):
-        return replace(node, x=node.x + dx, y=node.y + dy)
-
-    if isinstance(node, Component):
-        return _offset_node(node.render(), dx, dy)
-
-    if isinstance(node, list):
-        return [_offset_node(child, dx, dy) for child in node]
-
-    if isinstance(node, tuple):
-        return [_offset_node(child, dx, dy) for child in node]
-
-    raise ValueError(f"unrecognized node: {node}")
+    return ImageFont.truetype(code[0], size), code[1]

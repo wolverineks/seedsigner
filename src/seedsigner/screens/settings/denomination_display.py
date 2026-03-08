@@ -1,6 +1,6 @@
 from typing import Literal, TYPE_CHECKING
 
-from seedsigner.components.components import CheckmarkButton
+from seedsigner.components import CheckmarkButton
 
 
 if TYPE_CHECKING:

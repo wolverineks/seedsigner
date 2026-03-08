@@ -1,7 +1,7 @@
 from typing import Literal, Tuple
 
-from seedsigner.components import Body, Header, BackButton, Text
-from seedsigner.loopyUI import Component, Node
+from seedsigner.components import Body, Header, BackButton
+from seedsigner.loopyUI import Component, Node, Text
 from seedsigner.loopyUI.events.types import HWButtonInput
 from seedsigner.dimensions import Dimensions
 

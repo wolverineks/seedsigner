@@ -1,6 +1,6 @@
 from typing import Literal, TYPE_CHECKING
 
-from seedsigner.components.components import CheckboxButton
+from seedsigner.components import CheckboxButton
 from seedsigner.settings.coordination_software import (
     COORDINATION_SOFTWARE_OPTIONS,
 )

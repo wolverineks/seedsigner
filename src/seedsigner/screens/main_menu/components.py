@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from seedsigner.components import Header, Dimensions, Body, LargeButton
+from seedsigner.components import Header, Body, LargeButton
+from seedsigner.dimensions import Dimensions
 
 
 @dataclass

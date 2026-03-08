@@ -59,9 +59,11 @@ class RPI:
 
 class Desktop:
     def __init__(self) -> None:
+        scale = 4
         pygame.init()
+        self.scale = scale
         self.win: pygame.Surface = pygame.display.set_mode(
-            (Dimensions.width, Dimensions.height)
+            (Dimensions.width * self.scale, Dimensions.height * self.scale)
         )
         self.clock: pygame.time.Clock = pygame.time.Clock()
 
@@ -78,7 +80,11 @@ class Desktop:
         # print("FROM_STRING: ", time.time() - before)
 
         before = time.time()
-        self.win.blit(surf, (0, 0))
+        scaled_surf: pygame.Surface = pygame.transform.scale(
+            surf,
+            (Dimensions.width * self.scale, Dimensions.height * self.scale),
+        )
+        self.win.blit(scaled_surf, (0, 0))
         # print("BLIT: ", time.time() - before)
 
         before = time.time()

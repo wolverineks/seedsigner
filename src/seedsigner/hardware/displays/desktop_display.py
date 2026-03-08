@@ -10,10 +10,13 @@ DARK_BLUE = (0, 0, 80)
 class DesktopDisplay:
     """A pygame-backed display used when running SeedSigner on a PC."""
 
-    def __init__(self, width: int = 240, height: int = 240, scale: int = 1):
+    def __init__(self, width: int = 240, height: int = 240, scale: int = 4):
         pygame.init()
+        self.width = width
+        self.height = height
+        self.scale = scale
         self.win: pygame.Surface = pygame.display.set_mode(
-            (Dimensions.width, Dimensions.height)
+            (self.width * self.scale, self.height * self.scale)
         )
         self.clock: pygame.time.Clock = pygame.time.Clock()
 
@@ -22,7 +25,11 @@ class DesktopDisplay:
         surf: pygame.Surface = pygame.image.fromstring(
             data, (Dimensions.width, Dimensions.height), "RGB"
         )
-        self.win.blit(surf, (0, 0))
+        scaled_surf: pygame.Surface = pygame.transform.scale(
+            surf,
+            (self.width * self.scale, self.height * self.scale),
+        )
+        self.win.blit(scaled_surf, (0, 0))
         pygame.display.flip()
 
         self.clock.tick(60)
