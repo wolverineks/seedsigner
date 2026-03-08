@@ -5,7 +5,13 @@ from typing import Union, List, TypeAlias, Literal, Any
 
 DrawPrimitive: TypeAlias = Union["Rect", "Text"]
 Node: TypeAlias = Union[
-    DrawPrimitive, "Component", None, List["Node"], tuple["Node", ...]
+    DrawPrimitive,
+    "Group",
+    "Box",
+    "Component",
+    None,
+    List["Node"],
+    tuple["Node", ...],
 ]
 
 
@@ -74,7 +80,7 @@ class Rect:
     h: int = 240
     fill: str = "black"
     outline: str | None = None
-    width: int = 1
+    width: int = 0
     radius: int = 0
 
 
@@ -87,3 +93,25 @@ class Text:
     fill: str | None = "white"
     size: int | None = 16
     font: Any | None = None
+
+
+@dataclass(frozen=True)
+class Group:
+    type: Literal["group"] = "group"
+    x: int = 0
+    y: int = 0
+    children: tuple[Node, ...] = ()
+
+
+@dataclass(frozen=True)
+class Box:
+    type: Literal["box"] = "box"
+    x: int = 0
+    y: int = 0
+    w: int = 240
+    h: int = 240
+    fill: str = "black"
+    outline: str | None = None
+    width: int = 0
+    radius: int = 0
+    children: tuple[Node, ...] = ()

@@ -3,9 +3,8 @@ import time
 from dataclasses import dataclass
 from typing import Optional
 
-from seedsigner.components import Rect, Dimensions
-from seedsigner.loopyUI import Component
-from seedsigner.loopyUI.renderer import Text
+from seedsigner.components import Dimensions
+from seedsigner.loopyUI import Component, Rect, Text
 from seedsigner.components import get_icon_info
 
 OUTLINE_WIDTH = 1

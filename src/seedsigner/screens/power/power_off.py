@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Tuple
 
 from seedsigner.components import Body, Header, BackButton, Text
 from seedsigner.loopyUI import Component, Node
@@ -12,12 +12,6 @@ if TYPE_CHECKING:
     from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
-ButtonId = Literal["back", "power-off", "restart"]
-
-nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
-    "back": {},
-}
-
 
 class PowerOffScreen(Component):
     def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
@@ -25,7 +19,7 @@ class PowerOffScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: ButtonId = "back"
+        self.selected: NavKey = "back"
 
     def render(self) -> Node:
         selected = self.selected
@@ -38,26 +32,34 @@ class PowerOffScreen(Component):
             Body(
                 Text(
                     x=int(Dimensions.width / 2) - 80,
-                    y=int(Dimensions.height / 2) - 24,
+                    y=48,
                     text="It is safe to disconnect",
                 ),
                 Text(
                     x=int(Dimensions.width / 2) - 60,
-                    y=int(Dimensions.height / 2),
+                    y=72,
                     text="power at any time.",
                 ),
             ),
         ]
 
-    def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in nav_map[selected]:
-                self.set_selected(nav_map[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+            else:
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -69,3 +71,16 @@ class PowerOffScreen(Component):
 
     def handle_shutdown(self):
         print("Shutting down...")
+
+
+NavKey = Literal["back"]
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+    "back": {
+        "up": None,
+        "down": None,
+        "left": ("navigate", "back"),
+        "right": None,
+    },
+}
