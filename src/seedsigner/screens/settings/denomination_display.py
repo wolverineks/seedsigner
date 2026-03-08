@@ -65,12 +65,18 @@ class DenominationDisplayScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in nav_map[selected]:
-                self.set_selected(nav_map[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -91,28 +97,31 @@ NavKey = Literal[
     "back",
 ]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+Action = tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": "btc",
-        "down": "btc",
+        "right": ("focus", "btc"),
+        "down": ("focus", "btc"),
+        "left": ("navigate", "back"),
     },
     "btc": {
-        "down": "sats",
-        "up": "back",
-        "left": "back",
+        "down": ("focus", "sats"),
+        "up": ("focus", "back"),
+        "left": ("focus", "back"),
     },
     "sats": {
-        "up": "btc",
-        "down": "threshold",
-        "left": "back",
+        "up": ("focus", "btc"),
+        "down": ("focus", "threshold"),
+        "left": ("focus", "back"),
     },
     "threshold": {
-        "up": "sats",
-        "down": "hybrid",
-        "left": "back",
+        "up": ("focus", "sats"),
+        "down": ("focus", "hybrid"),
+        "left": ("focus", "back"),
     },
     "hybrid": {
-        "up": "threshold",
-        "left": "back",
+        "up": ("focus", "threshold"),
+        "left": ("focus", "back"),
     },
 }

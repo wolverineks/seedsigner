@@ -57,12 +57,18 @@ class PersistentSettingsScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in nav_map[selected]:
-                self.set_selected(nav_map[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -81,18 +87,21 @@ NavKey = Literal[
     "back",
 ]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+Action = tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": "enabled",
-        "down": "enabled",
+        "right": ("focus", "enabled"),
+        "down": ("focus", "enabled"),
+        "left": ("navigate", "back"),
     },
     "enabled": {
-        "down": "disabled",
-        "up": "back",
-        "left": "back",
+        "down": ("focus", "disabled"),
+        "up": ("focus", "back"),
+        "left": ("focus", "back"),
     },
     "disabled": {
-        "up": "enabled",
-        "left": "back",
+        "up": ("focus", "enabled"),
+        "left": ("focus", "back"),
     },
 }

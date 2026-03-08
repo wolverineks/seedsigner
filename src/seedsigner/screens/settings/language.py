@@ -86,12 +86,18 @@ class LanguageScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in nav_map[selected]:
-                self.set_selected(nav_map[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -115,43 +121,46 @@ NavKey = Literal[
     "back",
 ]
 
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+Action = tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": "english",
-        "down": "english",
+        "right": ("focus", "english"),
+        "down": ("focus", "english"),
+        "left": ("navigate", "back"),
     },
     "english": {
-        "down": "spanish",
-        "up": "back",
-        "left": "back",
+        "down": ("focus", "spanish"),
+        "up": ("focus", "back"),
+        "left": ("focus", "back"),
     },
     "spanish": {
-        "up": "english",
-        "down": "japanese",
-        "left": "back",
+        "up": ("focus", "english"),
+        "down": ("focus", "japanese"),
+        "left": ("focus", "back"),
     },
     "japanese": {
-        "up": "spanish",
-        "down": "italian",
-        "left": "back",
+        "up": ("focus", "spanish"),
+        "down": ("focus", "italian"),
+        "left": ("focus", "back"),
     },
     "italian": {
-        "up": "japanese",
-        "down": "french",
-        "left": "back",
+        "up": ("focus", "japanese"),
+        "down": ("focus", "french"),
+        "left": ("focus", "back"),
     },
     "french": {
-        "up": "italian",
-        "down": "korean",
-        "left": "back",
+        "up": ("focus", "italian"),
+        "down": ("focus", "korean"),
+        "left": ("focus", "back"),
     },
     "korean": {
-        "up": "french",
-        "down": "russian",
-        "left": "back",
+        "up": ("focus", "french"),
+        "down": ("focus", "russian"),
+        "left": ("focus", "back"),
     },
     "russian": {
-        "up": "korean",
-        "left": "back",
+        "up": ("focus", "korean"),
+        "left": ("focus", "back"),
     },
 }

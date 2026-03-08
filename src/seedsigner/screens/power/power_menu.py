@@ -37,12 +37,18 @@ class PowerScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in nav_map[selected]:
-                self.set_selected(nav_map[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -55,18 +61,21 @@ class PowerScreen(Component):
 
 ButtonId = Literal["back", "power-off", "restart"]
 
-nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
+Action = tuple[Literal["navigate", "focus"], ButtonId]
+
+ACTION_MAP: dict[ButtonId, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": "power-off",
-        "down": "power-off",
+        "right": ("focus", "power-off"),
+        "down": ("focus", "power-off"),
+        "left": ("navigate", "back"),
     },
     "power-off": {
-        "up": "back",
-        "right": "restart",
-        "left": "back",
+        "up": ("focus", "back"),
+        "right": ("focus", "restart"),
+        "left": ("focus", "back"),
     },
     "restart": {
-        "up": "back",
-        "left": "power-off",
+        "up": ("focus", "back"),
+        "left": ("focus", "power-off"),
     },
 }
