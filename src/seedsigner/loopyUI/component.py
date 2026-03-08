@@ -110,6 +110,7 @@ class Box:
     y: int = 0
     w: int = 240
     h: int = 240
+    padding: int = 0
     fill: str = "black"
     outline: str | None = None
     width: int = 0

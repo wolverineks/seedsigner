@@ -62,13 +62,14 @@ class BackButton(Component):
             y=BackButton.y,
             w=BackButton.width,
             h=BackButton.height,
+            padding=2,
             fill=Colors.button.focused.background
             if self.selected
             else Colors.button.background,
             radius=6,
             children=(
                 Text(
-                    x=2,
+                    x=0,
                     y=icon_y,
                     text=code,
                     fill=Colors.button.focused.text
@@ -100,13 +101,14 @@ class PowerButton(Component):
             y=PowerButton.y,
             w=PowerButton.width,
             h=PowerButton.height,
+            padding=button_padding,
             fill=Colors.button.focused.background
             if self.selected
             else Colors.button.background,
             radius=6,
             children=(
                 Text(
-                    x=button_padding,
+                    x=0,
                     y=icon_y,
                     text=code,
                     fill=Colors.button.focused.text
@@ -136,17 +138,9 @@ class Body(Component):
             y=Body.y,
             w=Body.width,
             h=Body.height,
+            padding=Body.padding,
             fill=Colors.background,
-            children=(
-                Box(
-                    x=Body.padding,
-                    y=Body.padding,
-                    w=Body.width - Body.padding - Body.padding,
-                    h=Body.height - Body.padding - Body.padding,
-                    fill=Colors.background,
-                    children=self.children,
-                ),
-            ),
+            children=self.children,
         )
 
 
@@ -171,13 +165,14 @@ class Button(Component):
             y=self.y,
             w=Button.width,
             h=Button.height,
+            padding=button_padding,
             fill=Colors.button.focused.background
             if self.selected
             else Colors.button.background,
             radius=10,
             children=(
                 Text(
-                    x=button_padding,
+                    x=0,
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text
@@ -214,7 +209,7 @@ class CheckmarkButton(Component):
 
         checkmark_y = int((Button.height - ascent) / 2)
         checkmark = Text(
-            x=button_padding,
+            x=0,
             y=checkmark_y,
             text=code,
             fill="black" if self.selected else "white",
@@ -227,6 +222,7 @@ class CheckmarkButton(Component):
             y=button_y,
             w=Button.width,
             h=Button.height,
+            padding=button_padding,
             fill=Colors.button.focused.background
             if self.selected
             else Colors.button.background,
@@ -234,7 +230,7 @@ class CheckmarkButton(Component):
             children=(
                 checkmark if self.checked else None,
                 Text(
-                    x=button_padding + 24,
+                    x=24,
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text
@@ -279,7 +275,7 @@ class CheckboxButton(Component):
 
         checkbox_y = int((Button.height - ascent) / 2)
         checkbox = Text(
-            x=button_padding,
+            x=0,
             y=checkbox_y,
             text=code,
             fill=fill,
@@ -292,6 +288,7 @@ class CheckboxButton(Component):
             y=button_y,
             w=Button.width,
             h=Button.height,
+            padding=button_padding,
             fill=Colors.button.focused.background
             if self.selected
             else Colors.button.background,
@@ -299,7 +296,7 @@ class CheckboxButton(Component):
             children=(
                 checkbox,
                 Text(
-                    x=button_padding + 24,
+                    x=24,
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text

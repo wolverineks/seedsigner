@@ -36,7 +36,11 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
                 outline=node.outline,
                 width=node.width,
             )
-            recurse(node.children, box_offset_x, box_offset_y)
+            recurse(
+                node.children,
+                box_offset_x + node.padding,
+                box_offset_y + node.padding,
+            )
         elif isinstance(node, Rect):
             draw.rounded_rectangle(
                 (
