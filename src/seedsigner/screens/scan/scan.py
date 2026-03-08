@@ -6,9 +6,7 @@ if TYPE_CHECKING:
     from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, BackButton
-from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
+from seedsigner.loopyUI import Component, Node, HWButtonInput
 
 
 class ScanScreen(Component):
@@ -30,7 +28,7 @@ class ScanScreen(Component):
             Body(),
         ]
 
-    def handle_input(self, input: Literal["select"]):
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
         elif input == "left" and self.selected == "back":

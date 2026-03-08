@@ -10,41 +10,7 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "right", "left", "select"]
-NavKey = Literal[
-    "btc",
-    "sats",
-    "threshold",
-    "hybrid",
-    "back",
-]
-
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "btc",
-        "down": "btc",
-    },
-    "btc": {
-        "down": "sats",
-        "up": "back",
-        "left": "back",
-    },
-    "sats": {
-        "up": "btc",
-        "down": "threshold",
-        "left": "back",
-    },
-    "threshold": {
-        "up": "sats",
-        "down": "hybrid",
-        "left": "back",
-    },
-    "hybrid": {
-        "up": "threshold",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI.events.types import HWButtonInput
 
 
 class DenominationDisplayScreen(Component):
@@ -115,3 +81,38 @@ class DenominationDisplayScreen(Component):
             router.go_back()
         else:
             self.settings.denomination_display = selected
+
+
+NavKey = Literal[
+    "btc",
+    "sats",
+    "threshold",
+    "hybrid",
+    "back",
+]
+
+nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "right": "btc",
+        "down": "btc",
+    },
+    "btc": {
+        "down": "sats",
+        "up": "back",
+        "left": "back",
+    },
+    "sats": {
+        "up": "btc",
+        "down": "threshold",
+        "left": "back",
+    },
+    "threshold": {
+        "up": "sats",
+        "down": "hybrid",
+        "left": "back",
+    },
+    "hybrid": {
+        "up": "threshold",
+        "left": "back",
+    },
+}

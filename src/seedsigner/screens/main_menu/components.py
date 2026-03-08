@@ -12,10 +12,10 @@ class Grid:
     )
     height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
 
-    top = Header.height + Body.padding
+    top = 0
     bottom = top + height + Body.padding
-    left = Body.padding
-    right = Body.padding + width + Body.padding
+    left = 0
+    right = Body.padding + width
 
 
 def ScanButton(selected: bool):

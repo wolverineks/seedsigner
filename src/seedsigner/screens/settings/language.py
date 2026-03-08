@@ -11,59 +11,7 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "right", "left", "select"]
-NavKey = Literal[
-    "english",
-    "spanish",
-    "japanese",
-    "italian",
-    "french",
-    "korean",
-    "russian",
-    "back",
-]
-
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "english",
-        "down": "english",
-    },
-    "english": {
-        "down": "spanish",
-        "up": "back",
-        "left": "back",
-    },
-    "spanish": {
-        "up": "english",
-        "down": "japanese",
-        "left": "back",
-    },
-    "japanese": {
-        "up": "spanish",
-        "down": "italian",
-        "left": "back",
-    },
-    "italian": {
-        "up": "japanese",
-        "down": "french",
-        "left": "back",
-    },
-    "french": {
-        "up": "italian",
-        "down": "korean",
-        "left": "back",
-    },
-    "korean": {
-        "up": "french",
-        "down": "russian",
-        "left": "back",
-    },
-    "russian": {
-        "up": "korean",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI.events.types import HWButtonInput
 
 
 class LanguageScreen(Component):
@@ -154,3 +102,56 @@ class LanguageScreen(Component):
             router.go_back()
         else:
             self.settings.language = selected
+
+
+NavKey = Literal[
+    "english",
+    "spanish",
+    "japanese",
+    "italian",
+    "french",
+    "korean",
+    "russian",
+    "back",
+]
+
+nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "right": "english",
+        "down": "english",
+    },
+    "english": {
+        "down": "spanish",
+        "up": "back",
+        "left": "back",
+    },
+    "spanish": {
+        "up": "english",
+        "down": "japanese",
+        "left": "back",
+    },
+    "japanese": {
+        "up": "spanish",
+        "down": "italian",
+        "left": "back",
+    },
+    "italian": {
+        "up": "japanese",
+        "down": "french",
+        "left": "back",
+    },
+    "french": {
+        "up": "italian",
+        "down": "korean",
+        "left": "back",
+    },
+    "korean": {
+        "up": "french",
+        "down": "russian",
+        "left": "back",
+    },
+    "russian": {
+        "up": "korean",
+        "left": "back",
+    },
+}

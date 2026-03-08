@@ -10,29 +10,7 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "right", "left", "select"]
-NavKey = Literal[
-    "enabled",
-    "disabled",
-    "back",
-]
-
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "enabled",
-        "down": "enabled",
-    },
-    "enabled": {
-        "down": "disabled",
-        "up": "back",
-        "left": "back",
-    },
-    "disabled": {
-        "up": "enabled",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI.events.types import HWButtonInput
 
 
 class PersistentSettingsScreen(Component):
@@ -95,3 +73,26 @@ class PersistentSettingsScreen(Component):
             router.go_back()
         else:
             self.settings.persistent_settings = selected == "enabled"
+
+
+NavKey = Literal[
+    "enabled",
+    "disabled",
+    "back",
+]
+
+nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "right": "enabled",
+        "down": "enabled",
+    },
+    "enabled": {
+        "down": "disabled",
+        "up": "back",
+        "left": "back",
+    },
+    "disabled": {
+        "up": "enabled",
+        "left": "back",
+    },
+}

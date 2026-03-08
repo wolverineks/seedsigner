@@ -5,11 +5,9 @@ from seedsigner.components import Dimensions, Body, LargeButton
 @dataclass
 class Grid:
     columns = 2
-    width = int(
-        (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
-    )
-    left = Body.padding
-    right = Body.padding + width + Body.padding
+    width = int((Dimensions.width - Body.padding) / columns)
+    left = 0
+    right = width
 
 
 def ShutdownButton(selected: bool):
@@ -17,7 +15,7 @@ def ShutdownButton(selected: bool):
         label="Shutdown",
         icon="power",
         x=Grid.left,
-        y=Body.y + int((Body.height - LargeButton.height) / 2),
+        y=36,
         selected=selected,
     )
 
@@ -27,6 +25,6 @@ def RestartButton(selected: bool):
         label="Restart",
         icon="restart",
         x=Grid.right,
-        y=Body.y + int((Body.height - LargeButton.height) / 2),
+        y=36,
         selected=selected,
     )

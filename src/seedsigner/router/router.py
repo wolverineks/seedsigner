@@ -2,7 +2,6 @@ from typing import Literal
 
 from seedsigner.loopyUI.router import LoopyRouter
 
-
 Route = Literal[
     "main",
     "settings",
@@ -25,6 +24,10 @@ Route = Literal[
     "persistent_settings",
     "advanced",
     "i/o_test",
+    "scan_a_seedqr",
+    "create_a_seed",
+    "enter_a_12_word_seed",
+    "enter_a_24_word_seed",
     "not_found",
 ]
 
@@ -50,12 +53,16 @@ ROUTES: tuple[Route, ...] = (
     "persistent_settings",
     "advanced",
     "i/o_test",
+    "scan_a_seedqr",
+    "create_a_seed",
+    "enter_a_12_word_seed",
+    "enter_a_24_word_seed",
     "not_found",
 )
 
 Router = LoopyRouter[Route]
 
-router: Router = LoopyRouter[Route](
+router = LoopyRouter[Route](
     routes=ROUTES,
     initial_route="main",
 )

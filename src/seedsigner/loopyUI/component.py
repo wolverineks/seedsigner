@@ -4,7 +4,9 @@ from typing import Union, List, TypeAlias, Literal, Any
 
 
 DrawPrimitive: TypeAlias = Union["Rect", "Text"]
-Node: TypeAlias = Union[DrawPrimitive, "Component", None, List["Node"]]
+Node: TypeAlias = Union[
+    DrawPrimitive, "Component", None, List["Node"], tuple["Node", ...]
+]
 
 
 class Component:

@@ -2,6 +2,7 @@ from typing import Literal
 
 from seedsigner.components import Body, Header, BackButton, Text
 from seedsigner.loopyUI import Component, Node
+from seedsigner.loopyUI.events.types import HWButtonInput
 from seedsigner.dimensions import Dimensions
 
 from typing import TYPE_CHECKING
@@ -11,7 +12,6 @@ if TYPE_CHECKING:
     from seedsigner.settings.settings import Settings
     from seedsigner.store import Store
 
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
 ButtonId = Literal["back", "power-off", "restart"]
 
 nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {

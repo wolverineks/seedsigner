@@ -5,7 +5,6 @@ from seedsigner.settings.coordination_software import (
     COORDINATION_SOFTWARE_OPTIONS,
 )
 
-
 if TYPE_CHECKING:
     from seedsigner.router import Router
     from seedsigner.store import Store
@@ -13,47 +12,7 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, BackButton
 from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "right", "left", "select"]
-NavKey = Literal[
-    "bluewallet",
-    "nunchuck",
-    "sparrow",
-    "spector_desktop",
-    "keeper",
-    "back",
-]
-
-nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "bluewallet",
-        "down": "bluewallet",
-    },
-    "bluewallet": {
-        "down": "nunchuck",
-        "up": "back",
-        "left": "back",
-    },
-    "nunchuck": {
-        "up": "bluewallet",
-        "down": "sparrow",
-        "left": "back",
-    },
-    "sparrow": {
-        "up": "nunchuck",
-        "down": "spector_desktop",
-        "left": "back",
-    },
-    "spector_desktop": {
-        "up": "sparrow",
-        "down": "keeper",
-        "left": "back",
-    },
-    "keeper": {
-        "up": "spector_desktop",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI.events.types import HWButtonInput
 
 
 class CoordinationSoftwareScreen(Component):
@@ -137,3 +96,44 @@ class CoordinationSoftwareScreen(Component):
             else:
                 current.append(option)
             self.settings.coordination_software = current
+
+
+NavKey = Literal[
+    "bluewallet",
+    "nunchuck",
+    "sparrow",
+    "spector_desktop",
+    "keeper",
+    "back",
+]
+
+nav_map: dict[NavKey, dict[HWButtonInput, NavKey]] = {
+    "back": {
+        "right": "bluewallet",
+        "down": "bluewallet",
+    },
+    "bluewallet": {
+        "down": "nunchuck",
+        "up": "back",
+        "left": "back",
+    },
+    "nunchuck": {
+        "up": "bluewallet",
+        "down": "sparrow",
+        "left": "back",
+    },
+    "sparrow": {
+        "up": "nunchuck",
+        "down": "spector_desktop",
+        "left": "back",
+    },
+    "spector_desktop": {
+        "up": "sparrow",
+        "down": "keeper",
+        "left": "back",
+    },
+    "keeper": {
+        "up": "spector_desktop",
+        "left": "back",
+    },
+}

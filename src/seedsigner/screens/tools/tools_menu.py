@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
@@ -6,48 +6,7 @@ if TYPE_CHECKING:
     from seedsigner.store import Store
 
 from seedsigner.components import Header, Body, BackButton, Button
-from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal[
-    "back",
-    "new_seed_camera",
-    "new_seed_dice",
-    "calculate_checksum",
-    "address_explorer",
-    "verify_address",
-]
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "new_seed_camera",
-        "down": "new_seed_camera",
-    },
-    "new_seed_camera": {
-        "up": "back",
-        "down": "new_seed_dice",
-        "left": "back",
-    },
-    "new_seed_dice": {
-        "up": "new_seed_camera",
-        "down": "calculate_checksum",
-        "left": "back",
-    },
-    "calculate_checksum": {
-        "up": "new_seed_dice",
-        "down": "address_explorer",
-        "left": "back",
-    },
-    "address_explorer": {
-        "up": "calculate_checksum",
-        "down": "verify_address",
-        "left": "back",
-    },
-    "verify_address": {
-        "up": "address_explorer",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI import Component, Node, HWButtonInput
 
 
 class ToolsMenuScreen(Component):
@@ -70,41 +29,47 @@ class ToolsMenuScreen(Component):
                 Button(
                     text="New seed (camera)",
                     selected=selected == "new_seed_camera",
-                    index=0,
                 ),
                 Button(
                     text="New seed (dice)",
                     selected=selected == "new_seed_dice",
-                    index=1,
+                    y=Button.height + Body.padding,
                 ),
                 Button(
                     text="Calc 12th/24th word",
                     selected=selected == "calculate_checksum",
-                    index=2,
+                    y=(Button.height + Body.padding) * 2,
                 ),
                 Button(
                     text="Address Explorer",
                     selected=selected == "address_explorer",
-                    index=3,
+                    y=(Button.height + Body.padding) * 3,
                 ),
                 Button(
                     text="Verify Address",
                     selected=selected == "verify_address",
-                    index=4,
+                    y=(Button.height + Body.padding) * 4,
                 ),
             ),
         ]
 
-    def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
-        print(f"Input: {self.selected}, input: {input}")
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in NAV_MAP[selected]:
-                self.set_selected(NAV_MAP[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+            else:
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -114,3 +79,54 @@ class ToolsMenuScreen(Component):
             return
 
         self.router.navigate_to(selected)
+
+
+NavKey = Literal[
+    "back",
+    "new_seed_camera",
+    "new_seed_dice",
+    "calculate_checksum",
+    "address_explorer",
+    "verify_address",
+]
+
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+    "back": {
+        "up": None,
+        "down": ("focus", "new_seed_camera"),
+        "left": ("navigate", "back"),
+        "right": ("focus", "new_seed_camera"),
+    },
+    "new_seed_camera": {
+        "up": ("focus", "back"),
+        "down": ("focus", "new_seed_dice"),
+        "left": ("focus", "back"),
+        "right": None,
+    },
+    "new_seed_dice": {
+        "up": ("focus", "new_seed_camera"),
+        "down": ("focus", "calculate_checksum"),
+        "left": ("focus", "back"),
+        "right": None,
+    },
+    "calculate_checksum": {
+        "up": ("focus", "new_seed_dice"),
+        "down": ("focus", "address_explorer"),
+        "left": ("focus", "back"),
+        "right": None,
+    },
+    "address_explorer": {
+        "up": ("focus", "calculate_checksum"),
+        "down": ("focus", "verify_address"),
+        "left": ("focus", "back"),
+        "right": None,
+    },
+    "verify_address": {
+        "up": ("focus", "address_explorer"),
+        "down": None,
+        "left": ("focus", "back"),
+        "right": None,
+    },
+}

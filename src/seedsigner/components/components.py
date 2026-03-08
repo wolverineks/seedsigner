@@ -5,6 +5,7 @@ from typing import Tuple
 from seedsigner.loopyUI import Component, Rect, Text, Node
 from seedsigner.dimensions import Dimensions
 from seedsigner.colors import Colors
+from .helpers import _offset_node
 
 
 @dataclass
@@ -140,33 +141,34 @@ class Body(Component):
         self.children = children
 
     def render(self) -> Node:
-        return [Body.bg, *self.children]
+        offset_x = Body.x + Body.padding
+        offset_y = Body.y + Body.padding
+        relative_children = [
+            _offset_node(child, offset_x, offset_y) for child in self.children
+        ]
+        return [Body.bg, *relative_children]
 
 
 @dataclass
 class Button(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x = Body.padding
-
+    x: int = 0
+    y: int = 0
     text: str = ""
-    index: int = 0
     selected: bool = False
 
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
-        button_y = (
-            Header.height + Body.padding + self.index * (Button.height + Body.padding)
-        )
         ascent = font.getmetrics()[0]
 
-        text_y = button_y + int((Button.height - ascent) / 2)
+        text_y = self.y + int((Button.height - ascent) / 2)
 
         return [
             Rect(
-                x=Button.x,
-                y=button_y,
+                x=self.x,
+                y=self.y,
                 w=Button.width,
                 h=Button.height,
                 fill=Colors.button.focused.background
@@ -176,7 +178,7 @@ class Button(Component):
             ),
             None,
             Text(
-                x=Button.x + button_padding,
+                x=self.x + button_padding,
                 y=text_y,
                 text=self.text,
                 fill=Colors.button.focused.text
@@ -191,7 +193,8 @@ class Button(Component):
 class CheckmarkButton(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x = Body.padding
+    x: int = 0
+    y: int = 0
 
     text: str = ""
     index: int = 0
@@ -201,9 +204,7 @@ class CheckmarkButton(Component):
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
-        button_y = (
-            Header.height + Body.padding + self.index * (Button.height + Body.padding)
-        )
+        button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
         text_y = button_y + int((Button.height - ascent) / 2)
@@ -213,7 +214,7 @@ class CheckmarkButton(Component):
 
         checkmark_y = button_y + int((Button.height - ascent) / 2)
         checkmark = Text(
-            x=Button.x + button_padding,
+            x=self.x + button_padding,
             y=checkmark_y,
             text=code,
             fill="black" if self.selected else "white",
@@ -223,7 +224,7 @@ class CheckmarkButton(Component):
 
         return [
             Rect(
-                x=Button.x,
+                x=self.x,
                 y=button_y,
                 w=Button.width,
                 h=Button.height,
@@ -234,7 +235,7 @@ class CheckmarkButton(Component):
             ),
             checkmark if self.checked else None,
             Text(
-                x=Button.x + button_padding + 24,
+                x=self.x + button_padding + 24,
                 y=text_y,
                 text=self.text,
                 fill=Colors.button.focused.text
@@ -249,7 +250,8 @@ class CheckmarkButton(Component):
 class CheckboxButton(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x = Body.padding
+    x: int = 0
+    y: int = 0
 
     text: str = ""
     index: int = 0
@@ -259,9 +261,7 @@ class CheckboxButton(Component):
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
-        button_y = (
-            Header.height + Body.padding + self.index * (Button.height + Body.padding)
-        )
+        button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
         text_y = button_y + int((Button.height - ascent) / 2)
@@ -279,7 +279,7 @@ class CheckboxButton(Component):
 
         checkbox_y = button_y + int((Button.height - ascent) / 2)
         checkbox = Text(
-            x=Button.x + button_padding,
+            x=self.x + button_padding,
             y=checkbox_y,
             text=code,
             fill=fill,
@@ -289,7 +289,7 @@ class CheckboxButton(Component):
 
         return [
             Rect(
-                x=Button.x,
+                x=self.x,
                 y=button_y,
                 w=Button.width,
                 h=Button.height,
@@ -300,7 +300,7 @@ class CheckboxButton(Component):
             ),
             checkbox,
             Text(
-                x=Button.x + button_padding + 24,
+                x=self.x + button_padding + 24,
                 y=text_y,
                 text=self.text,
                 fill=Colors.button.focused.text

@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, Tuple
 
 
 if TYPE_CHECKING:
@@ -7,14 +7,7 @@ if TYPE_CHECKING:
     from seedsigner.settings.settings import Settings
 
 from seedsigner.components import Header, Body, BackButton
-from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal["back"]
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {},
-}
+from seedsigner.loopyUI import Component, Node, HWButtonInput
 
 
 class NotFoundScreen(Component):
@@ -36,15 +29,23 @@ class NotFoundScreen(Component):
             Body(),
         ]
 
-    def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in NAV_MAP[selected]:
-                self.set_selected(NAV_MAP[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+            else:
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -55,3 +56,17 @@ class NotFoundScreen(Component):
             router.go_back()
         else:
             router.navigate_to(selected)
+
+
+NavKey = Literal["back"]
+
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+    "back": {
+        "up": None,
+        "down": None,
+        "left": ("navigate", "back"),
+        "right": None,
+    },
+}

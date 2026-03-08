@@ -7,27 +7,9 @@ if TYPE_CHECKING:
     from seedsigner.store import Store
 
 from seedsigner.components import Body, Header, BackButton
-from seedsigner.loopyUI import Component, Node
+from seedsigner.loopyUI import Component, Node, HWButtonInput
+
 from .components import ShutdownButton, RestartButton
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-ButtonId = Literal["back", "power-off", "restart"]
-
-nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
-    "back": {
-        "right": "power-off",
-        "down": "power-off",
-    },
-    "power-off": {
-        "up": "back",
-        "right": "restart",
-        "left": "back",
-    },
-    "restart": {
-        "up": "back",
-        "left": "power-off",
-    },
-}
 
 
 class PowerScreen(Component):
@@ -52,7 +34,7 @@ class PowerScreen(Component):
             ),
         ]
 
-    def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+    def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
         elif input == "left" and self.selected == "back":
@@ -69,3 +51,22 @@ class PowerScreen(Component):
             self.router.go_back()
         else:
             self.router.navigate_to(selected)
+
+
+ButtonId = Literal["back", "power-off", "restart"]
+
+nav_map: dict[ButtonId, dict[HWButtonInput, ButtonId]] = {
+    "back": {
+        "right": "power-off",
+        "down": "power-off",
+    },
+    "power-off": {
+        "up": "back",
+        "right": "restart",
+        "left": "back",
+    },
+    "restart": {
+        "up": "back",
+        "left": "power-off",
+    },
+}

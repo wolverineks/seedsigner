@@ -14,9 +14,8 @@ from seedsigner.components import (
     ScrollList,
     ScrollListWindow,
 )
-from seedsigner.loopyUI import Component, Node
+from seedsigner.loopyUI import Component, Node, HWButtonInput
 
-HWButtonInput = Literal["up", "down", "right", "left", "select"]
 MenuKey = Literal[
     "language",
     "persistent_settings",
@@ -26,28 +25,11 @@ MenuKey = Literal[
     "i/o_test",
     "donate",
 ]
-NavKey = Literal["back"] | MenuKey
 
 
 class MenuItem(NamedTuple):
     key: MenuKey
     label: str
-
-
-MENU_ITEMS: list[MenuItem] = [
-    MenuItem("language", "Language"),
-    MenuItem("persistent_settings", "Persistent Settings"),
-    MenuItem("coordination_software", "Coordinator software"),
-    MenuItem("denomination_display", "Denomination display"),
-    MenuItem("advanced", "Advanced"),
-    MenuItem("i/o_test", "I/O test"),
-    MenuItem("donate", "Donate"),
-]
-
-MENU_KEYS: list[MenuKey] = [item.key for item in MENU_ITEMS]
-KEY_TO_INDEX: dict[MenuKey, int] = {
-    item.key: index for index, item in enumerate(MENU_ITEMS)
-}
 
 
 class SettingsMenuScreen(Component):
@@ -78,11 +60,12 @@ class SettingsMenuScreen(Component):
 
     def render_item(self, item: MenuItem, index: int):
         selected = self.selected
+        print("y: ", KEY_TO_INDEX[item.key] * (Button.height + Body.padding))
 
         return Button(
             text=item.label,
             selected=selected == item.key,
-            index=index,
+            y=index * (Button.height + Body.padding),
         )
 
     def handle_input(self, input: HWButtonInput):
@@ -90,7 +73,7 @@ class SettingsMenuScreen(Component):
             self.handle_select()
             return
 
-        action = NAV_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.selected].get(input)
         if action is None:
             return
 
@@ -116,8 +99,26 @@ class SettingsMenuScreen(Component):
             router.navigate_to(selected)
 
 
+NavKey = Literal["back"] | MenuKey
+
+
+MENU_ITEMS: list[MenuItem] = [
+    MenuItem("language", "Language"),
+    MenuItem("persistent_settings", "Persistent Settings"),
+    MenuItem("coordination_software", "Coordinator software"),
+    MenuItem("denomination_display", "Denomination display"),
+    MenuItem("advanced", "Advanced"),
+    MenuItem("i/o_test", "I/O test"),
+    MenuItem("donate", "Donate"),
+]
+
+MENU_KEYS: list[MenuKey] = [item.key for item in MENU_ITEMS]
+KEY_TO_INDEX: dict[MenuKey, int] = {
+    item.key: index for index, item in enumerate(MENU_ITEMS)
+}
+
 Action = Tuple[Literal["navigate", "focus"], NavKey]
-NAV_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
         "up": None,
         "down": ("focus", "language"),

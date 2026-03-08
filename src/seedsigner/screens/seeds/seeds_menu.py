@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
@@ -7,41 +7,7 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, BackButton, Button
 from seedsigner.loopyUI import Component, Node
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal[
-    "back",
-    "scan_a_seedqr",
-    "enter_a_12_word_seed",
-    "enter_a_24_word_seed",
-    "create_a_seed",
-]
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "back": {
-        "right": "scan_a_seedqr",
-        "down": "scan_a_seedqr",
-    },
-    "scan_a_seedqr": {
-        "up": "back",
-        "left": "back",
-        "down": "enter_a_12_word_seed",
-    },
-    "enter_a_12_word_seed": {
-        "up": "scan_a_seedqr",
-        "left": "back",
-        "down": "enter_a_24_word_seed",
-    },
-    "enter_a_24_word_seed": {
-        "up": "enter_a_12_word_seed",
-        "left": "back",
-        "down": "create_a_seed",
-    },
-    "create_a_seed": {
-        "up": "enter_a_24_word_seed",
-        "left": "back",
-    },
-}
+from seedsigner.loopyUI.events.types import HWButtonInput
 
 
 class SeedsScreen(Component):
@@ -62,33 +28,45 @@ class SeedsScreen(Component):
             ),
             Body(
                 Button(
-                    text="Scan a SeedQR", selected=selected == "scan_a_seedqr", index=0
+                    text="Scan a SeedQR",
+                    selected=selected == "scan_a_seedqr",
                 ),
                 Button(
                     text="Enter a 12-word seed",
                     selected=selected == "enter_a_12_word_seed",
-                    index=1,
+                    y=Button.height + Body.padding,
                 ),
                 Button(
                     text="Enter a 24-word seed",
                     selected=selected == "enter_a_24_word_seed",
-                    index=2,
+                    y=2 * (Button.height + Body.padding),
                 ),
                 Button(
-                    text="Create a seed", selected=selected == "create_a_seed", index=3
+                    text="Create a seed",
+                    selected=selected == "create_a_seed",
+                    y=3 * (Button.height + Body.padding),
                 ),
             ),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
+        print(f"Handling input {input} on {self.selected}")
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
-            self.handle_select()
-        else:
-            selected = self.selected
-            if input in NAV_MAP[selected]:
-                self.set_selected(NAV_MAP[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+            else:
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -99,3 +77,43 @@ class SeedsScreen(Component):
             router.go_back()
         else:
             router.navigate_to(selected)
+
+
+MenuKey = Literal[
+    "scan_a_seedqr", "enter_a_12_word_seed", "enter_a_24_word_seed", "create_a_seed"
+]
+NavKey = Literal["back"] | MenuKey
+
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+    "back": {
+        "up": None,
+        "left": ("navigate", "back"),
+        "right": ("focus", "scan_a_seedqr"),
+        "down": ("focus", "scan_a_seedqr"),
+    },
+    "scan_a_seedqr": {
+        "up": ("focus", "back"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "scan_a_seedqr"),
+        "down": ("focus", "enter_a_12_word_seed"),
+    },
+    "enter_a_12_word_seed": {
+        "up": ("focus", "scan_a_seedqr"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "enter_a_12_word_seed"),
+        "down": ("focus", "enter_a_24_word_seed"),
+    },
+    "enter_a_24_word_seed": {
+        "up": ("focus", "enter_a_12_word_seed"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "enter_a_24_word_seed"),
+        "down": ("focus", "create_a_seed"),
+    },
+    "create_a_seed": {
+        "up": ("focus", "enter_a_24_word_seed"),
+        "left": ("focus", "back"),
+        "right": ("navigate", "create_a_seed"),
+        "down": None,
+    },
+}

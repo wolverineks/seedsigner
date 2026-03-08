@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
@@ -7,20 +7,8 @@ if TYPE_CHECKING:
 
 from seedsigner.components import Body, Header, PowerButton
 from seedsigner.loopyUI import Component, Node
+from seedsigner.loopyUI.events.types import HWButtonInput
 from .components import ScanButton, SeedsButton, SettingsButton, ToolsButton
-
-HWButtonInput = Literal["up", "down", "left", "right", "select"]
-NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
-
-
-NAV_MAP: dict[NavKey, dict[HWButtonInput, NavKey]] = {
-    "scan": {"right": "seeds", "down": "tools"},
-    "seeds": {"left": "scan", "down": "settings", "up": "power"},
-    "tools": {"right": "settings", "up": "scan"},
-    "settings": {"left": "tools", "up": "seeds"},
-    "back": {"right": "power", "down": "scan"},
-    "power": {"down": "seeds"},
-}
 
 
 class MainMenuScreen(Component):
@@ -50,10 +38,20 @@ class MainMenuScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        else:
-            selected = self.selected
-            if input in NAV_MAP[selected]:
-                self.set_selected(NAV_MAP[selected][input])
+            return
+
+        action = ACTION_MAP[self.selected].get(input)
+        if action is None:
+            return
+
+        type, key = action
+        if type == "navigate":
+            if key == "back":
+                self.router.go_back()
+            else:
+                self.router.navigate_to(key)
+        elif type == "focus":
+            self.set_selected(key)
 
     def handle_select(self):
         selected = self.selected
@@ -63,3 +61,47 @@ class MainMenuScreen(Component):
             router.go_back()
         else:
             router.navigate_to(selected)
+
+
+NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
+
+Action = Tuple[Literal["navigate", "focus"], NavKey]
+
+ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+    "scan": {
+        "up": None,
+        "down": ("focus", "tools"),
+        "left": None,
+        "right": ("focus", "seeds"),
+    },
+    "seeds": {
+        "up": ("focus", "power"),
+        "down": ("focus", "settings"),
+        "left": ("focus", "scan"),
+        "right": None,
+    },
+    "tools": {
+        "up": ("focus", "scan"),
+        "down": None,
+        "left": None,
+        "right": ("focus", "settings"),
+    },
+    "settings": {
+        "up": ("focus", "seeds"),
+        "down": None,
+        "left": ("focus", "tools"),
+        "right": None,
+    },
+    "back": {
+        "up": None,
+        "down": ("focus", "scan"),
+        "left": ("navigate", "back"),
+        "right": ("focus", "power"),
+    },
+    "power": {
+        "up": None,
+        "down": ("focus", "seeds"),
+        "left": None,
+        "right": None,
+    },
+}
