@@ -39,14 +39,14 @@ class Button(Component):
     x: int = 0
     y: int = 0
     text: str = ""
-    selected: bool = False
+    focused: bool = False
 
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
         ascent = font.getmetrics()[0]
 
-        text_y = int((Button.height - ascent) / 2)
+        text_y = round((Button.height - ascent) / 2)
 
         return Box(
             x=self.x,
@@ -54,7 +54,7 @@ class Button(Component):
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=10,
             children=(
@@ -63,7 +63,7 @@ class Button(Component):
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text
-                    if self.selected
+                    if self.focused
                     else Colors.button.text,
                     size=18,
                 ),
@@ -80,7 +80,7 @@ class CheckmarkButton(Component):
 
     text: str = ""
     index: int = 0
-    selected: bool = False
+    focused: bool = False
     checked: bool = False
 
     def render(self) -> Node:
@@ -89,17 +89,17 @@ class CheckmarkButton(Component):
         button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
-        text_y = int((Button.height - ascent) / 2)
+        text_y = round((Button.height - ascent) / 2)
 
         font, code = get_icon_info("checkmark", 16)
         ascent = font.getmetrics()[0]
 
-        checkmark_y = int((Button.height - ascent) / 2)
+        checkmark_y = round((Button.height - ascent) / 2)
         checkmark = Text(
             x=4,
             y=checkmark_y,
             text=code,
-            fill="black" if self.selected else "white",
+            fill="black" if self.focused else "white",
             size=16,
             font=font,
         )
@@ -110,7 +110,7 @@ class CheckmarkButton(Component):
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=10,
             children=(
@@ -120,7 +120,7 @@ class CheckmarkButton(Component):
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text
-                    if self.selected
+                    if self.focused
                     else Colors.button.text,
                     size=18,
                 ),
@@ -137,7 +137,7 @@ class CheckboxButton(Component):
 
     text: str = ""
     index: int = 0
-    selected: bool = False
+    focused: bool = False
     checked: bool = False
 
     def render(self) -> Node:
@@ -146,7 +146,7 @@ class CheckboxButton(Component):
         button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
-        text_y = int((Button.height - ascent) / 2)
+        text_y = round((Button.height - ascent) / 2)
 
         font, code = get_icon_info(
             "checkbox-checked" if self.checked else "checkbox-unchecked", 16
@@ -154,12 +154,12 @@ class CheckboxButton(Component):
         ascent = font.getmetrics()[0]
 
         fill = "white"
-        if self.selected:
+        if self.focused:
             fill = "black"
-        if self.checked and not self.selected:
+        if self.checked and not self.focused:
             fill = "green"
 
-        checkbox_y = int((Button.height - ascent) / 2)
+        checkbox_y = round((Button.height - ascent) / 2)
         checkbox = Text(
             x=4,
             y=checkbox_y,
@@ -175,7 +175,7 @@ class CheckboxButton(Component):
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=10,
             children=(
@@ -185,7 +185,7 @@ class CheckboxButton(Component):
                     y=text_y,
                     text=self.text,
                     fill=Colors.button.focused.text
-                    if self.selected
+                    if self.focused
                     else Colors.button.text,
                     size=18,
                 ),
@@ -200,7 +200,7 @@ class LargeButton(Component):
     width = int((Body.width - 3 * Body.padding) / columns)
     height = int((Body.height - 3 * Body.padding) / rows)
 
-    selected: bool = False
+    focused: bool = False
     icon: str = ""
     label: str = ""
 
@@ -215,11 +215,11 @@ class LargeButton(Component):
         ascent, descent = font.getmetrics()
         height = ascent + descent
 
-        label_x = int(LargeButton.width / 2) - int(width / 2)
+        label_x = round(LargeButton.width / 2) - round(width / 2)
         label_y = LargeButton.height - 4 - height
 
         icon_size = 48
-        icon_x = int(LargeButton.width / 2) - int(icon_size / 2)
+        icon_x = round(LargeButton.width / 2) - round(icon_size / 2)
         icon_y = 4
 
         return Box(
@@ -228,7 +228,7 @@ class LargeButton(Component):
             w=LargeButton.width,
             h=LargeButton.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=10,
             children=(
@@ -237,13 +237,13 @@ class LargeButton(Component):
                     y=icon_y,
                     icon=self.icon,
                     size=icon_size,
-                    selected=self.selected,
+                    focused=self.focused,
                 ),
                 LargeButton.Label(
                     text=self.label,
                     x=label_x,
                     y=label_y,
-                    selected=self.selected,
+                    focused=self.focused,
                 ),
             ),
         )
@@ -253,7 +253,7 @@ class LargeButton(Component):
         x: int,
         y: int,
         icon: str,
-        selected: bool,
+        focused: bool,
         size: int,
     ):
         font, code = get_icon_info(icon=icon, size=size)
@@ -262,17 +262,17 @@ class LargeButton(Component):
             x=x,
             y=y,
             text=code,
-            fill="black" if selected else "white",
+            fill="black" if focused else "white",
             size=size,
             font=font,
         )
 
     @staticmethod
-    def Label(x: int, y: int, selected: bool, text: str) -> Node:
+    def Label(x: int, y: int, focused: bool, text: str) -> Node:
         return Text(
             x=x,
             y=y,
             text=text,
-            fill=Colors.button.focused.text if selected else Colors.button.text,
+            fill=Colors.button.focused.text if focused else Colors.button.text,
             size=24,
         )

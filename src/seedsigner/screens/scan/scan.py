@@ -15,14 +15,14 @@ class ScanScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: Literal["back"] = "back"
+        self.focused: Literal["back"] = "back"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Scan",
             ),
             Body(),
@@ -31,11 +31,11 @@ class ScanScreen(Component):
     def handle_input(self, input: HWButtonInput):
         if input == "select":
             self.handle_select()
-        elif input == "left" and self.selected == "back":
+        elif input == "left" and self.focused == "back":
             self.handle_select()
 
     def handle_select(self):
-        selected = self.selected
-        print(f"Selected {selected}")
-        if selected == "back":
+        focused = self.focused
+        print(f"Selected {focused}")
+        if focused == "back":
             self.router.go_back()

@@ -76,12 +76,12 @@ class Toast(Component):
         return dirty
 
 
-def get_y(state, show_start_time, hide_start_time):
+def get_y(state, show_start_time, hide_start_time) -> int:
     if state == "opening":
         if show_start_time is None:
             raise ValueError("show_start_time should not be None when state is opening")
 
-        return int(
+        return round(
             CLOSED_Y - (TRAVEL_DISTANCE * ease_out_quad(get_progress(show_start_time)))
         )
 
@@ -89,7 +89,7 @@ def get_y(state, show_start_time, hide_start_time):
         if hide_start_time is None:
             raise ValueError("hide_start_time should not be None when state is closing")
 
-        return int(
+        return round(
             OPENED_Y + (TRAVEL_DISTANCE * ease_in_quad(get_progress(hide_start_time)))
         )
 
@@ -115,7 +115,7 @@ toast = Toast()
 def bg(y):
     return Rect(
         x=X,
-        y=int(y),
+        y=y,
         w=WIDTH,
         h=HEIGHT,
         fill=FILL_COLOR,
@@ -128,7 +128,7 @@ def bg(y):
 def icon(y):
     return Text(
         x=X + PADDING,
-        y=int(y) + PADDING,
+        y=y + PADDING,
         text=code,
         fill=NOTIFICATION_COLOR,
         size=32,
@@ -139,7 +139,7 @@ def icon(y):
 def message(text: str, y: int):
     return Text(
         x=X + 48,
-        y=int(y) + PADDING,
+        y=y + PADDING,
         text=text,
         fill=NOTIFICATION_COLOR,
         size=24,

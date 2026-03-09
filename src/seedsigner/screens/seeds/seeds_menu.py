@@ -16,46 +16,42 @@ class SeedsScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "scan_a_seedqr"
+        self.focused: NavKey = "scan_a_seedqr"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Seed",
             ),
             Body(
                 Button(
                     text="Scan a SeedQR",
-                    selected=selected == "scan_a_seedqr",
+                    focused=focused == "scan_a_seedqr",
                 ),
                 Button(
                     text="Enter a 12-word seed",
-                    selected=selected == "enter_a_12_word_seed",
+                    focused=focused == "enter_a_12_word_seed",
                     y=Button.height + Body.padding,
                 ),
                 Button(
                     text="Enter a 24-word seed",
-                    selected=selected == "enter_a_24_word_seed",
+                    focused=focused == "enter_a_24_word_seed",
                     y=2 * (Button.height + Body.padding),
                 ),
                 Button(
                     text="Create a seed",
-                    selected=selected == "create_a_seed",
+                    focused=focused == "create_a_seed",
                     y=3 * (Button.height + Body.padding),
                 ),
             ),
         ]
 
     def handle_input(self, input: Literal["up", "down", "left", "right", "select"]):
-        print(f"Handling input {input} on {self.selected}")
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        print(f"Handling input {input} on {self.focused}")
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -66,17 +62,7 @@ class SeedsScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            router.navigate_to(selected)
+            self.set_focused(key)
 
 
 MenuKey = Literal[
@@ -88,32 +74,37 @@ Action = Tuple[Literal["navigate", "focus"], NavKey]
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
         "up": None,
-        "left": ("navigate", "back"),
-        "right": ("focus", "scan_a_seedqr"),
         "down": ("focus", "scan_a_seedqr"),
+        "left": ("navigate", "back"),
+        "right": ("navigate", "back"),
+        "select": ("navigate", "back"),
     },
     "scan_a_seedqr": {
         "up": ("focus", "back"),
+        "down": ("focus", "enter_a_12_word_seed"),
         "left": ("focus", "back"),
         "right": ("navigate", "scan_a_seedqr"),
-        "down": ("focus", "enter_a_12_word_seed"),
+        "select": ("navigate", "scan_a_seedqr"),
     },
     "enter_a_12_word_seed": {
         "up": ("focus", "scan_a_seedqr"),
+        "down": ("focus", "enter_a_24_word_seed"),
         "left": ("focus", "back"),
         "right": ("navigate", "enter_a_12_word_seed"),
-        "down": ("focus", "enter_a_24_word_seed"),
+        "select": ("navigate", "enter_a_12_word_seed"),
     },
     "enter_a_24_word_seed": {
         "up": ("focus", "enter_a_12_word_seed"),
+        "down": ("focus", "create_a_seed"),
         "left": ("focus", "back"),
         "right": ("navigate", "enter_a_24_word_seed"),
-        "down": ("focus", "create_a_seed"),
+        "select": ("navigate", "enter_a_24_word_seed"),
     },
     "create_a_seed": {
         "up": ("focus", "enter_a_24_word_seed"),
+        "down": None,
         "left": ("focus", "back"),
         "right": ("navigate", "create_a_seed"),
-        "down": None,
+        "select": ("navigate", "create_a_seed"),
     },
 }

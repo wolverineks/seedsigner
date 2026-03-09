@@ -24,7 +24,7 @@ class Header(Component):
         left, _, right, _ = font.getbbox(self.title)
         width = right - left
 
-        text_x = int(Header.width / 2) - int(width / 2)
+        text_x = round(Header.width / 2) - round(width / 2)
 
         return Box(
             x=0,
@@ -47,14 +47,14 @@ class PowerButton(Component):
     x = Dimensions.width - Header.padding - width
     y = Header.padding
 
-    selected: bool = False
+    focused: bool = False
 
     def render(self) -> Node:
         font, code = get_icon_info("power", 18)
         ascent = (font.getmetrics() or (0, 0))[0]
         left, _, right, _ = font.getbbox(code)
-        icon_y = int((PowerButton.height - ascent) / 2)
-        icon_x = int((PowerButton.width - (right - left)) / 2)
+        icon_y = round((PowerButton.height - ascent) / 2)
+        icon_x = round((PowerButton.width - (right - left)) / 2)
 
         return Box(
             x=PowerButton.x,
@@ -62,7 +62,7 @@ class PowerButton(Component):
             w=PowerButton.width,
             h=PowerButton.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=6,
             children=(
@@ -71,7 +71,7 @@ class PowerButton(Component):
                     y=icon_y,
                     text=code,
                     fill=Colors.button.focused.text
-                    if self.selected
+                    if self.focused
                     else Colors.button.text,
                     size=18,
                     font=font,
@@ -87,14 +87,14 @@ class BackButton(Component):
     x = Header.padding
     y = Header.padding
 
-    selected: bool = False
+    focused: bool = False
 
     def render(self) -> Node:
         font, code = get_icon_info("back", 18)
         ascent = (font.getmetrics() or (0, 0))[0]
         left, _, right, _ = font.getbbox(code)
-        icon_y = int((BackButton.height - ascent) / 2)
-        icon_x = int((BackButton.width - (right - left)) / 2)
+        icon_y = round((BackButton.height - ascent) / 2)
+        icon_x = round((BackButton.width - (right - left)) / 2)
 
         return Box(
             x=BackButton.x,
@@ -102,7 +102,7 @@ class BackButton(Component):
             w=BackButton.width,
             h=BackButton.height,
             fill=Colors.button.focused.background
-            if self.selected
+            if self.focused
             else Colors.button.background,
             radius=6,
             children=(
@@ -111,7 +111,7 @@ class BackButton(Component):
                     y=icon_y,
                     text=code,
                     fill=Colors.button.focused.text
-                    if self.selected
+                    if self.focused
                     else Colors.button.text,
                     size=18,
                     font=font,

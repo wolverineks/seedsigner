@@ -17,30 +17,26 @@ class MainMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "scan"
+        self.focused: NavKey = "scan"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
                 title="Home",
-                right=PowerButton(selected=selected == "power"),
+                right=PowerButton(focused=focused == "power"),
             ),
             Body(
-                ScanButton(selected=selected == "scan"),
-                SeedsButton(selected=selected == "seeds"),
-                ToolsButton(selected=selected == "tools"),
-                SettingsButton(selected=selected == "settings"),
+                ScanButton(focused=focused == "scan"),
+                SeedsButton(focused=focused == "seeds"),
+                ToolsButton(focused=focused == "tools"),
+                SettingsButton(focused=focused == "settings"),
             ),
         ]
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -51,21 +47,12 @@ class MainMenuScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        if selected == "back":
-            router.go_back()
-        else:
-            router.navigate_to(selected)
+            self.set_focused(key)
 
 
 NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
 
-Action = Tuple[Literal["navigate", "focus"], NavKey]
+Action = Tuple[Literal["navigate", "focus", "select"], NavKey]
 
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "scan": {
@@ -73,35 +60,34 @@ ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
         "down": ("focus", "tools"),
         "left": None,
         "right": ("focus", "seeds"),
+        "select": ("navigate", "scan"),
     },
     "seeds": {
         "up": ("focus", "power"),
         "down": ("focus", "settings"),
         "left": ("focus", "scan"),
         "right": None,
+        "select": ("navigate", "seeds"),
     },
     "tools": {
         "up": ("focus", "scan"),
         "down": None,
         "left": None,
         "right": ("focus", "settings"),
+        "select": ("navigate", "tools"),
     },
     "settings": {
         "up": ("focus", "seeds"),
         "down": None,
         "left": ("focus", "tools"),
         "right": None,
-    },
-    "back": {
-        "up": None,
-        "down": ("focus", "scan"),
-        "left": ("navigate", "back"),
-        "right": ("focus", "power"),
+        "select": ("navigate", "settings"),
     },
     "power": {
         "up": None,
         "down": ("focus", "seeds"),
         "left": None,
         "right": None,
+        "select": ("navigate", "power"),
     },
 }

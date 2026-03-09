@@ -38,15 +38,15 @@ class SettingsMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: MenuKey | Literal["back"] = MENU_ITEMS[0].key
+        self.focused: MenuKey | Literal["back"] = MENU_ITEMS[0].key
         self.window = ScrollListWindow(visible_count=5)
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Settings",
             ),
             Body(
@@ -59,21 +59,17 @@ class SettingsMenuScreen(Component):
         ]
 
     def render_item(self, item: MenuItem, index: int):
-        selected = self.selected
+        focused = self.focused
         print("y: ", KEY_TO_INDEX[item.key] * (Button.height + Body.padding))
 
         return Button(
             text=item.label,
-            selected=selected == item.key,
+            focused=focused == item.key,
             y=index * (Button.height + Body.padding),
         )
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -84,19 +80,9 @@ class SettingsMenuScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)  # set_focus
+            self.set_focused(key)  # set_focused
             if key != "back":
-                self.window.update(selected_index=KEY_TO_INDEX[key])
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            router.navigate_to(selected)
+                self.window.update(focused_index=KEY_TO_INDEX[key])
 
 
 NavKey = Literal["back"] | MenuKey
@@ -122,49 +108,57 @@ ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
         "up": None,
         "down": ("focus", "language"),
-        "right": ("focus", "language"),
         "left": ("navigate", "back"),
+        "right": ("navigate", "back"),
+        "select": ("navigate", "back"),
     },
     "language": {
         "up": ("focus", "back"),
         "down": ("focus", "persistent_settings"),
         "left": ("focus", "back"),
         "right": ("navigate", "language"),
+        "select": ("navigate", "language"),
     },
     "persistent_settings": {
         "up": ("focus", "language"),
         "down": ("focus", "coordination_software"),
         "left": ("focus", "back"),
         "right": ("navigate", "persistent_settings"),
+        "select": ("navigate", "persistent_settings"),
     },
     "coordination_software": {
         "up": ("focus", "persistent_settings"),
         "down": ("focus", "denomination_display"),
         "left": ("focus", "back"),
         "right": ("navigate", "coordination_software"),
+        "select": ("navigate", "coordination_software"),
     },
     "denomination_display": {
         "up": ("focus", "coordination_software"),
         "down": ("focus", "advanced"),
         "left": ("focus", "back"),
         "right": ("navigate", "denomination_display"),
+        "select": ("navigate", "denomination_display"),
     },
     "advanced": {
         "up": ("focus", "denomination_display"),
         "down": ("focus", "i/o_test"),
         "left": ("focus", "back"),
         "right": ("navigate", "advanced"),
+        "select": ("navigate", "advanced"),
     },
     "i/o_test": {
         "up": ("focus", "advanced"),
         "down": ("focus", "donate"),
         "left": ("focus", "back"),
         "right": ("navigate", "i/o_test"),
+        "select": ("navigate", "i/o_test"),
     },
     "donate": {
         "up": ("focus", "i/o_test"),
         "down": None,
         "left": ("focus", "back"),
         "right": ("navigate", "donate"),
+        "select": ("navigate", "donate"),
     },
 }

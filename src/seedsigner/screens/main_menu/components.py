@@ -19,41 +19,41 @@ class Grid:
     right = Body.padding + width
 
 
-def ScanButton(selected: bool):
+def ScanButton(focused: bool):
     return LargeButton(
         label="Scan",
         icon="scan",
         x=Grid.left,
         y=Grid.top,
-        selected=selected,
+        focused=focused,
     )
 
 
-def SeedsButton(selected: bool):
+def SeedsButton(focused: bool):
     return LargeButton(
         label="Seeds",
         icon="seeds",
         x=Grid.right,
         y=Grid.top,
-        selected=selected,
+        focused=focused,
     )
 
 
-def ToolsButton(selected: bool):
+def ToolsButton(focused: bool):
     return LargeButton(
         label="Tools",
         icon="tools",
         x=Grid.left,
         y=Grid.bottom,
-        selected=selected,
+        focused=focused,
     )
 
 
-def SettingsButton(selected: bool):
+def SettingsButton(focused: bool):
     return LargeButton(
         label="Settings",
         x=Grid.right,
         y=Grid.bottom,
         icon="gear",
-        selected=selected,
+        focused=focused,
     )

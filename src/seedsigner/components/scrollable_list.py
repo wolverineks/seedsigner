@@ -15,19 +15,19 @@ class ScrollListWindow:
         self.visible_count = visible_count
         self.window = (0, visible_count)
 
-    def update(self, selected_index: int | None = None):
-        if selected_index is None:
+    def update(self, focused_index: int | None = None):
+        if focused_index is None:
             return
 
-        if selected_index <= self.window[0]:
+        if focused_index <= self.window[0]:
             self.window = (
-                selected_index,
-                selected_index + self.visible_count,
+                focused_index,
+                focused_index + self.visible_count,
             )
-        elif selected_index >= self.window[1]:
+        elif focused_index >= self.window[1]:
             self.window = (
-                selected_index - self.visible_count + 1,
-                selected_index + 1,
+                focused_index - self.visible_count + 1,
+                focused_index + 1,
             )
 
 

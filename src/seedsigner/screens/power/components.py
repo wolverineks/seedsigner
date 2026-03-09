@@ -11,21 +11,21 @@ class Grid:
     right = width
 
 
-def ShutdownButton(selected: bool):
+def ShutdownButton(focused: bool):
     return LargeButton(
         label="Shutdown",
         icon="power",
         x=Grid.left,
         y=36,
-        selected=selected,
+        focused=focused,
     )
 
 
-def RestartButton(selected: bool):
+def RestartButton(focused: bool):
     return LargeButton(
         label="Restart",
         icon="restart",
         x=Grid.right,
         y=36,
-        selected=selected,
+        focused=focused,
     )

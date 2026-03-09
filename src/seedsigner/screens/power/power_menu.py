@@ -18,19 +18,19 @@ class PowerScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: ButtonId = "power-off"
+        self.focused: ButtonId = "power-off"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Power/Restart",
             ),
             Body(
-                ShutdownButton(selected=selected == "power-off"),
-                RestartButton(selected=selected == "restart"),
+                ShutdownButton(focused=focused == "power-off"),
+                RestartButton(focused=focused == "restart"),
             ),
         ]
 
@@ -39,7 +39,7 @@ class PowerScreen(Component):
             self.handle_select()
             return
 
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -48,15 +48,15 @@ class PowerScreen(Component):
             if key == "back":
                 self.router.go_back()
         elif type == "focus":
-            self.set_selected(key)
+            self.set_focused(key)
 
     def handle_select(self):
-        selected = self.selected
-        print(f"Selected {selected}")
-        if selected == "back":
+        focused = self.focused
+        print(f"Selected {focused}")
+        if focused == "back":
             self.router.go_back()
         else:
-            self.router.navigate_to(selected)
+            self.router.navigate_to(focused)
 
 
 ButtonId = Literal["back", "power-off", "restart"]

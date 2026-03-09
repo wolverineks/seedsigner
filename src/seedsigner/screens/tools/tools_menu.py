@@ -15,50 +15,46 @@ class ToolsMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "new_seed_camera"
+        self.focused: NavKey = "new_seed_camera"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Tools",
             ),
             Body(
                 Button(
                     text="New seed (camera)",
-                    selected=selected == "new_seed_camera",
+                    focused=focused == "new_seed_camera",
                 ),
                 Button(
                     text="New seed (dice)",
-                    selected=selected == "new_seed_dice",
+                    focused=focused == "new_seed_dice",
                     y=Button.height + Body.padding,
                 ),
                 Button(
                     text="Calc 12th/24th word",
-                    selected=selected == "calculate_checksum",
+                    focused=focused == "calculate_checksum",
                     y=(Button.height + Body.padding) * 2,
                 ),
                 Button(
                     text="Address Explorer",
-                    selected=selected == "address_explorer",
+                    focused=focused == "address_explorer",
                     y=(Button.height + Body.padding) * 3,
                 ),
                 Button(
                     text="Verify Address",
-                    selected=selected == "verify_address",
+                    focused=focused == "verify_address",
                     y=(Button.height + Body.padding) * 4,
                 ),
             ),
         ]
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -69,16 +65,7 @@ class ToolsMenuScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        print(f"Selected {selected}")
-        if selected == "back":
-            self.router.go_back()
-            return
-
-        self.router.navigate_to(selected)
+            self.set_focused(key)
 
 
 NavKey = Literal[
@@ -90,7 +77,7 @@ NavKey = Literal[
     "verify_address",
 ]
 
-Action = Tuple[Literal["navigate", "focus"], NavKey]
+Action = Tuple[Literal["navigate", "focus", "select"], NavKey]
 
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
@@ -98,35 +85,41 @@ ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
         "down": ("focus", "new_seed_camera"),
         "left": ("navigate", "back"),
         "right": ("focus", "new_seed_camera"),
+        "select": ("navigate", "back"),
     },
     "new_seed_camera": {
         "up": ("focus", "back"),
         "down": ("focus", "new_seed_dice"),
         "left": ("focus", "back"),
-        "right": None,
+        "right": ("navigate", "new_seed_camera"),
+        "select": ("navigate", "new_seed_camera"),
     },
     "new_seed_dice": {
         "up": ("focus", "new_seed_camera"),
         "down": ("focus", "calculate_checksum"),
         "left": ("focus", "back"),
-        "right": None,
+        "right": ("navigate", "new_seed_dice"),
+        "select": ("navigate", "new_seed_dice"),
     },
     "calculate_checksum": {
         "up": ("focus", "new_seed_dice"),
         "down": ("focus", "address_explorer"),
         "left": ("focus", "back"),
-        "right": None,
+        "right": ("navigate", "calculate_checksum"),
+        "select": ("navigate", "calculate_checksum"),
     },
     "address_explorer": {
         "up": ("focus", "calculate_checksum"),
         "down": ("focus", "verify_address"),
         "left": ("focus", "back"),
-        "right": None,
+        "right": ("navigate", "address_explorer"),
+        "select": ("navigate", "address_explorer"),
     },
     "verify_address": {
         "up": ("focus", "address_explorer"),
         "down": None,
         "left": ("focus", "back"),
-        "right": None,
+        "right": ("navigate", "verify_address"),
+        "select": ("navigate", "verify_address"),
     },
 }

@@ -20,75 +20,69 @@ class LanguageScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "english"
+        self.focused: NavKey = "english"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Language",
             ),
             Body(
-                [
-                    CheckmarkButton(
-                        text="English",
-                        selected=selected == "english",
-                        checked=self.settings.language == "english",
-                        index=0,
-                    ),
-                    CheckmarkButton(
-                        text="Español",
-                        selected=selected == "spanish",
-                        checked=self.settings.language == "spanish",
-                        index=1,
-                    ),
-                    CheckmarkButton(
-                        text="日本語",
-                        selected=selected == "japanese",
-                        checked=self.settings.language == "japanese",
-                        index=2,
-                    ),
-                    CheckmarkButton(
-                        text="Italiano",
-                        selected=selected == "italian",
-                        checked=self.settings.language == "italian",
-                        index=3,
-                    ),
-                    CheckmarkButton(
-                        text="Français",
-                        selected=selected == "french",
-                        checked=self.settings.language == "french",
-                        index=4,
-                    ),
-                    CheckmarkButton(
-                        text="한국어",
-                        selected=selected == "korean",
-                        checked=self.settings.language == "korean",
-                        index=5,
-                    ),
-                    CheckmarkButton(
-                        text="Русский",
-                        selected=selected == "russian",
-                        checked=self.settings.language == "russian",
-                        index=6,
-                    ),
-                ]
+                CheckmarkButton(
+                    text="English",
+                    focused=focused == "english",
+                    checked=self.settings.language == "english",
+                    index=0,
+                ),
+                CheckmarkButton(
+                    text="Español",
+                    focused=focused == "spanish",
+                    checked=self.settings.language == "spanish",
+                    index=1,
+                ),
+                CheckmarkButton(
+                    text="日本語",
+                    focused=focused == "japanese",
+                    checked=self.settings.language == "japanese",
+                    index=2,
+                ),
+                CheckmarkButton(
+                    text="Italiano",
+                    focused=focused == "italian",
+                    checked=self.settings.language == "italian",
+                    index=3,
+                ),
+                CheckmarkButton(
+                    text="Français",
+                    focused=focused == "french",
+                    checked=self.settings.language == "french",
+                    index=4,
+                ),
+                CheckmarkButton(
+                    text="한국어",
+                    focused=focused == "korean",
+                    checked=self.settings.language == "korean",
+                    index=5,
+                ),
+                CheckmarkButton(
+                    text="Русский",
+                    focused=focused == "russian",
+                    checked=self.settings.language == "russian",
+                    index=6,
+                ),
             ),
         ]
 
     def handle_on_focus(self) -> None:
         language = self.settings.language
         if language in LANGUAGE_OPTIONS:
-            self.set_selected(language)
+            self.set_focused(language)
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -96,18 +90,12 @@ class LanguageScreen(Component):
         if type == "navigate":
             if key == "back":
                 self.router.go_back()
+            else:
+                self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            self.settings.language = selected
+            self.set_focused(key)
+        elif type == "select":
+            self.settings.language = key
 
 
 NavKey = Literal[
@@ -121,46 +109,63 @@ NavKey = Literal[
     "back",
 ]
 
-Action = tuple[Literal["navigate", "focus"], NavKey]
+Action = tuple[Literal["navigate", "focus", "select"], NavKey]
 
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": ("focus", "english"),
+        "up": None,
         "down": ("focus", "english"),
         "left": ("navigate", "back"),
+        "right": ("focus", "english"),
+        "select": ("navigate", "back"),
     },
     "english": {
-        "down": ("focus", "spanish"),
         "up": ("focus", "back"),
+        "down": ("focus", "spanish"),
         "left": ("focus", "back"),
+        "right": ("select", "english"),
+        "select": ("select", "english"),
     },
     "spanish": {
         "up": ("focus", "english"),
         "down": ("focus", "japanese"),
         "left": ("focus", "back"),
+        "right": ("select", "spanish"),
+        "select": ("select", "spanish"),
     },
     "japanese": {
         "up": ("focus", "spanish"),
         "down": ("focus", "italian"),
         "left": ("focus", "back"),
+        "right": ("select", "japanese"),
+        "select": ("select", "japanese"),
     },
     "italian": {
         "up": ("focus", "japanese"),
         "down": ("focus", "french"),
         "left": ("focus", "back"),
+        "right": ("select", "italian"),
+        "select": ("select", "italian"),
     },
     "french": {
         "up": ("focus", "italian"),
         "down": ("focus", "korean"),
         "left": ("focus", "back"),
+        "right": ("select", "french"),
+        "select": ("select", "french"),
     },
     "korean": {
         "up": ("focus", "french"),
         "down": ("focus", "russian"),
         "left": ("focus", "back"),
+        "right": ("select", "korean"),
+        "select": ("select", "korean"),
     },
     "russian": {
         "up": ("focus", "korean"),
+        "down": None,
         "left": ("focus", "back"),
+        "right": ("select", "russian"),
+        "select": ("select", "russian"),
     },
 }

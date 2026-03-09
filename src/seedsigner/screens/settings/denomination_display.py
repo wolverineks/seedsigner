@@ -19,39 +19,39 @@ class DenominationDisplayScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = settings.denomination_display
+        self.focused: NavKey = settings.denomination_display
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Denomination",
             ),
             Body(
                 [
                     CheckmarkButton(
                         text="BTC",
-                        selected=selected == "btc",
+                        focused=focused == "btc",
                         checked=self.settings.denomination_display == "btc",
                         index=0,
                     ),
                     CheckmarkButton(
                         text="sats",
-                        selected=selected == "sats",
+                        focused=focused == "sats",
                         checked=self.settings.denomination_display == "sats",
                         index=1,
                     ),
                     CheckmarkButton(
                         text="Threshold at 0.01",
-                        selected=selected == "threshold",
+                        focused=focused == "threshold",
                         checked=self.settings.denomination_display == "threshold",
                         index=2,
                     ),
                     CheckmarkButton(
                         text="BTC | sats hybrid",
-                        selected=selected == "hybrid",
+                        focused=focused == "hybrid",
                         checked=self.settings.denomination_display == "hybrid",
                         index=3,
                     ),
@@ -60,14 +60,10 @@ class DenominationDisplayScreen(Component):
         ]
 
     def handle_on_focus(self) -> None:
-        self.set_selected(self.settings.denomination_display)
+        self.set_focused(self.settings.denomination_display)
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -76,17 +72,9 @@ class DenominationDisplayScreen(Component):
             if key == "back":
                 self.router.go_back()
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            self.settings.denomination_display = selected
+            self.set_focused(key)
+        elif type == "select":
+            self.settings.denomination_display = key
 
 
 NavKey = Literal[
@@ -97,31 +85,42 @@ NavKey = Literal[
     "back",
 ]
 
-Action = tuple[Literal["navigate", "focus"], NavKey]
+Action = tuple[Literal["navigate", "focus", "select"], NavKey]
 
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": ("focus", "btc"),
+        "up": None,
         "down": ("focus", "btc"),
         "left": ("navigate", "back"),
+        "right": ("focus", "btc"),
+        "select": ("navigate", "back"),
     },
     "btc": {
-        "down": ("focus", "sats"),
         "up": ("focus", "back"),
+        "down": ("focus", "sats"),
         "left": ("focus", "back"),
+        "right": ("select", "btc"),
+        "select": ("select", "btc"),
     },
     "sats": {
         "up": ("focus", "btc"),
         "down": ("focus", "threshold"),
         "left": ("focus", "back"),
+        "right": ("select", "sats"),
+        "select": ("select", "sats"),
     },
     "threshold": {
         "up": ("focus", "sats"),
         "down": ("focus", "hybrid"),
         "left": ("focus", "back"),
+        "right": ("select", "threshold"),
+        "select": ("select", "threshold"),
     },
     "hybrid": {
         "up": ("focus", "threshold"),
+        "down": None,
         "left": ("focus", "back"),
+        "right": ("select", "hybrid"),
+        "select": ("select", "hybrid"),
     },
 }

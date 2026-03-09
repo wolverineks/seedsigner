@@ -21,46 +21,46 @@ class CoordinationSoftwareScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "bluewallet"
+        self.focused: NavKey = "bluewallet"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Coordinator Software",
             ),
             Body(
                 [
                     CheckboxButton(
                         text="BlueWallet",
-                        selected=selected == "bluewallet",
+                        focused=focused == "bluewallet",
                         checked="bluewallet" in self.settings.coordination_software,
                         index=0,
                     ),
                     CheckboxButton(
                         text="Nunchuk",
-                        selected=selected == "nunchuck",
+                        focused=focused == "nunchuck",
                         checked="nunchuck" in self.settings.coordination_software,
                         index=1,
                     ),
                     CheckboxButton(
                         text="Sparrow",
-                        selected=selected == "sparrow",
+                        focused=focused == "sparrow",
                         checked="sparrow" in self.settings.coordination_software,
                         index=2,
                     ),
                     CheckboxButton(
                         text="Spector Desktop",
-                        selected=selected == "spector_desktop",
+                        focused=focused == "spector_desktop",
                         checked="spector_desktop"
                         in self.settings.coordination_software,
                         index=3,
                     ),
                     CheckboxButton(
                         text="Keeper",
-                        selected=selected == "keeper",
+                        focused=focused == "keeper",
                         checked="keeper" in self.settings.coordination_software,
                         index=4,
                     ),
@@ -69,11 +69,7 @@ class CoordinationSoftwareScreen(Component):
         ]
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -82,21 +78,13 @@ class CoordinationSoftwareScreen(Component):
             if key == "back":
                 self.router.go_back()
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        router = self.router
-
-        print(f"Selected {selected}")
-        if selected == "back":
-            router.go_back()
-        else:
-            if selected not in COORDINATION_SOFTWARE_OPTIONS:
+            self.set_focused(key)
+        elif type == "select":
+            if key not in COORDINATION_SOFTWARE_OPTIONS:
                 return
 
             current = list(self.settings.coordination_software)
-            option = selected
+            option = key
             if option in current:
                 current.remove(option)
             else:
@@ -113,36 +101,49 @@ NavKey = Literal[
     "back",
 ]
 
-Action = tuple[Literal["navigate", "focus"], NavKey]
+Action = tuple[Literal["navigate", "focus", "select"], NavKey]
 
 ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
     "back": {
-        "right": ("focus", "bluewallet"),
+        "up": None,
         "down": ("focus", "bluewallet"),
         "left": ("navigate", "back"),
+        "right": ("focus", "bluewallet"),
+        "select": ("navigate", "back"),
     },
     "bluewallet": {
-        "down": ("focus", "nunchuck"),
         "up": ("focus", "back"),
+        "down": ("focus", "nunchuck"),
         "left": ("focus", "back"),
+        "right": ("select", "bluewallet"),
+        "select": ("select", "bluewallet"),
     },
     "nunchuck": {
         "up": ("focus", "bluewallet"),
         "down": ("focus", "sparrow"),
         "left": ("focus", "back"),
+        "right": ("select", "nunchuck"),
+        "select": ("select", "nunchuck"),
     },
     "sparrow": {
         "up": ("focus", "nunchuck"),
         "down": ("focus", "spector_desktop"),
         "left": ("focus", "back"),
+        "right": ("select", "sparrow"),
+        "select": ("select", "sparrow"),
     },
     "spector_desktop": {
         "up": ("focus", "sparrow"),
         "down": ("focus", "keeper"),
         "left": ("focus", "back"),
+        "right": ("select", "spector_desktop"),
+        "select": ("select", "spector_desktop"),
     },
     "keeper": {
         "up": ("focus", "spector_desktop"),
+        "down": None,
         "left": ("focus", "back"),
+        "right": ("select", "keeper"),
+        "select": ("select", "keeper"),
     },
 }

@@ -19,24 +19,24 @@ class PowerOffScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "back"
+        self.focus: NavKey = "back"
 
     def render(self) -> Node:
-        selected = self.selected
+        focus = self.focus
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focus == "back"),
                 title="Just Unplug It",
             ),
             Body(
                 Text(
-                    x=int(Dimensions.width / 2) - 80,
+                    x=round(Dimensions.width / 2) - 80,
                     y=48,
                     text="It is safe to disconnect",
                 ),
                 Text(
-                    x=int(Dimensions.width / 2) - 60,
+                    x=round(Dimensions.width / 2) - 60,
                     y=72,
                     text="power at any time.",
                 ),
@@ -44,11 +44,7 @@ class PowerOffScreen(Component):
         ]
 
     def handle_input(self, input: HWButtonInput):
-        if input == "select":
-            self.handle_select()
-            return
-
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -59,15 +55,7 @@ class PowerOffScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
-
-    def handle_select(self):
-        selected = self.selected
-        print(f"Selected {selected}")
-        if selected == "back":
-            self.router.go_back()
-        else:
-            self.router.navigate_to(selected)
+            self.set_focused(key)
 
     def handle_shutdown(self):
         print("Shutting down...")
@@ -81,6 +69,7 @@ ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
         "up": None,
         "down": None,
         "left": ("navigate", "back"),
-        "right": None,
+        "right": ("navigate", "back"),
+        "select": ("navigate", "back"),
     },
 }

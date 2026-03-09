@@ -16,14 +16,14 @@ class NotFoundScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.selected: NavKey = "back"
+        self.focused: NavKey = "back"
 
     def render(self) -> Node:
-        selected = self.selected
+        focused = self.focused
 
         return [
             Header(
-                left=BackButton(selected=selected == "back"),
+                left=BackButton(focused=focused == "back"),
                 title="Not Found",
             ),
             Body(),
@@ -34,7 +34,7 @@ class NotFoundScreen(Component):
             self.handle_select()
             return
 
-        action = ACTION_MAP[self.selected].get(input)
+        action = ACTION_MAP[self.focused].get(input)
         if action is None:
             return
 
@@ -45,17 +45,17 @@ class NotFoundScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_selected(key)
+            self.set_focused(key)
 
     def handle_select(self):
-        selected = self.selected
+        focused = self.focused
         router = self.router
 
-        print(f"Selected {selected}")
-        if selected == "back":
+        print(f"Selected {focused}")
+        if focused == "back":
             router.go_back()
         else:
-            router.navigate_to(selected)
+            router.navigate_to(focused)
 
 
 NavKey = Literal["back"]
