@@ -30,20 +30,18 @@ class PersistentSettingsScreen(Component):
                 title="Persistent Settings",
             ),
             Body(
-                [
-                    CheckmarkButton(
-                        text="Enabled",
-                        focused=focused == "enabled",
-                        checked=self.settings.persistent_settings,
-                        index=0,
-                    ),
-                    CheckmarkButton(
-                        text="Disabled",
-                        focused=focused == "disabled",
-                        checked=not self.settings.persistent_settings,
-                        index=1,
-                    ),
-                ]
+                CheckmarkButton(
+                    text="Enabled",
+                    focused=focused == "enabled",
+                    checked=self.settings.persistent_settings,
+                    index=0,
+                ),
+                CheckmarkButton(
+                    text="Disabled",
+                    focused=focused == "disabled",
+                    checked=not self.settings.persistent_settings,
+                    index=1,
+                ),
             ),
         ]
 

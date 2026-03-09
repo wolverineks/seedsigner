@@ -1,6 +1,6 @@
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, NamedTuple
 
-from seedsigner.components import CheckmarkButton
+from seedsigner.components import CheckmarkButton, ScrollList, ScrollListWindow
 from seedsigner.settings.language import LANGUAGE_OPTIONS
 
 
@@ -14,6 +14,11 @@ from seedsigner.loopyUI import Component, Node
 from seedsigner.loopyUI.events.types import HWButtonInput
 
 
+class MenuItem(NamedTuple):
+    key: str
+    label: str
+
+
 class LanguageScreen(Component):
     def __init__(self, store: "Store", router: "Router", settings: "Settings") -> None:
         super().__init__()
@@ -21,6 +26,7 @@ class LanguageScreen(Component):
         self.router = router
         self.settings = settings
         self.focused: NavKey = "english"
+        self.window = ScrollListWindow(visible_count=5)
 
     def render(self) -> Node:
         focused = self.focused
@@ -31,55 +37,29 @@ class LanguageScreen(Component):
                 title="Language",
             ),
             Body(
-                CheckmarkButton(
-                    text="English",
-                    focused=focused == "english",
-                    checked=self.settings.language == "english",
-                    index=0,
-                ),
-                CheckmarkButton(
-                    text="Español",
-                    focused=focused == "spanish",
-                    checked=self.settings.language == "spanish",
-                    index=1,
-                ),
-                CheckmarkButton(
-                    text="日本語",
-                    focused=focused == "japanese",
-                    checked=self.settings.language == "japanese",
-                    index=2,
-                ),
-                CheckmarkButton(
-                    text="Italiano",
-                    focused=focused == "italian",
-                    checked=self.settings.language == "italian",
-                    index=3,
-                ),
-                CheckmarkButton(
-                    text="Français",
-                    focused=focused == "french",
-                    checked=self.settings.language == "french",
-                    index=4,
-                ),
-                CheckmarkButton(
-                    text="한국어",
-                    focused=focused == "korean",
-                    checked=self.settings.language == "korean",
-                    index=5,
-                ),
-                CheckmarkButton(
-                    text="Русский",
-                    focused=focused == "russian",
-                    checked=self.settings.language == "russian",
-                    index=6,
-                ),
+                ScrollList(
+                    window=self.window,
+                    render_item=self.render_item,
+                    items=LANGUAGE_ITEMS,
+                )
             ),
         ]
+
+    def render_item(self, item: MenuItem, index: int):
+        focused = self.focused
+
+        return CheckmarkButton(
+            text=item.label,
+            focused=focused == item.key,
+            checked=self.settings.language == item.key,
+            y=index * (CheckmarkButton.height + Body.padding),
+        )
 
     def handle_on_focus(self) -> None:
         language = self.settings.language
         if language in LANGUAGE_OPTIONS:
             self.set_focused(language)
+            self.window.update(focused_index=KEY_TO_INDEX[language])
 
     def handle_input(self, input: HWButtonInput):
         action = ACTION_MAP[self.focused].get(input)
@@ -90,13 +70,26 @@ class LanguageScreen(Component):
         if type == "navigate":
             if key == "back":
                 self.router.go_back()
-            else:
-                self.router.navigate_to(key)
         elif type == "focus":
             self.set_focused(key)
+            if key != "back":
+                self.window.update(focused_index=KEY_TO_INDEX[key])
         elif type == "select":
-            self.settings.language = key
+            if key != "back":
+                self.settings.language = key
 
+
+LANGUAGE_ITEMS = [
+    MenuItem("english", "English"),
+    MenuItem("spanish", "Español"),
+    MenuItem("japanese", "日本語"),
+    MenuItem("italian", "Italiano"),
+    MenuItem("french", "Français"),
+    MenuItem("korean", "한국어"),
+    MenuItem("russian", "Русский"),
+]
+
+KEY_TO_INDEX = {item.key: i for i, item in enumerate(LANGUAGE_ITEMS)}
 
 NavKey = Literal[
     "english",

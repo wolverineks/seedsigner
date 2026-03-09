@@ -60,7 +60,6 @@ class SettingsMenuScreen(Component):
 
     def render_item(self, item: MenuItem, index: int):
         focused = self.focused
-        print("y: ", KEY_TO_INDEX[item.key] * (Button.height + Body.padding))
 
         return Button(
             text=item.label,
