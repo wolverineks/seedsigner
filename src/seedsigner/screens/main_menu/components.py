@@ -8,15 +8,16 @@ from seedsigner.dimensions import Dimensions
 class Grid:
     columns = 2
     rows = 2
-    width = int(
+
+    width = round(
         (Dimensions.width - Body.padding - Body.padding - Body.padding) / columns
     )
-    height = int((Dimensions.height - Header.height - 3 * Body.padding) / rows)
+    height = round((Dimensions.height - Header.height - 3 * Body.padding) / rows)
 
-    top = 0
+    top = Body.padding
     bottom = top + height + Body.padding
-    left = 0
-    right = Body.padding + width
+    left = Body.padding
+    right = Body.padding + width + Body.padding
 
 
 def ScanButton(focused: bool):

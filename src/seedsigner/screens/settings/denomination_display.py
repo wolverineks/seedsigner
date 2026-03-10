@@ -30,32 +30,34 @@ class DenominationDisplayScreen(Component):
                 title="Denomination",
             ),
             Body(
-                [
-                    CheckmarkButton(
-                        text="BTC",
-                        focused=focused == "btc",
-                        checked=self.settings.denomination_display == "btc",
-                        index=0,
-                    ),
-                    CheckmarkButton(
-                        text="sats",
-                        focused=focused == "sats",
-                        checked=self.settings.denomination_display == "sats",
-                        index=1,
-                    ),
-                    CheckmarkButton(
-                        text="Threshold at 0.01",
-                        focused=focused == "threshold",
-                        checked=self.settings.denomination_display == "threshold",
-                        index=2,
-                    ),
-                    CheckmarkButton(
-                        text="BTC | sats hybrid",
-                        focused=focused == "hybrid",
-                        checked=self.settings.denomination_display == "hybrid",
-                        index=3,
-                    ),
-                ]
+                CheckmarkButton(
+                    text="BTC",
+                    focused=focused == "btc",
+                    checked=self.settings.denomination_display == "btc",
+                    y=Body.button_y(4),
+                    x=Body.padding,
+                ),
+                CheckmarkButton(
+                    text="sats",
+                    focused=focused == "sats",
+                    checked=self.settings.denomination_display == "sats",
+                    y=Body.button_y(3),
+                    x=Body.padding,
+                ),
+                CheckmarkButton(
+                    text="Threshold at 0.01",
+                    focused=focused == "threshold",
+                    checked=self.settings.denomination_display == "threshold",
+                    y=Body.button_y(2),
+                    x=Body.padding,
+                ),
+                CheckmarkButton(
+                    text="BTC | sats hybrid",
+                    focused=focused == "hybrid",
+                    checked=self.settings.denomination_display == "hybrid",
+                    y=Body.button_y(1),
+                    x=Body.padding,
+                ),
             ),
         ]
 

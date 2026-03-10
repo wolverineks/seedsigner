@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING, NamedTuple, Tuple
+from typing import Literal, TYPE_CHECKING, NamedTuple, Tuple, TypeVar
 
 
 if TYPE_CHECKING:
@@ -38,6 +38,7 @@ class SettingsMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
+
         self.focused: MenuKey | Literal["back"] = MENU_ITEMS[0].key
         self.window = ScrollListWindow(visible_count=5)
 
@@ -64,7 +65,8 @@ class SettingsMenuScreen(Component):
         return Button(
             text=item.label,
             focused=focused == item.key,
-            y=index * (Button.height + Body.padding),
+            y=Body.button_y(len(MENU_ITEMS) - index - 2),
+            x=Body.padding,
         )
 
     def handle_input(self, input: HWButtonInput):
@@ -79,8 +81,9 @@ class SettingsMenuScreen(Component):
             else:
                 self.router.navigate_to(key)
         elif type == "focus":
-            self.set_focused(key)  # set_focused
+            self.set_focused(key)
             if key != "back":
+                # scroll to focused item
                 self.window.update(focused_index=KEY_TO_INDEX[key])
 
 
@@ -103,12 +106,16 @@ KEY_TO_INDEX: dict[MenuKey, int] = {
 }
 
 Action = Tuple[Literal["navigate", "focus"], NavKey]
-ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+
+Key = TypeVar("Key")
+ActionMap = dict[Key, dict[HWButtonInput, Action | None]]
+
+ACTION_MAP: ActionMap[NavKey] = {
     "back": {
         "up": None,
         "down": ("focus", "language"),
         "left": ("navigate", "back"),
-        "right": ("navigate", "back"),
+        "right": ("focus", "language"),
         "select": ("navigate", "back"),
     },
     "language": {

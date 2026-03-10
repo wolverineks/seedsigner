@@ -24,18 +24,18 @@ class RestartingScreen(Component):
             Header(title="Restarting"),
             Body(
                 Text(
-                    x=30,
-                    y=24,
+                    x=round(Body.width / 2) - 90,
+                    y=28,
                     text="Seedsigner is restarting.",
                 ),
                 Text(
-                    x=24,
-                    y=48,
+                    x=round(Body.width / 2) - 96,
+                    y=52,
                     text="All in-memory data will be",
                 ),
                 Text(
-                    x=80,
-                    y=72,
+                    x=round(Body.width / 2) - 32,
+                    y=76,
                     text="wiped.",
                 ),
             ),

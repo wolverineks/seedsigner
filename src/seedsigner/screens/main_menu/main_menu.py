@@ -1,4 +1,4 @@
-from typing import Literal, TYPE_CHECKING, Tuple
+from typing import Literal, TYPE_CHECKING, Tuple, TypeVar
 
 if TYPE_CHECKING:
     from seedsigner.router import Router
@@ -17,7 +17,7 @@ class MainMenuScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.focused: NavKey = "scan"
+        self.focused: FocusID = "scan"
 
     def render(self) -> Node:
         focused = self.focused
@@ -50,11 +50,14 @@ class MainMenuScreen(Component):
             self.set_focused(key)
 
 
-NavKey = Literal["scan", "tools", "settings", "seeds", "back", "power"]
+FocusID = Literal["scan", "tools", "settings", "seeds", "back", "power"]
 
-Action = Tuple[Literal["navigate", "focus", "select"], NavKey]
+Action = Tuple[Literal["navigate", "focus", "select"], FocusID]
 
-ACTION_MAP: dict[NavKey, dict[HWButtonInput, Action | None]] = {
+Key = TypeVar("Key")
+ActionMap = dict[Key, dict[HWButtonInput, Action | None]]
+
+ACTION_MAP: ActionMap[FocusID] = {
     "scan": {
         "up": None,
         "down": ("focus", "tools"),

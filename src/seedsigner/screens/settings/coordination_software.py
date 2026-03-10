@@ -32,39 +32,41 @@ class CoordinationSoftwareScreen(Component):
                 title="Coordinator Software",
             ),
             Body(
-                [
-                    CheckboxButton(
-                        text="BlueWallet",
-                        focused=focused == "bluewallet",
-                        checked="bluewallet" in self.settings.coordination_software,
-                        index=0,
-                    ),
-                    CheckboxButton(
-                        text="Nunchuk",
-                        focused=focused == "nunchuck",
-                        checked="nunchuck" in self.settings.coordination_software,
-                        index=1,
-                    ),
-                    CheckboxButton(
-                        text="Sparrow",
-                        focused=focused == "sparrow",
-                        checked="sparrow" in self.settings.coordination_software,
-                        index=2,
-                    ),
-                    CheckboxButton(
-                        text="Spector Desktop",
-                        focused=focused == "spector_desktop",
-                        checked="spector_desktop"
-                        in self.settings.coordination_software,
-                        index=3,
-                    ),
-                    CheckboxButton(
-                        text="Keeper",
-                        focused=focused == "keeper",
-                        checked="keeper" in self.settings.coordination_software,
-                        index=4,
-                    ),
-                ]
+                CheckboxButton(
+                    text="BlueWallet",
+                    focused=focused == "bluewallet",
+                    checked="bluewallet" in self.settings.coordination_software,
+                    y=Body.button_y(5),
+                    x=Body.padding,
+                ),
+                CheckboxButton(
+                    text="Nunchuk",
+                    focused=focused == "nunchuck",
+                    checked="nunchuck" in self.settings.coordination_software,
+                    y=Body.button_y(4),
+                    x=Body.padding,
+                ),
+                CheckboxButton(
+                    text="Sparrow",
+                    focused=focused == "sparrow",
+                    checked="sparrow" in self.settings.coordination_software,
+                    y=Body.button_y(3),
+                    x=Body.padding,
+                ),
+                CheckboxButton(
+                    text="Spector Desktop",
+                    focused=focused == "spector_desktop",
+                    checked="spector_desktop" in self.settings.coordination_software,
+                    y=Body.button_y(2),
+                    x=Body.padding,
+                ),
+                CheckboxButton(
+                    text="Keeper",
+                    focused=focused == "keeper",
+                    checked="keeper" in self.settings.coordination_software,
+                    y=Body.button_y(1),
+                    x=Body.padding,
+                ),
             ),
         ]
 

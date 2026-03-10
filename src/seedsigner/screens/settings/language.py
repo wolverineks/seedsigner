@@ -52,7 +52,8 @@ class LanguageScreen(Component):
             text=item.label,
             focused=focused == item.key,
             checked=self.settings.language == item.key,
-            y=index * (CheckmarkButton.height + Body.padding),
+            y=Body.button_y(len(LANGUAGE_ITEMS) - index - 2),
+            x=Body.padding,
         )
 
     def handle_on_focus(self) -> None:

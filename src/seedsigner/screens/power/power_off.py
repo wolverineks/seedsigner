@@ -19,10 +19,10 @@ class PowerOffScreen(Component):
         self.store = store
         self.router = router
         self.settings = settings
-        self.focus: NavKey = "back"
+        self.focused: NavKey = "back"
 
     def render(self) -> Node:
-        focus = self.focus
+        focus = self.focused
 
         return [
             Header(
@@ -31,13 +31,13 @@ class PowerOffScreen(Component):
             ),
             Body(
                 Text(
-                    x=round(Dimensions.width / 2) - 80,
-                    y=48,
+                    x=round(Dimensions.width / 2) - 84,
+                    y=52,
                     text="It is safe to disconnect",
                 ),
                 Text(
-                    x=round(Dimensions.width / 2) - 60,
-                    y=72,
+                    x=round(Dimensions.width / 2) - 64,
+                    y=76,
                     text="power at any time.",
                 ),
             ),

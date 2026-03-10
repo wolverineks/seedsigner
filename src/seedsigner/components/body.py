@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from typing import Literal
 from PIL import ImageFont
 
 from seedsigner.components.header import Header
@@ -31,6 +31,10 @@ class Body(Component):
             children=self.children,
         )
 
+    @staticmethod
+    def button_y(multiplier: int) -> int:
+        return Body.height - (Button.height + Body.padding) * multiplier
+
 
 @dataclass
 class Button(Component):
@@ -40,6 +44,7 @@ class Button(Component):
     y: int = 0
     text: str = ""
     focused: bool = False
+    type: Literal["standard", "danger"] = "standard"
 
     def render(self) -> Node:
         size = 24
@@ -47,6 +52,13 @@ class Button(Component):
         ascent = font.getmetrics()[0]
 
         text_y = round((Button.height - ascent) / 2)
+        text_color = (
+            "red"
+            if self.type == "danger"
+            else Colors.button.focused.text
+            if self.focused
+            else Colors.button.text
+        )
 
         return Box(
             x=self.x,
@@ -62,9 +74,7 @@ class Button(Component):
                     x=4,
                     y=text_y,
                     text=self.text,
-                    fill=Colors.button.focused.text
-                    if self.focused
-                    else Colors.button.text,
+                    fill=text_color,
                     size=18,
                 ),
             ),
@@ -86,7 +96,6 @@ class CheckmarkButton(Component):
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
-        button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
         text_y = round((Button.height - ascent) / 2)
@@ -106,7 +115,7 @@ class CheckmarkButton(Component):
 
         return Box(
             x=self.x,
-            y=button_y,
+            y=self.y,
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
@@ -143,7 +152,6 @@ class CheckboxButton(Component):
     def render(self) -> Node:
         size = 24
         font = ImageFont.load_default(size=size)
-        button_y = self.y + self.index * (Button.height + Body.padding)
         ascent = font.getmetrics()[0]
 
         text_y = round((Button.height - ascent) / 2)
@@ -171,7 +179,7 @@ class CheckboxButton(Component):
 
         return Box(
             x=self.x,
-            y=button_y,
+            y=self.y,
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
@@ -197,8 +205,8 @@ class CheckboxButton(Component):
 class LargeButton(Component):
     columns = 2
     rows = 2
-    width = int((Body.width - 3 * Body.padding) / columns)
-    height = int((Body.height - 3 * Body.padding) / rows)
+    width = round((Body.width - 3 * Body.padding) / columns)
+    height = round((Body.height - 3 * Body.padding) / rows)
 
     focused: bool = False
     icon: str = ""

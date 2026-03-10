@@ -29,26 +29,32 @@ class ToolsMenuScreen(Component):
                 Button(
                     text="New seed (camera)",
                     focused=focused == "new_seed_camera",
+                    y=Body.button_y(5),
+                    x=Body.padding,
                 ),
                 Button(
                     text="New seed (dice)",
                     focused=focused == "new_seed_dice",
-                    y=Button.height + Body.padding,
+                    y=Body.button_y(4),
+                    x=Body.padding,
                 ),
                 Button(
                     text="Calc 12th/24th word",
                     focused=focused == "calculate_checksum",
-                    y=(Button.height + Body.padding) * 2,
+                    y=Body.button_y(3),
+                    x=Body.padding,
                 ),
                 Button(
                     text="Address Explorer",
                     focused=focused == "address_explorer",
-                    y=(Button.height + Body.padding) * 3,
+                    y=Body.button_y(2),
+                    x=Body.padding,
                 ),
                 Button(
                     text="Verify Address",
                     focused=focused == "verify_address",
-                    y=(Button.height + Body.padding) * 4,
+                    y=Body.button_y(1),
+                    x=Body.padding,
                 ),
             ),
         ]

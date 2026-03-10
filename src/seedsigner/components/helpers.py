@@ -52,6 +52,14 @@ def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
             seedsigner_icons_path,
             "\ue91f",
         ),
+        "up_arrow": (
+            seedsigner_icons_path,
+            "\ue90e",
+        ),
+        "down_arrow": (
+            seedsigner_icons_path,
+            "\ue90d",
+        ),
     }
 
     code = icon_codes.get(icon)

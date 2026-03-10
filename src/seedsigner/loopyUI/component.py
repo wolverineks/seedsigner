@@ -96,14 +96,6 @@ class Text:
 
 
 @dataclass(frozen=True)
-class Group:
-    type: Literal["group"] = "group"
-    x: int = 0
-    y: int = 0
-    children: tuple[Node, ...] = ()
-
-
-@dataclass(frozen=True)
 class Box:
     type: Literal["box"] = "box"
     x: int = 0

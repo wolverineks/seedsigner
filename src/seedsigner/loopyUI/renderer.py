@@ -17,10 +17,6 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
                 recurse(child, offset_x, offset_y)
         elif hasattr(node, "render") and callable(getattr(node, "render")):
             recurse(node.render(), offset_x, offset_y)
-        elif isinstance(node, Group):
-            group_offset_x = offset_x + node.x
-            group_offset_y = offset_y + node.y
-            recurse(node.children, group_offset_x, group_offset_y)
         elif isinstance(node, Box):
             box_offset_x = offset_x + node.x
             box_offset_y = offset_y + node.y
@@ -38,8 +34,8 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
             )
             recurse(
                 node.children,
-                box_offset_x + node.padding,
-                box_offset_y + node.padding,
+                box_offset_x,
+                box_offset_y,
             )
         elif isinstance(node, Rect):
             draw.rounded_rectangle(
