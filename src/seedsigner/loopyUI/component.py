@@ -6,7 +6,6 @@ from typing import Union, List, TypeAlias, Literal, Any
 DrawPrimitive: TypeAlias = Union["Rect", "Text"]
 Node: TypeAlias = Union[
     DrawPrimitive,
-    "Group",
     "Box",
     "Component",
     None,

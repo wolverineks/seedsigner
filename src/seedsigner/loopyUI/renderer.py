@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw
 
 from seedsigner.dimensions import Dimensions
 
-from .component import Rect, Text, Group, Box, Component
+from .component import Rect, Text, Box, Component
 
 canvas = Image.new("RGB", (Dimensions.width, Dimensions.height), "white")
 
