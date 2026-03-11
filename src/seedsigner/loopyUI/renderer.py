@@ -57,6 +57,7 @@ def render(component: Component, canvas: Image.Image = canvas) -> Image.Image:
                 fill=node.fill,
                 font_size=node.size,
                 font=node.font,
+                anchor=node.anchor,
             )
         elif node is None:
             pass

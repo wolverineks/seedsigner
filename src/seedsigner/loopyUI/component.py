@@ -92,6 +92,7 @@ class Text:
     fill: str | None = "white"
     size: int | None = 16
     font: Any | None = None
+    anchor: str | None = None
 
 
 @dataclass(frozen=True)

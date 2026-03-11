@@ -1,5 +1,5 @@
 from PIL import ImageFont
-from typing import Tuple
+from typing import Tuple, Literal
 
 
 def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
@@ -67,3 +67,18 @@ def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
         raise ValueError(f"Unknown icon: {icon}")
 
     return ImageFont.truetype(code[0], size), code[1]
+Code = Literal[
+    "scan",
+    "seeds",
+    "gear",
+    "tools",
+    "back",
+    "power",
+    "restart",
+    "checkmark",
+    "checkbox-checked",
+    "checkbox-unchecked",
+    "sdcard",
+    "up_arrow",
+    "down_arrow",
+]
