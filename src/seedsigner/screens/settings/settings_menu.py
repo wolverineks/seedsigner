@@ -65,8 +65,7 @@ class SettingsMenuScreen(Component):
         return Button(
             text=item.label,
             focused=focused == item.key,
-            y=Body.button_y(len(MENU_ITEMS) - index - 2),
-            x=Body.padding,
+            slot=self.window.visible_count - index,
         )
 
     def handle_input(self, input: HWButtonInput):

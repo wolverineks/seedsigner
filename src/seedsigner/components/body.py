@@ -32,16 +32,15 @@ class Body(Component):
         )
 
     @staticmethod
-    def button_y(multiplier: int) -> int:
-        return Body.height - (Button.height + Body.padding) * multiplier
+    def slot_y(slot: int, height: int = 30) -> int:
+        return Body.height - (height + Body.padding) * slot
 
 
 @dataclass
 class Button(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x: int = 0
-    y: int = 0
+    slot: int = 1
     text: str = ""
     focused: bool = False
     type: Literal["standard", "danger"] = "standard"
@@ -61,8 +60,8 @@ class Button(Component):
         )
 
         return Box(
-            x=self.x,
-            y=self.y,
+            x=Body.padding,
+            y=Body.slot_y(self.slot, Button.height),
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
@@ -85,8 +84,7 @@ class Button(Component):
 class CheckmarkButton(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x: int = 0
-    y: int = 0
+    slot: int = 1
 
     text: str = ""
     index: int = 0
@@ -114,8 +112,8 @@ class CheckmarkButton(Component):
         )
 
         return Box(
-            x=self.x,
-            y=self.y,
+            x=Body.padding,
+            y=Body.slot_y(self.slot, CheckmarkButton.height),
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background
@@ -141,8 +139,7 @@ class CheckmarkButton(Component):
 class CheckboxButton(Component):
     height = 30
     width = Dimensions.width - Body.padding - Body.padding
-    x: int = 0
-    y: int = 0
+    slot: int = 1
 
     text: str = ""
     index: int = 0
@@ -178,8 +175,8 @@ class CheckboxButton(Component):
         )
 
         return Box(
-            x=self.x,
-            y=self.y,
+            x=Body.padding,
+            y=Body.slot_y(self.slot, CheckboxButton.height),
             w=Button.width,
             h=Button.height,
             fill=Colors.button.focused.background

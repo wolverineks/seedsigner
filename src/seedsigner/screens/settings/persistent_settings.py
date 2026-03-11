@@ -34,15 +34,13 @@ class PersistentSettingsScreen(Component):
                     text="Enabled",
                     focused=focused == "enabled",
                     checked=self.settings.persistent_settings,
-                    y=Body.button_y(2),
-                    x=Body.padding,
+                    slot=2,
                 ),
                 CheckmarkButton(
                     text="Disabled",
                     focused=focused == "disabled",
                     checked=not self.settings.persistent_settings,
-                    y=Body.button_y(1),
-                    x=Body.padding,
+                    slot=1,
                 ),
             ),
         ]

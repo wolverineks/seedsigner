@@ -31,27 +31,23 @@ class SeedsScreen(Component):
                 Button(
                     text="Scan a SeedQR",
                     focused=focused == "scan_a_seedqr",
-                    x=Body.padding,
-                    y=Body.button_y(4),
+                    slot=4,
                 ),
                 Button(
                     text="Enter a 12-word seed",
                     focused=focused == "enter_a_12_word_seed",
-                    y=Body.button_y(3),
-                    x=Body.padding,
+                    slot=3,
                 ),
                 Button(
                     text="Enter a 24-word seed",
                     focused=focused == "enter_a_24_word_seed",
-                    y=Body.button_y(2),
-                    x=Body.padding,
+                    slot=2,
                 ),
                 Button(
                     type="danger",
                     text="Create a seed",
                     focused=focused == "create_a_seed",
-                    y=Body.button_y(1),
-                    x=Body.padding,
+                    slot=1,
                 ),
             ),
         ]

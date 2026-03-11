@@ -52,8 +52,7 @@ class LanguageScreen(Component):
             text=item.label,
             focused=focused == item.key,
             checked=self.settings.language == item.key,
-            y=Body.button_y(len(LANGUAGE_ITEMS) - index - 2),
-            x=Body.padding,
+            slot=self.window.visible_count - index,
         )
 
     def handle_on_focus(self) -> None:
