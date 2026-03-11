@@ -33,6 +33,7 @@ class ScrollListWindow:
                 focused_index + 1,
             )
 
+
 def ScrollList(
     items: Sequence[T],
     window: ScrollListWindow,
