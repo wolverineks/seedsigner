@@ -1,6 +1,7 @@
 from time import sleep
+from typing import Any
 
-from seedsigner.loopyUI import render
+from seedsigner.loopyUI import Desktop, RPI, get_platform, render
 from seedsigner.app import app
 
 
@@ -20,16 +21,31 @@ from seedsigner.app import app
 #     driver.show_image(canvas)
 #     time.sleep(0.01)
 
-from seedsigner.loopyUI import Desktop, DesktopButtons
+platform = get_platform()
+display: Any
+InputDevice: Any
+
+if platform == "desktop":
+    from seedsigner.loopyUI.events.desktop import DesktopButtons as InputDevice
+
+    display = Desktop()
+elif platform == "rpi":
+    from seedsigner.loopyUI.events.rpi import Buttons as InputDevice
+
+    display = RPI()
+else:
+    raise RuntimeError(
+        "Unsupported platform. On Raspberry Pi, install requirements-raspi.txt and RPi.GPIO; on desktop, install requirements-desktop.txt."
+    )
 
 
 def main():
     while running:
-        inputs = DesktopButtons.get_inputs()
+        inputs = InputDevice.get_inputs()
         updated = app.update(inputs)
         if updated:
             canvas = render(app)
-            desktop.paint(canvas)
+            display.paint(canvas)
             app.post_render()
 
         sleep(0.01)
@@ -42,9 +58,6 @@ def on_quit():
     # print("quitting")
     global running
     running = False
-
-
-desktop = Desktop()
 
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
 # from environment import is_raspberry_pi
 # from seedsigner.dimensions import Dimensions
-import pygame  # type: ignore
-from PIL import Image
-from seedsigner.dimensions import Dimensions
 import time
+from PIL import Image
+
+from seedsigner.dimensions import Dimensions
 
 # class Painter:
 #     @staticmethod
@@ -39,33 +39,33 @@ import time
 
 class RPI:
     def __init__(self) -> None:
+        from seedsigner.hardware.displays.display_driver import DisplayDriver
 
-        from seedsigner.hardware.displays.ST7789 import ST7789
-
-        self.driver = ST7789()
-
-    def paint(self, canvas: Image.Image):
-        from PIL import Image
-
-        pil_img = Image.frombytes(
-            "RGB", (Dimensions.screen_width, Dimensions.screen_height), canvas
+        self.driver = DisplayDriver(
+            display_type="st7789",
+            width=Dimensions.width,
+            height=Dimensions.height,
         )
 
-        self.driver.show_image(pil_img)
+    def paint(self, canvas: Image.Image):
+        self.driver.show_image(canvas)
 
     def destroy(self):
-        pygame.quit()
+        pass
 
 
 class Desktop:
     def __init__(self) -> None:
+        import pygame  # type: ignore
+
         scale = 4
         pygame.init()
+        self.pygame = pygame
         self.scale = scale
-        self.win: pygame.Surface = pygame.display.set_mode(
+        self.win = pygame.display.set_mode(
             (Dimensions.width * self.scale, Dimensions.height * self.scale)
         )
-        self.clock: pygame.time.Clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
 
     def paint(self, canvas: Image.Image):
         before_convert = time.time()
@@ -74,13 +74,13 @@ class Desktop:
         # print("CONVERT:, ", after_convert - before_convert)
 
         before = time.time()
-        surf: pygame.Surface = pygame.image.fromstring(
+        surf = self.pygame.image.fromstring(
             data, (Dimensions.width, Dimensions.height), "RGB"
         )
         # print("FROM_STRING: ", time.time() - before)
 
         before = time.time()
-        scaled_surf: pygame.Surface = pygame.transform.scale(
+        scaled_surf = self.pygame.transform.scale(
             surf,
             (Dimensions.width * self.scale, Dimensions.height * self.scale),
         )
@@ -88,10 +88,10 @@ class Desktop:
         # print("BLIT: ", time.time() - before)
 
         before = time.time()
-        pygame.display.flip()
+        self.pygame.display.flip()
         # print("FLIP: ", time.time() - before)
 
         # self.clock.tick(60)
 
     def destroy(self):
-        pygame.quit()
+        self.pygame.quit()
