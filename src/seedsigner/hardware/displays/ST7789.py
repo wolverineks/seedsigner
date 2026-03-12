@@ -116,6 +116,7 @@ class ST7789(object):
         self.command(0x21)  # inversion ON; 0x20 = inversion OFF
 
         self.command(0x11)
+        time.sleep(0.12)
 
         self.command(0x29)
 
@@ -126,7 +127,7 @@ class ST7789(object):
         GPIO.output(self._rst, GPIO.LOW)
         time.sleep(0.01)
         GPIO.output(self._rst, GPIO.HIGH)
-        time.sleep(0.01)
+        time.sleep(0.12)
 
     def SetWindows(self, Xstart, Ystart, Xend, Yend):
         # set the X coordinates
