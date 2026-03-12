@@ -49,18 +49,9 @@ jobs:
             --cov=seedsigner \
             --cov-append \
             --cov-branch \
+            --cov-report html:./artifacts/cov_html \
             --durations 5 \
             -vv
-      - name: Generate screenshots
-        run: |
-          python -m pytest tests/screenshot_generator/generator.py \
-            --color=yes \
-            --cov=seedsigner \
-            --cov-append \
-            --cov-branch \
-            --cov-report html:./artifacts/cov_html \
-            -vv
-          cp -r ./seedsigner-screenshots ./artifacts/
       - name: Coverage report
         run: coverage report
       - name: Archive CI Artifacts
