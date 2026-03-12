@@ -63,7 +63,9 @@ from math import sin, cos
 try:
     from time import sleep_ms
 except ImportError:
-    sleep_ms = lambda ms: None
+    from time import sleep as _time_sleep
+
+    sleep_ms = lambda ms: _time_sleep(ms / 1000)
     uint = int
     const = lambda x: x
 
