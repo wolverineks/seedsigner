@@ -1,11 +1,12 @@
+from pathlib import Path
 from PIL import ImageFont
 from typing import Tuple, Literal
 
 
 def get_icon_info(icon: str, size: int) -> Tuple[ImageFont.FreeTypeFont, str]:
-    fonts_path = "./src/seedsigner/resources/fonts/"
-    seedsigner_icons_path = f"{fonts_path}seedsigner-icons.otf"
-    font_awesome_path = f"{fonts_path}Font_Awesome_6_Free-Solid-900.otf"
+    fonts_dir = Path(__file__).parent.parent / "resources" / "fonts"
+    seedsigner_icons_path = str(fonts_dir / "seedsigner-icons.otf")
+    font_awesome_path = str(fonts_dir / "Font_Awesome_6_Free-Solid-900.otf")
 
     icon_codes = {
         "scan": (
