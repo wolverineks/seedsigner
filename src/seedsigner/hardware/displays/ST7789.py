@@ -1,7 +1,8 @@
 import spidev
 import RPi.GPIO as GPIO
 import time
-import array
+
+import numpy as np
 
 
 class ST7789(object):
@@ -115,10 +116,13 @@ class ST7789(object):
 
         self.command(0x21)  # inversion ON; 0x20 = inversion OFF
 
+        # SLPOUT (Sleep Out): wake the display from its post-reset sleep state.
+        # The ST7789 datasheet requires at least 120 ms between SLPOUT and any
+        # subsequent command (including DISPON).  Use 150 ms for OS timer headroom.
         self.command(0x11)
-        time.sleep(0.12)
+        time.sleep(0.15)
 
-        self.command(0x29)
+        self.command(0x29)  # DISPON (Display On)
 
     def reset(self):
         """Reset the display"""
@@ -155,10 +159,13 @@ class ST7789(object):
                 "Image must be same dimensions as display \
                 ({0}x{1}).".format(self.width, self.height)
             )
-        # convert 24-bit RGB-8:8:8 to gBRG-3:5:5:3; then per-pixel byteswap to 16-bit RGB-5:6:5
-        arr = array.array("H", Image.convert("BGR;16").tobytes())
-        arr.byteswap()
-        pix = arr.tobytes()
+        # convert 24-bit RGB to 16-bit RGB-5:6:5 (big-endian)
+        arr = np.array(Image.convert("RGB")).astype(np.uint16)
+        pix = (
+            ((arr[:, :, 0] & 0xF8) << 8)
+            | ((arr[:, :, 1] & 0xFC) << 3)
+            | (arr[:, :, 2] >> 3)
+        ).astype(">u2").tobytes()
         self.SetWindows(0, 0, self.width, self.height)
         GPIO.output(self._dc, GPIO.HIGH)
         self._spi.writebytes2(pix)
