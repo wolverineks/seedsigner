@@ -116,10 +116,13 @@ class ST7789(object):
 
         self.command(0x21)  # inversion ON; 0x20 = inversion OFF
 
+        # SLPOUT (Sleep Out): wake the display from its post-reset sleep state.
+        # The ST7789 datasheet requires at least 120 ms between SLPOUT and any
+        # subsequent command (including DISPON).  Use 150 ms for OS timer headroom.
         self.command(0x11)
-        time.sleep(0.12)
+        time.sleep(0.15)
 
-        self.command(0x29)
+        self.command(0x29)  # DISPON (Display On)
 
     def reset(self):
         """Reset the display"""
