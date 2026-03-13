@@ -50,9 +50,9 @@ This driver supports:
 
 """
 
-import array
 import spidev
 import RPi.GPIO as GPIO
+import numpy as np
 
 from math import sin, cos
 
@@ -358,10 +358,13 @@ class ST7789:
                 ({0}x{1}).".format(self.width, self.height)
             )
 
-        # convert 24-bit RGB-8:8:8 to gBRG-3:5:5:3; then per-pixel byteswap to 16-bit RGB-5:6:5
-        arr = array.array("H", image.convert("BGR;16").tobytes())
-        arr.byteswap()
-        pix = arr.tobytes()
+        # Convert 24-bit RGB-8:8:8 to 16-bit RGB565 big-endian for the display
+        arr = np.array(image.convert("RGB")).astype(np.uint16)
+        pix = (
+            ((arr[:, :, 0] & 0xF8) << 8)
+            | ((arr[:, :, 1] & 0xFC) << 3)
+            | (arr[:, :, 2] >> 3)
+        ).astype(">u2").tobytes()
 
         self._set_window(x_start, y_start, self.width, self.height)
         GPIO.output(self.dc, GPIO.HIGH)
