@@ -171,7 +171,7 @@ jobs:
         run: |
           cd seedsigner-os
           mkdir -p .buildroot-ccache .ccache images
-          docker compose up --force-recreate --build
+          docker compose up --force-recreate --build --abort-on-container-exit --exit-code-from build-images
           docker compose down
 
       - name: Fix permissions
