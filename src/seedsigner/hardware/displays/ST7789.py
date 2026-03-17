@@ -116,18 +116,18 @@ class ST7789(object):
         self.command(0x21)  # inversion ON; 0x20 = inversion OFF
 
         self.command(0x11)
-        time.sleep(0.12)
+        time.sleep(1)
 
         self.command(0x29)
 
     def reset(self):
         """Reset the display"""
         GPIO.output(self._rst, GPIO.HIGH)
-        time.sleep(0.01)
+        time.sleep(1)
         GPIO.output(self._rst, GPIO.LOW)
-        time.sleep(0.01)
+        time.sleep(1)
         GPIO.output(self._rst, GPIO.HIGH)
-        time.sleep(0.12)
+        time.sleep(1)
 
     def SetWindows(self, Xstart, Ystart, Xend, Yend):
         # set the X coordinates
