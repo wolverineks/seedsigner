@@ -6,8 +6,8 @@ from seedsigner.hardware.displays.display_driver import DisplayDriver
 
 
 def main() -> None:
-    # driver = DisplayDriver("desktop", 240, 240)
-    driver = DisplayDriver("st7789", 240, 240)
+    driver = DisplayDriver("desktop", 240, 240)
+    # driver = DisplayDriver("st7789", 240, 240)
 
     canvas = Image.new("RGB", (240, 240), "black")
     draw = ImageDraw.Draw(canvas)

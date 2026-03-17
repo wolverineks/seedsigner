@@ -24,87 +24,89 @@ Tested with a 320x240 IPS display (https://a.co/d/2Q9wDLo)
 * Requires `invert()` and 90° rotation
 * Exhibits noticeable residual ghosting
 """
-
+import logging
 import numbers
 import time
-
-# import numpy as np
 import array
+import errno
 
 from PIL import Image
 from PIL import ImageDraw
 
-import RPi.GPIO as GPIO
-from spidev import SpiDev
+from periphery import GPIO, SPI
 
+from seedsigner.models.settings import Settings
+from seedsigner.hardware.io_config import get_hardware_pin_mapping
+
+logger = logging.getLogger(__name__)
 
 # Constants for interacting with display registers.
-ILI9341_TFTWIDTH = 240
-ILI9341_TFTHEIGHT = 320
+ILI9341_TFTWIDTH    = 240
+ILI9341_TFTHEIGHT   = 320
 
-ILI9341_NOP = 0x00
-ILI9341_SWRESET = 0x01
-ILI9341_RDDID = 0x04
-ILI9341_RDDST = 0x09
+ILI9341_NOP         = 0x00
+ILI9341_SWRESET     = 0x01
+ILI9341_RDDID       = 0x04
+ILI9341_RDDST       = 0x09
 
-ILI9341_SLPIN = 0x10
-ILI9341_SLPOUT = 0x11
-ILI9341_PTLON = 0x12
-ILI9341_NORON = 0x13
+ILI9341_SLPIN       = 0x10
+ILI9341_SLPOUT      = 0x11
+ILI9341_PTLON       = 0x12
+ILI9341_NORON       = 0x13
 
-ILI9341_RDMODE = 0x0A
-ILI9341_RDMADCTL = 0x0B
-ILI9341_RDPIXFMT = 0x0C
-ILI9341_RDIMGFMT = 0x0A
-ILI9341_RDSELFDIAG = 0x0F
+ILI9341_RDMODE      = 0x0A
+ILI9341_RDMADCTL    = 0x0B
+ILI9341_RDPIXFMT    = 0x0C
+ILI9341_RDIMGFMT    = 0x0A
+ILI9341_RDSELFDIAG  = 0x0F
 
-ILI9341_INVOFF = 0x20
-ILI9341_INVON = 0x21
-ILI9341_GAMMASET = 0x26
-ILI9341_DISPOFF = 0x28
-ILI9341_DISPON = 0x29
+ILI9341_INVOFF      = 0x20
+ILI9341_INVON       = 0x21
+ILI9341_GAMMASET    = 0x26
+ILI9341_DISPOFF     = 0x28
+ILI9341_DISPON      = 0x29
 
-ILI9341_CASET = 0x2A
-ILI9341_PASET = 0x2B
-ILI9341_RAMWR = 0x2C
-ILI9341_RAMRD = 0x2E
+ILI9341_CASET       = 0x2A
+ILI9341_PASET       = 0x2B
+ILI9341_RAMWR       = 0x2C
+ILI9341_RAMRD       = 0x2E
 
-ILI9341_PTLAR = 0x30
-ILI9341_MADCTL = 0x36
-ILI9341_PIXFMT = 0x3A
+ILI9341_PTLAR       = 0x30
+ILI9341_MADCTL      = 0x36
+ILI9341_PIXFMT      = 0x3A
 
-ILI9341_FRMCTR1 = 0xB1
-ILI9341_FRMCTR2 = 0xB2
-ILI9341_FRMCTR3 = 0xB3
-ILI9341_INVCTR = 0xB4
-ILI9341_DFUNCTR = 0xB6
+ILI9341_FRMCTR1     = 0xB1
+ILI9341_FRMCTR2     = 0xB2
+ILI9341_FRMCTR3     = 0xB3
+ILI9341_INVCTR      = 0xB4
+ILI9341_DFUNCTR     = 0xB6
 
-ILI9341_PWCTR1 = 0xC0
-ILI9341_PWCTR2 = 0xC1
-ILI9341_PWCTR3 = 0xC2
-ILI9341_PWCTR4 = 0xC3
-ILI9341_PWCTR5 = 0xC4
-ILI9341_VMCTR1 = 0xC5
-ILI9341_VMCTR2 = 0xC7
+ILI9341_PWCTR1      = 0xC0
+ILI9341_PWCTR2      = 0xC1
+ILI9341_PWCTR3      = 0xC2
+ILI9341_PWCTR4      = 0xC3
+ILI9341_PWCTR5      = 0xC4
+ILI9341_VMCTR1      = 0xC5
+ILI9341_VMCTR2      = 0xC7
 
-ILI9341_RDID1 = 0xDA
-ILI9341_RDID2 = 0xDB
-ILI9341_RDID3 = 0xDC
-ILI9341_RDID4 = 0xDD
+ILI9341_RDID1       = 0xDA
+ILI9341_RDID2       = 0xDB
+ILI9341_RDID3       = 0xDC
+ILI9341_RDID4       = 0xDD
 
-ILI9341_GMCTRP1 = 0xE0
-ILI9341_GMCTRN1 = 0xE1
+ILI9341_GMCTRP1     = 0xE0
+ILI9341_GMCTRN1     = 0xE1
 
-ILI9341_PWCTR6 = 0xFC
+ILI9341_PWCTR6      = 0xFC
 
-ILI9341_BLACK = 0x0000
-ILI9341_BLUE = 0x001F
-ILI9341_RED = 0xF800
-ILI9341_GREEN = 0x07E0
-ILI9341_CYAN = 0x07FF
-ILI9341_MAGENTA = 0xF81F
-ILI9341_YELLOW = 0xFFE0
-ILI9341_WHITE = 0xFFFF
+ILI9341_BLACK       = 0x0000
+ILI9341_BLUE        = 0x001F
+ILI9341_RED         = 0xF800
+ILI9341_GREEN       = 0x07E0
+ILI9341_CYAN        = 0x07FF
+ILI9341_MAGENTA     = 0xF81F
+ILI9341_YELLOW      = 0xFFE0
+ILI9341_WHITE       = 0xFFFF
 
 
 def color565(r, g, b):
@@ -113,11 +115,10 @@ def color565(r, g, b):
     """
     return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
-
 def image_to_data(image):
     """Generator function to convert a PIL image to 16-bit 565 RGB bytes."""
-    # NumPy is much faster at doing this. NumPy code provided by:
-    # Keith (https://www.blogger.com/profile/02555547344016007163)
+    #NumPy is much faster at doing this. NumPy code provided by:
+    #Keith (https://www.blogger.com/profile/02555547344016007163)
     # pb = np.array(image.convert('RGB')).astype('uint16')
     # color = ((pb[:,:,0] & 0xF8) << 8) | ((pb[:,:,1] & 0xFC) << 3) | (pb[:,:,2] >> 3)
     # return np.dstack(((color >> 8) & 0xFF, color & 0xFF)).flatten().tolist()
@@ -135,55 +136,63 @@ def image_to_data(image):
 class ILI9341(object):
     """Representation of an ILI9341 TFT LCD."""
 
-    def __init__(
-        self,
-        dc=22,
-        rst=13,
-        led=12,
-        width=ILI9341_TFTWIDTH,
-        height=ILI9341_TFTHEIGHT,
-        rotation=90,
-    ):
-        """Create an instance of the display using SPI communication.  Must
-        provide the GPIO pin number for the D/C pin and the SPI driver.  Can
-        optionally provide the GPIO pin number for the reset pin as the rst
-        parameter.
-        """
-        spi = SpiDev(0, 0)
-        # spi.mode = 0b10  # [CPOL|CPHA] -> polarity 1, phase 0
-        spi.max_speed_hz = 64_000_000
-
-        self._dc = dc
-        self._rst = rst
-        self._spi = spi
+    def __init__(self, width=ILI9341_TFTWIDTH, height=ILI9341_TFTHEIGHT, rotation=90):
+        """Create an instance of the display using SPI communication."""
         self.width = width
         self.height = height
         self.rotation = rotation
         self.inverted = False
-        # if self._gpio is None:
-        #     self._gpio = GPIO.get_platform_gpio()
-        # Set DC as output.
+        # Keep SPI transfers within conservative per-message kernel limits.
+        self.CHUNK_SIZE = 4096
 
-        GPIO.setmode(GPIO.BOARD)  # Use physical pin nums, not gpio labels
-        GPIO.setwarnings(False)
-        GPIO.setup(self._dc, GPIO.OUT)
-        GPIO.output(self._dc, GPIO.HIGH)
-        GPIO.setup(led, GPIO.OUT)
-        GPIO.output(led, GPIO.HIGH)
-        if self._rst is not None:
-            GPIO.setup(self._rst, GPIO.OUT)
-            GPIO.output(self._rst, GPIO.HIGH)
+        hardware_config = Settings.get_platform_default_hardware_config()
+        pin_mapping = get_hardware_pin_mapping(hardware_config)["display"]
+
+        # Initialize GPIO pins with periphery
+        self._dc = GPIO(*pin_mapping["dc"], "out")
+        self._rst = GPIO(*pin_mapping["rst"], "out")
+        # bl_config is either "disabled" or a list [chip, line] for GPIO
+        bl_config = pin_mapping["bl"]
+        if bl_config == "disabled":
+            self._bl = None
+        else:
+            self._bl = GPIO(*bl_config, "out")
+            self._bl.write(True)
+
+        # Initialize SPI
+        spi_bus = f"/dev/spidev{pin_mapping['spi_bus']}.{pin_mapping['spi_device']}"
+        spi_mode = 0
+        spi_hz = 64_000_000
+
+        logger.info(f"Initializing SPI: bus={spi_bus} at {spi_hz/1_000_000} MHz")
+        self._spi = SPI(spi_bus, spi_mode, spi_hz)
 
         # Create an image buffer.
-        self.buffer = Image.new("RGB", (width, height))
+        self.buffer = Image.new('RGB', (width, height))
 
-    # @property
-    # def width(self):
-    #     return self.width
+    def _chunked_transfer(self, data):
+        """Transfer data in chunks to prevent buffer overflows"""
+        if isinstance(data, list):
+            data = bytes(data)
 
-    # @property
-    # def height(self):
-    #     return self.height
+        i = 0
+        chunk_size = self.CHUNK_SIZE
+        while i < len(data):
+            chunk = data[i:i + chunk_size]
+            try:
+                self._spi.transfer(chunk)
+                i += len(chunk)
+            except Exception as e:
+                # Some kernels/drivers enforce smaller SPI message sizes.
+                if getattr(e, "errno", None) == errno.EMSGSIZE and chunk_size > 256:
+                    chunk_size = max(256, chunk_size // 2)
+                    self.CHUNK_SIZE = chunk_size
+                    logger.warning(
+                        "SPI message too long; reducing chunk size to %d bytes",
+                        chunk_size,
+                    )
+                    continue
+                raise
 
     def send(self, data, is_data=True, chunk_size=4096):
         """Write a byte or array of bytes to the display. Is_data parameter
@@ -192,7 +201,7 @@ class ILI9341(object):
         single SPI transaction, with a default of 4096.
         """
         # Set DC low for command, high for data.
-        GPIO.output(self._dc, is_data)
+        self._dc.write(is_data)
         # Convert scalar argument to list so either can be passed as parameter.
         if isinstance(data, numbers.Number):
             data = [data & 0xFF]
@@ -201,7 +210,8 @@ class ILI9341(object):
         #     end = min(start+chunk_size, len(data))
         #     self._spi.writebytes2(data[start:end])
 
-        self._spi.writebytes2(data)
+        # self._spi.transfer(data)
+        self._chunked_transfer(data)
 
     def command(self, data):
         """Write a byte or array of bytes to the display as command data."""
@@ -214,11 +224,11 @@ class ILI9341(object):
     def reset(self):
         """Reset the display, if reset pin is connected."""
         if self._rst is not None:
-            GPIO.output(self._rst, GPIO.HIGH)
+            self._rst.write(True)
             time.sleep(0.005)
-            GPIO.output(self._rst, GPIO.LOW)
+            self._rst.write(False)
             time.sleep(0.02)
-            GPIO.output(self._rst, GPIO.HIGH)
+            self._rst.write(True)
             time.sleep(0.150)
 
     def _init(self):
@@ -230,13 +240,13 @@ class ILI9341(object):
         self.data(0x02)
         self.command(0xCF)
         self.data(0x00)
-        self.data(0xC1)
-        self.data(0x30)
+        self.data(0XC1)
+        self.data(0X30)
         self.command(0xED)
         self.data(0x64)
         self.data(0x03)
-        self.data(0x12)
-        self.data(0x81)
+        self.data(0X12)
+        self.data(0X81)
         self.command(0xE8)
         self.data(0x85)
         self.data(0x00)
@@ -252,31 +262,31 @@ class ILI9341(object):
         self.command(0xEA)
         self.data(0x00)
         self.data(0x00)
-        self.command(ILI9341_PWCTR1)  # Power control
-        self.data(0x23)  # VRH[5:0]
-        self.command(ILI9341_PWCTR2)  # Power control
-        self.data(0x10)  # SAP[2:0];BT[3:0]
-        self.command(ILI9341_VMCTR1)  # VCM control
-        self.data(0x3E)
+        self.command(ILI9341_PWCTR1)    # Power control
+        self.data(0x23)                    # VRH[5:0]
+        self.command(ILI9341_PWCTR2)    # Power control
+        self.data(0x10)                    # SAP[2:0];BT[3:0]
+        self.command(ILI9341_VMCTR1)    # VCM control
+        self.data(0x3e)
         self.data(0x28)
-        self.command(ILI9341_VMCTR2)  # VCM control2
-        self.data(0x86)  # --
-        self.command(ILI9341_MADCTL)  #  Memory Access Control
+        self.command(ILI9341_VMCTR2)    # VCM control2
+        self.data(0x86)                    # --
+        self.command(ILI9341_MADCTL)    #  Memory Access Control
         self.data(0x48)
         self.command(ILI9341_PIXFMT)
         self.data(0x55)
         self.command(ILI9341_FRMCTR1)
         self.data(0x00)
         self.data(0x18)
-        self.command(ILI9341_DFUNCTR)  #  Display Function Control
+        self.command(ILI9341_DFUNCTR)    #  Display Function Control
         self.data(0x08)
         self.data(0x82)
         self.data(0x27)
-        self.command(0xF2)  #  3Gamma Function Disable
+        self.command(0xF2)                #  3Gamma Function Disable
         self.data(0x00)
-        self.command(ILI9341_GAMMASET)  # Gamma curve selected
+        self.command(ILI9341_GAMMASET)    # Gamma curve selected
         self.data(0x01)
-        self.command(ILI9341_GMCTRP1)  # Set Gamma
+        self.command(ILI9341_GMCTRP1)    # Set Gamma
         self.data(0x0F)
         self.data(0x31)
         self.data(0x2B)
@@ -292,7 +302,7 @@ class ILI9341(object):
         self.data(0x0E)
         self.data(0x09)
         self.data(0x00)
-        self.command(ILI9341_GMCTRN1)  # Set Gamma
+        self.command(ILI9341_GMCTRN1)    # Set Gamma
         self.data(0x00)
         self.data(0x0E)
         self.data(0x14)
@@ -308,9 +318,9 @@ class ILI9341(object):
         self.data(0x31)
         self.data(0x36)
         self.data(0x0F)
-        self.command(ILI9341_SLPOUT)  # Exit Sleep
+        self.command(ILI9341_SLPOUT)    # Exit Sleep
         time.sleep(0.120)
-        self.command(ILI9341_DISPON)  # Display on
+        self.command(ILI9341_DISPON)    # Display on
 
     def begin(self):
         """Initialize the display.  Should be called once before other calls that
@@ -338,20 +348,20 @@ class ILI9341(object):
         to 239,319.
         """
         if x1 is None:
-            x1 = self.width - 1
+            x1 = self.width-1
         if y1 is None:
-            y1 = self.height - 1
-        self.command(ILI9341_CASET)  # Column addr set
+            y1 = self.height-1
+        self.command(ILI9341_CASET)        # Column addr set
         self.data(x0 >> 8)
-        self.data(x0)  # XSTART
+        self.data(x0)                    # XSTART
         self.data(x1 >> 8)
-        self.data(x1)  # XEND
-        self.command(ILI9341_PASET)  # Row addr set
+        self.data(x1)                    # XEND
+        self.command(ILI9341_PASET)        # Row addr set
         self.data(y0 >> 8)
-        self.data(y0)  # YSTART
+        self.data(y0)                    # YSTART
         self.data(y1 >> 8)
-        self.data(y1)  # YEND
-        self.command(ILI9341_RAMWR)  # write to RAM
+        self.data(y1)                    # YEND
+        self.command(ILI9341_RAMWR)        # write to RAM
 
     def show_image(self, image=None, x_start: int = 0, y_start: int = 0):
         """Write the display buffer or provided image to the hardware.  If no
@@ -362,14 +372,9 @@ class ILI9341(object):
         # By default write the internal buffer to the display.
         if image is None:
             image = self.buffer
-
+        
         output_image = image.rotate(self.rotation, expand=True)
-        self.set_window(
-            x_start,
-            y_start,
-            x_start + output_image.width - 1,
-            y_start + output_image.height - 1,
-        )
+        self.set_window(x_start, y_start, x_start + output_image.width - 1, y_start + output_image.height - 1)
 
         # Convert image to array of 16bit 565 RGB data bytes.
         # Unfortunate that this copy has to occur, but the SPI byte writing
@@ -378,13 +383,29 @@ class ILI9341(object):
         pixelbytes = image_to_data(output_image)
 
         # Write data to hardware.
-        self.data(pixelbytes)
+        self._dc.write(True)
+        self._chunked_transfer(pixelbytes)
 
-    def clear(self, color=(0, 0, 0)):
+    def clear(self, color=(0,0,0)):
         """Clear the image buffer to the specified RGB color (default black)."""
         width, height = self.buffer.size
-        self.buffer.putdata([color] * (width * height))
+        self.buffer.putdata([color]*(width*height))
 
     def draw(self):
         """Return a PIL ImageDraw instance for 2D drawing on the image buffer."""
         return ImageDraw.Draw(self.buffer)
+
+    def __del__(self):
+        """Cleanup when object is destroyed"""
+        self.close()
+
+    def close(self):
+        for attr_name in ["_spi", "_dc", "_rst", "_bl"]:
+            resource = getattr(self, attr_name, None)
+            if resource is None:
+                continue
+            try:
+                resource.close()
+            except Exception:
+                pass
+            setattr(self, attr_name, None)
