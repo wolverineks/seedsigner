@@ -60,6 +60,7 @@ branch = true
 testpaths = ["tests", "src/seedsigner/loopyUI"]
 pythonpath = ["src"]
 log_level = "DEBUG"
+python_files = ["test_*.py", "*_test.py", "test.py"]
 
 [tool.pyright]
 pythonVersion = "3.11"
